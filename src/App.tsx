@@ -1,16 +1,20 @@
-interface AppProps {
-  sa: string;
-  className?: string;
-  defaultClass?: string;
-  h1?: string;
-  p?: string;
-}
+import useOnline from "./hooks/useOnline";
 
-function App(props: AppProps) {
-  console.log(props);
+
+const App = () => {
+  console.log("Component Starts render");
+
+  const onlineStatus = useOnline();
+  
+  console.log(onlineStatus);
+
+  console.log("Component ends render");
+
 
   return (
-    <div className="sahil"></div>
+    <div className="sahil">
+      <p>userOnline: {String(onlineStatus)}</p>
+    </div>
   )
 
 }
