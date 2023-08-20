@@ -13,7 +13,7 @@ const App = () => {
 
   return (
     <div className="sahil">
-      <p>userOnline: {String(onlineStatus)}</p>
+      <p className="text-3xl font-bold underline">userOnline: {String(onlineStatus)}</p>
     </div>
   )
 
