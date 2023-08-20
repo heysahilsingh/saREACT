@@ -8,3 +8,10 @@ ReactDOM.createRoot(document.getElementById('main')!).render(
     <App />
   // </React.StrictMode>
 )
+
+export const Sahil = () => {
+  return (
+    <div>Sahil COmponent</div>
+  )
+
+}
