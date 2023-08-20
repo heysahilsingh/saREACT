@@ -1,0 +1,1 @@
+export const imageUrl = "../media/images";
