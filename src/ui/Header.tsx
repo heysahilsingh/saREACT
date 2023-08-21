@@ -1,7 +1,17 @@
+import { Link } from "react-router-dom";
+
 const Header = () => {
     return (
-        <header>Header Page</header>
-    )
-}
+        <header>
+            <nav>
+                <ul>
+                    <li>
+                        Dsd
+                    </li>
+                </ul>
+            </nav>
+        </header>
+    );
+};
 
-export default Header
+export default Header;
