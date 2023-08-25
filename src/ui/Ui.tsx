@@ -13,7 +13,7 @@ const UI = () => {
   return (
     <>
       <Header />
-      <div className="page-content">
+      <div className="page-content sa-container mx-auto">
         <Outlet />
       </div>
       <Footer />
