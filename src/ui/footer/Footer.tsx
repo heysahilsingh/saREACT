@@ -1,11 +1,15 @@
-import useDeviceDetection from "../../hooks/useDeviceDetection";
+import useDeviceDetect from "../../hooks/useDeviceDetect";
 import DeskFooter from "./DeskFooter";
 import MobFooter from "./MobFooter";
 
 const Footer = () => {
-    const device = useDeviceDetection();
+    const device = useDeviceDetect();
 
-    return (device === "desk") ? <DeskFooter /> : <MobFooter />
+    return (
+        <footer className="footer">
+            {(device === "desk") ? <DeskFooter /> : <MobFooter />}
+        </footer>
+    )
 }
 
 export default Footer

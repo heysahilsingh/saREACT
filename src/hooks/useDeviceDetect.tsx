@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const useDeviceDetection = () => {
+const useDeviceDetect = () => {
   const [device, setDevice] = useState<string>();
 
   useEffect(() => {
@@ -8,16 +8,14 @@ const useDeviceDetection = () => {
     function logScreenType() {
       const screenWidth = window.innerWidth;
 
-      if (screenWidth > 1100) {
+      if (screenWidth > 1024) {
         setDevice('desk');
-      } else if (screenWidth <= 1100 && screenWidth >= 765) {
+      } else if (screenWidth <= 1024 && screenWidth >= 765) {
         setDevice('tab');
       } else {
         setDevice('mob');
       }
     }
-
-    setInterval(() => console.log("Interval"), 1000)
 
     // Initial data based on screen width
     logScreenType();
@@ -35,4 +33,4 @@ const useDeviceDetection = () => {
   return device
 }
 
-export default useDeviceDetection
+export default useDeviceDetect

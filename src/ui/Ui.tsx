@@ -1,10 +1,13 @@
 import { Outlet, createBrowserRouter } from "react-router-dom";
 import Footer from "./footer/Footer";
 import Header from './header/Header';
-import Home from "./pages/Home";
-import Contact from "./pages/Contact";
-import About from "./pages/About";
-import NotFound from "./pages/NotFound";
+import Home from "./pages/home/Home";
+import NotFound from "./pages/notFound/NotFound";
+import Account from "./pages/account/Account";
+import Help from "./pages/help/Help";
+import Instamart from "./pages/instamart/Instamart";
+import Search from "./pages/search/Search";
+import Offers from "./pages/offers/Offers";
 
 const UI = () => {
   return (
@@ -22,23 +25,34 @@ export const routes = createBrowserRouter([
   {
     path: "/",
     element: <UI />,
-    errorElement: <NotFound />,
     children: [
+      {
+        path: "/*",
+        element: <NotFound />,
+      },
+      {
+        path: "/account",
+        element: <Account />
+      },
+      {
+        path: "/help",
+        element: <Help />
+      },
       {
         path: "/",
         element: <Home />
       },
       {
-        path: "/home",
-        element: <Home />
+        path: "/instamart",
+        element: <Instamart />
       },
       {
-        path: "/about",
-        element: <About />
+        path: "/offers",
+        element: <Offers />
       },
       {
-        path: "/contact",
-        element: <Contact />
+        path: "/search",
+        element: <Search />
       },
     ]
   },

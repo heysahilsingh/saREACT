@@ -1,11 +1,15 @@
-import useDeviceDetection from "../../hooks/useDeviceDetection";
+import useDeviceDetect from "../../hooks/useDeviceDetect";
 import DeskHeader from "./DeskHeader";
 import MobHeader from "./MobHeader";
 
 const Header = () => {
-    const device = useDeviceDetection();
+    const device = useDeviceDetect();
 
-    return (device === "desk") ? <DeskHeader /> : <MobHeader />
+    return (
+        <header className="header">
+            {(device === "desk") ? <DeskHeader /> : <MobHeader />}
+        </header>
+    )
 };
 
 export default Header;
