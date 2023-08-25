@@ -1,39 +1,47 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Footer from "./Footer";
-import Header from './Header';
-import Home from "./pages/Home"
-import Contact from "./pages/Contact"
-import About from "./pages/About"
-import NotFound from "./pages/NotFound"
+import { Outlet, createBrowserRouter } from "react-router-dom";
+import Footer from "./footer/Footer";
+import Header from './header/Header';
+import Home from "./pages/Home";
+import Contact from "./pages/Contact";
+import About from "./pages/About";
+import NotFound from "./pages/NotFound";
 
-const App = () => {
+const UI = () => {
   return (
     <>
-    <Header />
-    <RouterProvider router={pageRoutes} />
-    <Footer />
+      <Header />
+      <div className="page-content">
+        <Outlet />
+      </div>
+      <Footer />
     </>
   )
 }
 
-const pageRoutes = createBrowserRouter([
+export const routes = createBrowserRouter([
   {
-      path: "/",
-      element: <Home />,
-      errorElement: <NotFound />
-  },
-  {
-      path: "/home",
-      element: <Home />
-  },
-  {
-      path: "/about",
-      element: <About />
-  },
-  {
-      path: "/contact",
-      element: <Contact />
+    path: "/",
+    element: <UI />,
+    errorElement: <NotFound />,
+    children: [
+      {
+        path: "/",
+        element: <Home />
+      },
+      {
+        path: "/home",
+        element: <Home />
+      },
+      {
+        path: "/about",
+        element: <About />
+      },
+      {
+        path: "/contact",
+        element: <Contact />
+      },
+    ]
   },
 ]);
 
-export default App
+export default UI
