@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 
+interface Device {
+  desk: boolean,
+  tab: boolean,
+  mob: boolean,
+}
+
 const useDeviceDetect = () => {
-  const [device, setDevice] = useState<string>();
+  const [device, setDevice] = useState<Device>();
 
   useEffect(() => {
 
@@ -9,11 +15,23 @@ const useDeviceDetect = () => {
       const screenWidth = window.innerWidth;
 
       if (screenWidth > 1024) {
-        setDevice('desk');
+        setDevice({
+          desk: true,
+          tab: false,
+          mob: false
+        });
       } else if (screenWidth <= 1024 && screenWidth >= 765) {
-        setDevice('tab');
+        setDevice({
+          desk: false,
+          tab: true,
+          mob: false
+        });
       } else {
-        setDevice('mob');
+        setDevice({
+          desk: false,
+          tab: false,
+          mob: true
+        });
       }
     }
 

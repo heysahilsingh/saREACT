@@ -6,12 +6,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        "primary": "#fc8019"
+        "primary": "#fc8019",
       },
     },
-    colors: {
-      "blue": "#000000"
-    }
   },
   plugins: [],
+  darkMode: 'class',
 }

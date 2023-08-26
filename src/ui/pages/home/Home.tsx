@@ -1,11 +1,12 @@
-import Button from "../../../theme/Button"
+import LocationSearch from "../../components/LocationSearch/LocationSearch"
 
 const Home = () => {
     // console.log("Home page");
     return (
         <>
-        <div>Home Page</div>
-        <Button text="This is a button"/>
+            <div>Home Page</div>
+            <LocationSearch screen="mob" />
+            {/* <LocationSearch screen="desk" /> */}
         </>
     )
 }

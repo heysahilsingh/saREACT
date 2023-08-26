@@ -8,6 +8,7 @@ import Help from "./pages/help/Help";
 import Instamart from "./pages/instamart/Instamart";
 import Search from "./pages/search/Search";
 import Offers from "./pages/offers/Offers";
+import Cart from "./pages/cart/Cart";
 
 const UI = () => {
   return (
@@ -33,6 +34,10 @@ export const routes = createBrowserRouter([
       {
         path: "/account",
         element: <Account />
+      },
+      {
+        path: "/cart",
+        element: <Cart />
       },
       {
         path: "/help",

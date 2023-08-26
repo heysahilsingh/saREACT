@@ -2,12 +2,112 @@
 @tailwind components;
 @tailwind utilities;
 
+
+@font-face {
+  font-family: "Basis Grotesque Pro";
+  src: url(./assets/fonts/BasisGrotesquePro-Regular.woff2);
+  font-weight: 100;
+}
+
+@font-face {
+  font-family: "Basis Grotesque Pro";
+  src: url(./assets/fonts/BasisGrotesquePro-Regular.woff2);
+  font-weight: 200;
+}
+
+@font-face {
+  font-family: "Basis Grotesque Pro";
+  src: url(./assets/fonts/BasisGrotesquePro-Regular.woff2);
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "Basis Grotesque Pro";
+  src: url(./assets/fonts/BasisGrotesquePro-Medium.woff2);
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Basis Grotesque Pro";
+  src: url(./assets/fonts/BasisGrotesquePro-Medium.woff2);
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "Basis Grotesque Pro";
+  src: url(./assets/fonts/BasisGrotesquePro-Bold.woff2);
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "Basis Grotesque Pro";
+  src: url(./assets/fonts/BasisGrotesquePro-Bold.woff2);
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Basis Grotesque Pro";
+  src: url(./assets/fonts/BasisGrotesquePro-Black.woff2);
+  font-weight: 800;
+}
+
+@font-face {
+  font-family: "Basis Grotesque Pro";
+  src: url(./assets/fonts/BasisGrotesquePro-Black.woff2);
+  font-weight: 900;
+}
+
+
 *{
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+body{
+  font-family: "Basis Grotesque Pro";
+  font-weight: 300;
+}
+
 .sa-container{
-  max-width: 1600px;
+  max-width: 1400px;
+}
+
+.sa-dark-toggle:checked {
+  background-color: green;
+}
+
+.sa-dark-toggle:checked:after {
+  transform: translate(23px, -50%);
+}
+
+.sa-dark-toggle {
+  height: 28px;
+  width: 52px;
+  border-radius: 15px;
+  display: inline-block;
+  position: relative;
+  margin: 0;
+  background: grey;
+  transition: all 0.2s;
+  appearance: none;
+  outline: none;
+  position: fixed;
+  z-index: 999999;
+  bottom: 50px;
+  left: 50px;
+}
+
+.sa-dark-toggle:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 3px;
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: var(--box-shadow);
+  transition: all 0.2s cubic-bezier(0.5, 0.1, 0.75, 1.35);
 }

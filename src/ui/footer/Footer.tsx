@@ -7,7 +7,7 @@ const Footer = () => {
 
     return (
         <footer className="footer">
-            {(device === "desk") ? <DeskFooter /> : <MobFooter />}
+            {device?.desk ? <DeskFooter /> : <MobFooter />}
         </footer>
     )
 }
