@@ -1,22 +1,14 @@
-// import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-// interface UserLocation {
-//     InstamartEnabled: boolean;
-//     areaName: string;
-//     cityName: string;
-// }
+const useUserLocation = () => {
+    const [userLocation, setUserLocation] = useState(Object);
 
-// const useUserLocation = () => {
-//     const [cart, setCart] = useState<UserLocation>({
-//         count: 0,
-//         items: [],
-//     });
+    useEffect(() => {
+        const location = localStorage.getItem("USER_LOCATION") || {place_id: "123456"};
+        setUserLocation(location)
+    }, []);
 
-//     useEffect(() => {
-//         setCart({...cart, count: 5})
-//     }, []);
+    return [userLocation, setUserLocation];
+}
 
-//     return cart;
-// }
-
-// export default useUserLocation;
+export default useUserLocation;

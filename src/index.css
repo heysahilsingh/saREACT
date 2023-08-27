@@ -2,71 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-
-@font-face {
-  font-family: "Basis Grotesque Pro";
-  src: url(./assets/fonts/BasisGrotesquePro-Regular.woff2);
-  font-weight: 100;
-}
-
-@font-face {
-  font-family: "Basis Grotesque Pro";
-  src: url(./assets/fonts/BasisGrotesquePro-Regular.woff2);
-  font-weight: 200;
-}
-
-@font-face {
-  font-family: "Basis Grotesque Pro";
-  src: url(./assets/fonts/BasisGrotesquePro-Regular.woff2);
-  font-weight: 300;
-}
-
-@font-face {
-  font-family: "Basis Grotesque Pro";
-  src: url(./assets/fonts/BasisGrotesquePro-Medium.woff2);
-  font-weight: 400;
-}
-
-@font-face {
-  font-family: "Basis Grotesque Pro";
-  src: url(./assets/fonts/BasisGrotesquePro-Medium.woff2);
-  font-weight: 500;
-}
-
-@font-face {
-  font-family: "Basis Grotesque Pro";
-  src: url(./assets/fonts/BasisGrotesquePro-Bold.woff2);
-  font-weight: 600;
-}
-
-@font-face {
-  font-family: "Basis Grotesque Pro";
-  src: url(./assets/fonts/BasisGrotesquePro-Bold.woff2);
-  font-weight: 700;
-}
-
-@font-face {
-  font-family: "Basis Grotesque Pro";
-  src: url(./assets/fonts/BasisGrotesquePro-Black.woff2);
-  font-weight: 800;
-}
-
-@font-face {
-  font-family: "Basis Grotesque Pro";
-  src: url(./assets/fonts/BasisGrotesquePro-Black.woff2);
-  font-weight: 900;
-}
-
-
 *{
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-body{
-  font-family: "Basis Grotesque Pro";
-  font-weight: 300;
 }
 
 .sa-container{

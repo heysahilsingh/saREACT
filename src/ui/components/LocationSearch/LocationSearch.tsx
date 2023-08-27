@@ -1,9 +1,8 @@
 import { useState, ChangeEvent } from 'react';
 import SearchError from './SearchError';
-// import SearchAutoComplete from './SearchAutocomplete';
 import CONSTANTS from '../../../constants';
-import { Crosshair, MagnifyingGlass } from 'phosphor-react';
 import SearchAutoComplete from './SearchAutocomplete';
+import { IconCurrentLocation, IconSearch } from '@tabler/icons-react';
 
 interface LocationSearchProps {
     screen: "desk" | "mob"
@@ -34,7 +33,7 @@ const LocationSearch = (props: LocationSearchProps) => {
             }
             // If input is having a value
             else {
-                const response = await fetch(CONSTANTS.DELIVERY_LOCATION_SUGGESTION + keyword);
+                const response = await fetch(CONSTANTS.API_LOCATION_SUGGESTION + keyword);
 
                 if (!response.ok) {
                     setShowError(true);
@@ -52,6 +51,28 @@ const LocationSearch = (props: LocationSearchProps) => {
         }
     }
 
+    const saveUserLocation = async (placeId: string) => {
+
+        try {
+            const response = await fetch(CONSTANTS.API_USER_LOCATION + placeId);
+
+            if (!response.ok) {
+                setShowError(true);
+                setErrorMessage("We are fixing a temporary glitch. Sorry for the inconvenience. Please try again.");
+                return
+            }
+
+            const data = await response.json();
+
+            console.log(data);
+
+        } catch (error) {
+            setShowError(true);
+            setErrorMessage("An error occured.");
+        }
+
+    }
+
 
     if (props.screen === "desk") {
         return (
@@ -61,7 +82,7 @@ const LocationSearch = (props: LocationSearchProps) => {
                         <div className="grow flex gap-2 items-center border-2 font-medium border-zinc-300 py-4 px-5 leading focus-within:border-primary dark:border-zinc-800 dark:focus-within:border-primary">
                             <input className="bg-transparent outline-0 grow text-zinc-950 dark:text-zinc-300" type="search" placeholder="Enter your delivery location" />
                             <button className="group flex gap-2 items-center w-fit text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-300">
-                                <Crosshair className='group-hover:text-zinc-950 dark:group-hover:text-zinc-300 text-zinc-500' size={20} />
+                                <IconCurrentLocation className='group-hover:text-zinc-950 dark:group-hover:text-zinc-300 text-zinc-500' size={20} stroke={1.5} />
                                 Locate Me
                             </button>
                         </div>
@@ -79,7 +100,7 @@ const LocationSearch = (props: LocationSearchProps) => {
                         {/* Search Input */}
                         <div className="grow flex gap-2 items-center border-2 font-medium border-zinc-300 py-3 px-4 leading focus-within:border-primary dark:border-zinc-800 dark:focus-within:border-primary">
                             <input className='bg-transparent outline-0 grow text-zinc-950 dark:text-zinc-300' type="search" placeholder='Enter area, street name...' onChange={searchSuggestion} />
-                            <MagnifyingGlass className="text-zinc-400 dark:text-zinc-600" size={20} />
+                            <IconSearch className="text-zinc-400 dark:text-zinc-600" size={20} stroke={2} />
                         </div>
 
                         {/* Divider */}
@@ -89,7 +110,7 @@ const LocationSearch = (props: LocationSearchProps) => {
                         <div className="py-3 px-4">
                             {/* Detect Location */}
                             {locationOptions.length == 0 && <button className="group flex gap-4 items-center w-fit text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-300">
-                                <Crosshair className="group-hover:text-zinc-950 dark:group-hover:text-zinc-300 text-zinc-500" size={30} />
+                                <IconCurrentLocation className="group-hover:text-zinc-950 dark:group-hover:text-zinc-300 text-zinc-500" size={30} stroke={1.5} />
                                 <p className='flex flex-col items-start'>
                                     <span className='font-bold'>Use Current Location</span>
                                     <span className='text-xs'>Using GPS</span>
@@ -98,7 +119,7 @@ const LocationSearch = (props: LocationSearchProps) => {
 
                             {/* Suggestions */}
                             {locationOptions.length > 0 && locationOptions.map(option => {
-                                return <SearchAutoComplete key={option.place_id} heading={option.structured_formatting.main_text} subHeading={option.structured_formatting.secondary_text} />
+                                return <SearchAutoComplete onClick={() => saveUserLocation(option.place_id)} key={option.place_id} heading={option.structured_formatting.main_text} subHeading={option.structured_formatting.secondary_text} />
                             })}
 
                             {/* Error Message */}

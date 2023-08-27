@@ -6,7 +6,7 @@ const Home = () => {
         <>
             <div>Home Page</div>
             <LocationSearch screen="mob" />
-            {/* <LocationSearch screen="desk" /> */}
+            <LocationSearch screen="desk" />
         </>
     )
 }
