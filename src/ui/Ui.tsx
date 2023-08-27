@@ -9,6 +9,7 @@ import Instamart from "./pages/instamart/Instamart";
 import Search from "./pages/search/Search";
 import Offers from "./pages/offers/Offers";
 import Cart from "./pages/cart/Cart";
+import Near from "./pages/near/Near";
 
 const UI = () => {
   return (
@@ -50,6 +51,10 @@ export const routes = createBrowserRouter([
       {
         path: "/instamart",
         element: <Instamart />
+      },
+      {
+        path: "/near/:name",
+        element: <Near />,
       },
       {
         path: "/offers",

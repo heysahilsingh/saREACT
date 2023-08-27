@@ -11,7 +11,7 @@ const DeskHeader = () => {
     return (
         <div className="sa-container mx-auto flex gap-10 items-center p-4">
             <Link to="/" className="logo">
-                <Logo />
+                <Logo fill="gradient" />
             </Link>
             <div className="location flex gap-2 items-center justify-start cursor-pointer text-sm">
                 <span className="font-bold">Kirti Nagar</span>
