@@ -10,15 +10,18 @@ import Search from "./pages/search/Search";
 import Offers from "./pages/offers/Offers";
 import Cart from "./pages/cart/Cart";
 import Near from "./pages/near/Near";
+import { Sahil } from "../context/UserContext";
 
 const UI = () => {
   return (
     <>
-      <Header />
-      <div className="page-content sa-container mx-auto">
-        <Outlet />
-      </div>
-      <Footer />
+      <Sahil>
+        <Header />
+        <div className="page-content sa-container mx-auto">
+          <Outlet />
+        </div>
+        <Footer />
+      </Sahil>
     </>
   )
 }

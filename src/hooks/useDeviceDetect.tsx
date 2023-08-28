@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 
 interface Device {
-  desk: boolean,
-  tab: boolean,
-  mob: boolean,
+  isDesk: boolean,
+  isTab: boolean,
+  isMob: boolean,
 }
 
 const useDeviceDetect = () => {
@@ -16,21 +16,21 @@ const useDeviceDetect = () => {
 
       if (screenWidth > 1024) {
         setDevice({
-          desk: true,
-          tab: false,
-          mob: false
+          isDesk: true,
+          isTab: false,
+          isMob: false
         });
       } else if (screenWidth <= 1024 && screenWidth >= 765) {
         setDevice({
-          desk: false,
-          tab: true,
-          mob: false
+          isDesk: false,
+          isTab: true,
+          isMob: false
         });
       } else {
         setDevice({
-          desk: false,
-          tab: false,
-          mob: true
+          isDesk: false,
+          isTab: false,
+          isMob: true
         });
       }
     }

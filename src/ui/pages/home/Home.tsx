@@ -1,7 +1,7 @@
 import LocationSearch from "../../components/LocationSearch/LocationSearch"
 
 const Home = () => {
-    // console.log("Home page");
+
     return (
         <>
             <div>Home Page</div>

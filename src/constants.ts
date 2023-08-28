@@ -1,5 +1,5 @@
 const CONSTANTS = {
-   CLOUDINAY_IMG: "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/",
+   IMG_CDN: "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/",
 
    // APIs URL
    API_PAGE_HOME: "https://www.swiggy.com/dapi/homepage/getCards?", // location after "?" in "lat=2&lng=2"
