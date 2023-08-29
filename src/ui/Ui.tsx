@@ -10,19 +10,17 @@ import Search from "./pages/search/Search";
 import Offers from "./pages/offers/Offers";
 import Cart from "./pages/cart/Cart";
 import Near from "./pages/near/Near";
-import { Sahil } from "../context/UserContext";
+import { UserContextProvider } from "../context/UserContext";
 
 const UI = () => {
   return (
-    <>
-      <Sahil>
-        <Header />
-        <div className="page-content sa-container mx-auto">
-          <Outlet />
-        </div>
-        <Footer />
-      </Sahil>
-    </>
+    <UserContextProvider>
+      <Header />
+      <div className="page-content sa-container mx-auto">
+        <Outlet />
+      </div>
+      <Footer />
+    </UserContextProvider>
   )
 }
 

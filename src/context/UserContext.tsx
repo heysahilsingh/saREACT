@@ -1,34 +1,75 @@
-import { createContext, useContext, useState } from "react"
+import { createContext, useState } from 'react';
 
-// const UserContext = createContext({
-//     isLoggedIn: true,
-//     cart: {
-//         count: 2,
-//         items: []
-//     },
-//     location: {
-//         place_id: "12345"
-//     }
-// })
+// Shape of userInfo object
+type UserInfo = {
+    isLoggedIn: boolean
+    cart: {
+        cartItemsCount: number
+        cartItems: string[] | null
+    },
+    location: {
+        isInstamartEnabled: boolean
+        cityInfo: {
+            place_id: string | null
+            mainText: string | null
+            secondaryText: string | null
+        }
+    }
+}
 
-const UserContext = createContext({
-    name: "Sahil"
-})
+// UserContext Interface
+interface UserContextInterface {
+    userInfo: UserInfo;
+    updateUserInfo: (newInfo: UserInfo) => void;
+}
+
+// Create the initial context
+const initialUserInfo: UserInfo = {
+    isLoggedIn: false,
+    cart: {
+        cartItemsCount: 0,
+        cartItems: null
+    },
+    location: {
+        isInstamartEnabled: true,
+        cityInfo: {
+            place_id: null,
+            mainText: null,
+            secondaryText: null
+        }
+    }
+};
+
+const UserContext = createContext<UserContextInterface>({
+    userInfo: initialUserInfo,
+    updateUserInfo: () => { }
+});
 
 UserContext.displayName = "UserContext";
 
-export const Sahil = (props: React.PropsWithChildren<object>) => {
-    const sa = useContext(UserContext);
+export const UserContextProvider = (props: React.PropsWithChildren<object>) => {
+    const [userInfo, setUserInfo] = useState<UserInfo>(initialUserInfo);
 
-    const [user] = useState(sa)
+    const updateUserInfo = (newInfo: UserInfo) => {
+        console.log('Updating user info:', newInfo);
 
-    console.log(user);
+        // Update user DB
+        localStorage.setItem("userInfo", JSON.stringify(newInfo));
+
+        // Update userInfoState
+        setUserInfo(newInfo);
+    };
+
+    const contextValue: UserContextInterface = {
+        userInfo,
+        updateUserInfo,
+    };
 
     return (
-        <UserContext.Provider value={user}>
+        <UserContext.Provider value={contextValue}>
             {props.children}
         </UserContext.Provider>
-    )
-}
+    );
+};
 
 export default UserContext
