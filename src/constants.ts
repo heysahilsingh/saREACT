@@ -24,7 +24,7 @@ const CONSTANTS = {
       },
       by_geo_id: {
          mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc/address-recommend?", // after ? "latlng=28.721152%2C77.0605056"
-         desk: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc/address-recommend?" // after ? "latlng=28.721152%2C77.0605056"
+         desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/misc/address-recommend?" // after ? "latlng=28.721152%2C77.0605056"
       }
    }, // place_id after "="
 }

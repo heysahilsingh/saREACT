@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import Logo from "../../theme/Logo";
-import { IconSoup, IconBasket, IconSearch, IconUserHeart  } from '@tabler/icons-react';
+import { IconSoup, IconBasket, IconSearch, IconUserHeart } from '@tabler/icons-react';
 import { routePaths } from "../Ui";
 
 const MobHeader = () => {

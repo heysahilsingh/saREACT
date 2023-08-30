@@ -1,11 +1,11 @@
-// import React from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { routes } from './ui/Ui.tsx'
 import { RouterProvider } from 'react-router-dom'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('main')!).render(
-  // <React.StrictMode>
+  <React.StrictMode>
     <RouterProvider router={routes} />
-  // </React.StrictMode>
+  </React.StrictMode>
 )

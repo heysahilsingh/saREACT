@@ -9,4 +9,10 @@ export default defineConfig({
   build: {
     outDir: '../dist'
   },
+  server: {
+    https: {
+      key: "./ssl/swiggy-privateKey.key",
+      cert: "./ssl/swiggy.crt"
+    }
+  }
 })

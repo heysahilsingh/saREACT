@@ -26,23 +26,32 @@ interface UserContextInterface {
 }
 
 // Create the initial context
-const initialUserInfo: UserInfo = {
-    isLoggedIn: false,
-    cart: {
-        cartItemsCount: 0,
-        cartItems: null
-    },
-    location: {
-        isInstamartEnabled: true,
-        cityInfo: {
-            latitude: null,
-            longitude: null,
-            place_id: "NFv9DDkRQJY4FbcFcgM",
-            main_text: "Delhi",
-            secondary_text: "Cannought Place, CP New Delhi, India"
+const initialUserInfo: UserInfo = (() => {
+    const userInfoString = localStorage.getItem("userInfo");
+
+    if (userInfoString !== null) {
+        return JSON.parse(userInfoString);
+
+    } else {
+        return {
+            isLoggedIn: false,
+            cart: {
+                cartItemsCount: 0,
+                cartItems: null
+            },
+            location: {
+                isInstamartEnabled: true,
+                cityInfo: {
+                    latitude: null,
+                    longitude: null,
+                    place_id: null,
+                    main_text: null,
+                    secondary_text: null
+                }
+            }
         }
     }
-};
+})();
 
 const UserContext = createContext<UserContextInterface>({
     userInfo: initialUserInfo,
