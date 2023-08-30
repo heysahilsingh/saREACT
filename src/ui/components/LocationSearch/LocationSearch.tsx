@@ -46,7 +46,7 @@ const LocationSearch = (props: LocationSearchProps) => {
             else {
                 // const response = await fetch(API_Url + keyword);
 
-                const response = await fetch("https://www.swiggy.com/mapi/misc/place-autocomplete?input=delhi&types=")
+                const response = await fetch("https://corsproxy.io/?https://www.swiggy.com/mapi/misc/place-autocomplete?input=delhi&types=")
 
                 const data = await response.json();
 
