@@ -7,6 +7,7 @@
 //         }, delay);
 //     };
 // }
+//
 
 const waitAMoment = (func: (...args: never[]) => void, delay: number) => {
     let timerId: ReturnType<typeof setTimeout> | undefined;
