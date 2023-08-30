@@ -25,6 +25,8 @@ const LocationSearch = (props: LocationSearchProps) => {
 
     const API_Url = device?.isDesk ? CONSTANTS.API_LOCATION_SUGGESTION.desk : CONSTANTS.API_LOCATION_SUGGESTION.mob;
 
+    console.log(API_Url);
+
     // Error Message
     const [showError, setShowError] = useState<boolean>(false)
     const [errorMessage, setErrorMessage] = useState<string>("");
