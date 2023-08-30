@@ -11,6 +11,7 @@ import Offers from "./pages/offers/Offers";
 import Cart from "./pages/cart/Cart";
 import Near from "./pages/near/Near";
 import { UserContextProvider } from "../context/UserContext";
+import Restaurants from "./pages/restaurants/Restaurants";
 
 const UI = () => {
   return (
@@ -24,6 +25,18 @@ const UI = () => {
   )
 }
 
+export const routePaths = {
+  home: "/",
+  account: "/account",
+  cart: "/cart",
+  help: "/help",
+  Instamart: "/instamart",
+  near: "/near/:name",
+  offers: "/offers",
+  search: "/search",
+  restaurants: "/restaurants"
+}
+
 export const routes = createBrowserRouter([
   {
     path: "/",
@@ -34,37 +47,41 @@ export const routes = createBrowserRouter([
         element: <NotFound />,
       },
       {
-        path: "/account",
-        element: <Account />
-      },
-      {
-        path: "/cart",
-        element: <Cart />
-      },
-      {
-        path: "/help",
-        element: <Help />
-      },
-      {
         path: "/",
         element: <Home />
       },
       {
-        path: "/instamart",
+        path: routePaths.account,
+        element: <Account />
+      },
+      {
+        path: routePaths.cart,
+        element: <Cart />
+      },
+      {
+        path: routePaths.help,
+        element: <Help />
+      },
+      {
+        path: routePaths.Instamart,
         element: <Instamart />
       },
       {
-        path: "/near/:name",
+        path: routePaths.near,
         element: <Near />,
       },
       {
-        path: "/offers",
+        path: routePaths.offers,
         element: <Offers />
       },
       {
-        path: "/search",
+        path: routePaths.search,
         element: <Search />
       },
+      {
+        path: routePaths.restaurants,
+        element: <Restaurants />
+      }
     ]
   },
 ]);

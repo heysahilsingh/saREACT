@@ -33,9 +33,9 @@ const initialUserInfo: UserInfo = {
     location: {
         isInstamartEnabled: true,
         cityInfo: {
-            place_id: null,
-            mainText: null,
-            secondaryText: null
+            place_id: "NFv9DDkRQJY4FbcFcgM",
+            mainText: "Delhi",
+            secondaryText: "Cannought Place, CP New Delhi, India"
         }
     }
 };
