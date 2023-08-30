@@ -15,9 +15,9 @@ const DeskHeader = () => {
                     <Logo fill="gradient" className="w-8" />
                 </NavLink>
                 <div className="location flex gap-2 items-center justify-start cursor-pointer text-sm">
-                    <span className="font-bold">{userInfo.location?.cityInfo?.mainText || "Select Location"}</span>
-                    {userInfo.location?.cityInfo?.secondaryText &&
-                        <span className="text-zinc-500 dark:text-slate-400 w-56 overflow-hidden whitespace-nowrap text-ellipsis">{userInfo.location?.cityInfo?.secondaryText}</span>
+                    <span className="font-bold max-w-[150px] overflow-hidden whitespace-nowrap text-ellipsis">{userInfo.location?.cityInfo?.main_text || "Select Location"}</span>
+                    {userInfo.location?.cityInfo?.secondary_text &&
+                        <span className="text-zinc-500 dark:text-slate-400 max-w-xs overflow-hidden whitespace-nowrap text-ellipsis">{userInfo.location?.cityInfo?.secondary_text}</span>
                     }
                     <IconChevronDown className="text-primary" xmlns="http://www.w3.org/2000/svg" size={18} />
                 </div>

@@ -9,8 +9,8 @@ const Home = () => {
         <>
             {!device?.isDesk && <TopHeader className="sticky top-0" />}
             <div>Home Pagdsdsdse</div>
-            <LocationSearch screen="mob" />
-            {/* <LocationSearch screen="desk" /> */}
+            <LocationSearch screen="mob"/>
+            <LocationSearch screen="desk" />
         </>
     )
 }

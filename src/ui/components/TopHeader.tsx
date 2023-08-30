@@ -20,10 +20,10 @@ const TopHeader = (props: TopHeaderProps) => {
                         <path d="M11.87 21.48a1.992 1.992 0 0 1 -1.283 -.58l-4.244 -4.243a8 8 0 1 1 13.355 -3.474" />
                         <path d="M15 19l2 2l4 -4" className="stroke-primary" />
                     </svg>
-                    <span className="font-bold text-lg">{userInfo.location?.cityInfo?.mainText || "Select Location"}</span>
+                    <span className="font-bold text-lg max-w-[180px] overflow-hidden whitespace-nowrap text-ellipsis">{userInfo.location?.cityInfo?.main_text || "Select Location"}</span>
                 </div>
-                {userInfo.location?.cityInfo?.secondaryText &&
-                    <span className="text-zinc-500 dark:text-slate-400 w-56 overflow-hidden whitespace-nowrap text-ellipsis">{userInfo.location?.cityInfo?.secondaryText}</span>
+                {userInfo.location?.cityInfo?.secondary_text &&
+                    <span className="text-zinc-500 dark:text-slate-400 max-w-[250px] overflow-hidden whitespace-nowrap text-ellipsis">{userInfo.location?.cityInfo?.secondary_text}</span>
                 }
             </div>
             <Link to={routePaths.offers} className="font-semibold group flex items-center gap-2 hover:text-primary">

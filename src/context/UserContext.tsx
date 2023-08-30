@@ -10,9 +10,11 @@ type UserInfo = {
     location: {
         isInstamartEnabled: boolean
         cityInfo: {
+            latitude: string | null
+            longitude: string | null
             place_id: string | null
-            mainText: string | null
-            secondaryText: string | null
+            main_text: string | null
+            secondary_text: string | null
         }
     }
 }
@@ -33,9 +35,11 @@ const initialUserInfo: UserInfo = {
     location: {
         isInstamartEnabled: true,
         cityInfo: {
+            latitude: null,
+            longitude: null,
             place_id: "NFv9DDkRQJY4FbcFcgM",
-            mainText: "Delhi",
-            secondaryText: "Cannought Place, CP New Delhi, India"
+            main_text: "Delhi",
+            secondary_text: "Cannought Place, CP New Delhi, India"
         }
     }
 };
@@ -51,7 +55,7 @@ export const UserContextProvider = (props: React.PropsWithChildren<object>) => {
     const [userInfo, setUserInfo] = useState<UserInfo>(initialUserInfo);
 
     const updateUserInfo = (newInfo: UserInfo) => {
-        console.log('Updating user info:', newInfo);
+        console.warn('Updated user info:', newInfo);
 
         // Update user DB
         localStorage.setItem("userInfo", JSON.stringify(newInfo));
