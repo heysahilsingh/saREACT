@@ -14,8 +14,8 @@ const CONSTANTS = {
    API_RESTRO_NEAR: "https://www.swiggy.com/api/seo/getListing?", // location after "?" in "lat=2&lng=2"
 
    API_LOCATION_SUGGESTION: {
-      mob: "https://www.swiggy.com/mapi/misc/place-autocomplete?input=",
-      desk: "https://www.swiggy.com/dapi/misc/place-autocomplete?input="
+      mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc/place-autocomplete?input=",
+      desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/misc/place-autocomplete?input="
    }, // Keyword after "="
    API_USER_LOCATION: {
       mob: "https://www.swiggy.com/mapi/misc/address-recommend?place_id=",
