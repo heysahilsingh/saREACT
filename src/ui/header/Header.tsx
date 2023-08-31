@@ -5,6 +5,8 @@ import MobHeader from "./MobHeader";
 const Header = () => {
     const device = useDeviceDetect();
 
+    console.log(device);
+
     return (
         <header className="header">
             {device?.isDesk ? <DeskHeader /> : <MobHeader />}

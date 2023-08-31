@@ -94,8 +94,6 @@ const LocationSearch = (props: LocationSearchProps) => {
         }
     }
 
-    const throttleShowLocationSuggestion = waitAMoment(showLocationSuggestion, 500);
-
     // Function to update user location
     const updateUserLocation = async (arg1: "geo_id" | "place_id", arg2: LocationSuggesionInterface | GeoLocationInterface) => {
         try {
@@ -157,7 +155,7 @@ const LocationSearch = (props: LocationSearchProps) => {
                 {props.screen === "desk" && (
                     <div className='flex w-full'>
                         <div className="grow flex gap-2 items-center border-2 font-medium border-zinc-300 py-4 px-5 leading focus-within:border-primary dark:border-zinc-800 dark:focus-within:border-primary">
-                            <input onChange={showLocationSuggestion} className="bg-transparent outline-0 grow text-zinc-950 dark:text-zinc-300 focus:outline-0 active:outline-0" type="search" placeholder="Enter your delivery location" />
+                            <input onChange={waitAMoment(showLocationSuggestion, 300)} className="bg-transparent outline-0 grow text-zinc-950 dark:text-zinc-300 focus:outline-0 active:outline-0" type="search" placeholder="Enter your delivery location" />
                             <button onClick={askLocation} className="group flex gap-2 items-center w-fit text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-300">
                                 <IconCurrentLocation className='group-hover:text-zinc-950 dark:group-hover:text-zinc-300 text-zinc-500' size={20} stroke={1.5} />
                                 Locate Me
@@ -169,7 +167,7 @@ const LocationSearch = (props: LocationSearchProps) => {
                 {/* Search Input For Mob*/}
                 {props.screen === "mob" && (
                     <div className="grow flex gap-2 items-center border-2 font-medium border-zinc-300 py-3 px-4 leading focus-within:border-primary dark:border-zinc-800 dark:focus-within:border-primary">
-                        <input onChange={(throttleShowLocationSuggestion)} className='bg-transparent outline-none grow text-zinc-950 dark:text-zinc-300' type="search" placeholder='Enter area, street name...' />
+                        <input onChange={waitAMoment(showLocationSuggestion, 300)} className='bg-transparent outline-none grow text-zinc-950 dark:text-zinc-300' type="search" placeholder='Enter area, street name...' />
                         <IconSearch className="text-zinc-400 dark:text-zinc-600" size={20} stroke={2} />
                     </div>
                 )}

@@ -3,13 +3,13 @@ const CONSTANTS = {
 
    // APIs URL
    API_PAGE_HOME: {
-      mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/homepage/getCards?",
-      desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/homepage/getCards?"
-   }, // location after "?" in "lat=2&lng=2"
+      mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/homepage/getCards?", // location after "?" in "lat=2&lng=2"
+      desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/homepage/getCards?" // location after "?" in "lat=2&lng=2"
+   }, 
    API_PAGE_RESTAURANTS: {
-      mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&",
-      desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&"
-   }, // location after "&" in "lat=2&lng=2"
+      mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&", // location after "&" in "lat=2&lng=2"
+      desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&" // location after "&" in "lat=2&lng=2"
+   }, 
 
    API_RESTRO_NEAR: "https://corsproxy.io/?https://www.swiggy.com/api/seo/getListing?", // location after "?" in "lat=2&lng=2"
 

@@ -11,6 +11,7 @@ const CONFIG = {
         "Bengali Restaurants",
         "Beverages Restaurants",
         "Bihari Restaurants",
+        "Arabian Restaurantss",
     ],
     RESTRO_NEAR_ME: [
         "CakeZone",
@@ -23,7 +24,8 @@ const CONFIG = {
         "The Dessert Heaven - Pure Veg",
         "Chinese Wok",
         "ITC Fabelle Chocolates",
-        "Indiana Burgers"
+        "Indiana Burgers",
+        "Keventers Ice Creamm",
     ]
 }
 

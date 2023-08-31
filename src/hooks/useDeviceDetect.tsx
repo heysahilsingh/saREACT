@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
 
-interface Device {
-  isDesk: boolean,
-  isTab: boolean,
-  isMob: boolean,
-}
-
 const useDeviceDetect = () => {
-  const [device, setDevice] = useState<Device>();
+  const [device, setDevice] = useState({});
 
   useEffect(() => {
 
