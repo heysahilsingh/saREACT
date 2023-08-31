@@ -1,12 +1,25 @@
 import { useEffect, useState } from "react";
 
+interface Device {
+  isDesk: boolean,
+  isTab: boolean,
+  isMob: boolean,
+}
+
 const useDeviceDetect = () => {
-  const [device, setDevice] = useState({});
+  const [device, setDevice] = useState<Device>();
+
+  console.log(device);
 
   useEffect(() => {
 
+    console.log("device useEffect ran")
+    console.log(device);
+
     function logScreenType() {
       const screenWidth = window.innerWidth;
+
+      
 
       if (screenWidth > 1024) {
         setDevice({
