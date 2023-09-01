@@ -12,7 +12,7 @@ const InfoCardSection = (props: InfoCardSectionProps) => {
 
     return (
         <div className="w-full flex flex-col">
-            <p className="font-bold text-2xl mb-6 text-zinc-800 dark:text-zinc-400">{props.title} Near Me</p>
+            <p className="font-bold text-2xl mb-6">{props.title} Near Me</p>
             <div className="grid gap-3 grid-cols-2 lg:gap-x-10 lg:gap-y-4 lg:grid-cols-4">
                 {props.cardArray.slice(0, visibleCards).map(card => {
                     const link = card.toLowerCase().replace(/[\s-]+/g, '-');

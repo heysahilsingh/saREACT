@@ -5,6 +5,7 @@ import TopHeader from "../../components/TopHeader"
 import Page from "../Page";
 import UserContext from "../../../context/UserContext";
 import RestroInstaWidget from "./RestroInstaWidget";
+import TopPicks from "./TopPicks";
 
 const Home = () => {
     const device = useDeviceDetect();
@@ -12,61 +13,80 @@ const Home = () => {
     const { userInfo } = useContext(UserContext);
 
     // Error Message
-    const [showError, setShowError] = useState<boolean>(false)
+    const [showShimmer, setShowShimmer] = useState<boolean>(false)
 
+    // Page Data
     const [pageData, setPageData] = useState<object[]>([]);
 
     // API Call
     useEffect(() => {
-
         async function fetchData() {
             try {
+                // Show Shimmer
+                setShowShimmer(true)
 
                 const response = await fetch(CONSTANTS.API_PAGE_HOME.mob + "lat=" + userInfo?.location?.cityInfo?.latitude + "&lng=" + userInfo?.location?.cityInfo?.longitude);
                 const responseData = await response.json();
 
-                // console.log(responseData?.data?.success?.cards);
-
-                // console.log(responseData?.data?.success?.cards[0]?.gridWidget?.gridElements?.infoWithStyle?.info);
-
-
                 setPageData(responseData?.data?.success?.cards)
 
-                // console.log(pageData);
+                // Hide Shimmer
+                setShowShimmer(false)
+
+                console.log(responseData?.data?.success?.cards);
 
             } catch (error) {
-                setShowError(true);
+                setShowShimmer(true);
             }
         }
 
-        fetchData();
-    }, []);
+        if (!device.isDesk) fetchData();
+    }, [userInfo]);
 
-    return (
-        <Page pageName="home">
-            {/* Sticky Header */}
-            {!device?.isDesk && <TopHeader className="sticky top-0" />}
+    if (device.isDesk) return
+    else {
+        return (
+            <Page pageName="home">
+                {/* Sticky Header */}
+                <TopHeader className="sticky top-0" />
 
-            {/* Error message */}
-            {showError && <div>Error while loading data</div>}
+                {/* Error message */}
+                {showShimmer && <div className="text-center">Loading data</div>}
 
-            {/* Data */}
-            {!showError && (
-                <div className="flex flex-col px-4">
-                    {/* Restaurants and Instamart Banner */}
-                    <div className="flex items-center justify-between gap-4">
-                        {true && (
-                            pageData?.at(0)?.gridWidget?.gridElements?.infoWithStyle?.info.map((card, index) => {
-                                return (
-                                    <RestroInstaWidget key={card.id} type={card?.accessibility?.altText} imgId={index} imgAlt={card?.accessibility?.altTextCta} />
-                                )
-                            })
-                        )}
+                {/* Data */}
+                {!showShimmer && (
+                    <div className="flex flex-col px-4 pt-4">
+                        {/* Restaurants and Instamart Banner */}
+                        <div className="flex items-center justify-between gap-4">
+                            {pageData?.at(0)?.gridWidget?.gridElements?.infoWithStyle?.info.map((card, index) => (
+                                <RestroInstaWidget
+                                    key={card.id}
+                                    type={card?.accessibility?.altText}
+                                    imgId={index}
+                                    imgAlt={card?.accessibility?.altTextCta}
+                                />
+                            ))
+                            }
+                        </div>
+
+                        {/* Top Picks Setion */}
+                        {pageData?.at(1)?.gridWidget?.gridElements?.infoWithStyle?.restaurants?.map(restro => (
+                            <TopPicks
+                                key={restro.info?.id}
+                                imgSrc={restro.info?.cloudinaryImageId}
+                                offerHeading={restro.info?.aggregatedDiscountInfoV3?.header}
+                                offerSubHeading={restro.info?.aggregatedDiscountInfoV3?.subHeader}
+                                restroName={restro.info?.name}
+                                deliveryTime={restro.info?.sla?.deliveryTime}
+                                link={restro.info?.id}
+                            />
+                        ))}
+
                     </div>
-                </div>
-            )}
-        </Page>
-    )
+                )}
+            </Page>
+        )
+    }
 }
 
 export default Home

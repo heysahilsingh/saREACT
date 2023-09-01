@@ -17,7 +17,7 @@ const UI = () => {
   return (
     <UserContextProvider>
       <Header />
-      <div className="page-content sa-container mx-auto">
+      <div className="page-content sa-container mx-auto text-black dark:text-red-500">
         <Outlet />
       </div>
       <Footer />

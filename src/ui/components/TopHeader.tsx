@@ -25,7 +25,7 @@ const TopHeader = (props: TopHeaderProps) => {
                 </LightBox>
             )}
 
-            <div className={props?.className + " bg-white text-black dark:bg-neutral-950 dark:text-slate-200 border-b dark:border-neutral-800 flex items-center justify-between gap-4 px-4 py-2"}>
+            <div className={props?.className + " z-50 bg-white text-black dark:bg-neutral-950 dark:text-slate-200 border-b dark:border-neutral-800 flex items-center justify-between gap-4 px-4 py-2"}>
                 <div onClick={() => setOpenLightBox(true)} className="location flex flex-col justify-start items-start gap-0 cursor-pointer text-sm">
                     <div className="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
@@ -40,7 +40,7 @@ const TopHeader = (props: TopHeaderProps) => {
                 </div>
                 <Link to={routePaths.offers} className="font-semibold group flex items-center gap-2 hover:text-primary">
                     <IconDiscount2 className="text-zinc-600 dark:text-slate-300 group-hover:text-primary" size={25} stroke={1} />
-                    <span>Offers</span>
+                    <span className="dark:text-slate-300">Offers</span>
                 </Link>
             </div>
         </>

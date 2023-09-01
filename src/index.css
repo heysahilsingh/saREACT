@@ -8,6 +8,44 @@
   box-sizing: border-box;
 }
 
+html.dark body{
+  color: rgb(161,161,170);
+}
+
+html body{
+  color: rgb(39,39,42);
+}
+
+header .mob li > a.active svg {
+  stroke: #fc8019;
+}
+
+header .mob li > a.active span {
+  color: #fc8019;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .sa-container{
   max-width: 1400px;
   margin: auto;

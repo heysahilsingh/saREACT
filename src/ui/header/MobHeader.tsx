@@ -6,7 +6,7 @@ import { routePaths } from "../Ui";
 const MobHeader = () => {
 
     return (
-        <div className="fixed bottom-0 left-0 z-50 px-5 pt-3 pb-2 w-full max-w-full bg-white text-zinc-500 border-t dark:bg-neutral-950 dark:text-slate-400 dark:border-neutral-800">
+        <div className="mob fixed bottom-0 left-0 z-50 px-5 pt-3 pb-2 w-full max-w-full bg-white text-zinc-500 border-t dark:bg-neutral-950 dark:border-neutral-800">
             <nav>
                 <ul className="uppercase font-semibold text-[10px] flex items-center justify-between gap-4">
                     <li>
