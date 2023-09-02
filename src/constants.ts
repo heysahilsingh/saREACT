@@ -11,12 +11,16 @@ const CONSTANTS = {
       desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&" // location after "&" in "lat=2&lng=2"
    }, 
 
+   API_PAGE_RESTAURANT: {
+      mob: "https://www.swiggy.com/mapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=28.6497478&lng=77.137371&restaurantId=256254&submitAction=ENTER"
+   },
+
    API_RESTRO_NEAR: "https://corsproxy.io/?https://www.swiggy.com/api/seo/getListing?", // location after "?" in "lat=2&lng=2"
 
    API_LOCATION_SUGGESTION: {
-      mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc/place-autocomplete?input=", // keyword after "?"
-      desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/misc/place-autocomplete?input=" // keyword after "?"
-   }, // Keyword after "="
+      mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc/place-autocomplete?input=", // keyword after "="
+      desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/misc/place-autocomplete?input=" // keyword after "="
+   },
    API_USER_LOCATION: {
       by_place_id: {
          mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc/address-recommend?place_id=", // place_id after "?"
@@ -26,7 +30,7 @@ const CONSTANTS = {
          mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc/address-recommend?", // after ? "latlng=28.721152%2C77.0605056"
          desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/misc/address-recommend?" // after ? "latlng=28.721152%2C77.0605056"
       }
-   }, // place_id after "="
+   },
 }
 
 export default CONSTANTS

@@ -12,6 +12,46 @@ import { routePaths } from "../../Ui";
 import { Link } from "react-router-dom";
 import HomeShimmer from "./HomeShimmer";
 
+
+type ApiInfo = {
+    id: string,
+    accessibility: {
+        altText: "RESTAURANT" | "INSTAMART",
+        altTextCta: string
+    },
+    imageId: string,
+}
+
+type ApiRestaurants = {
+    info: {
+        id: string,
+        cloudinaryImageId: string,
+        aggregatedDiscountInfoV3: {
+            header: string,
+            subHeader: string
+        },
+        name: string,
+        sla: {
+            deliveryTime: number
+        },
+        promoted: boolean,
+        avgRating: string,
+        costForTwo: string,
+        cuisines: string[]
+    }
+}
+
+type ApiResponse = {
+    gridWidget: {
+        gridElements: {
+            infoWithStyle: {
+                info: ApiInfo[],
+                restaurants: ApiRestaurants[]
+            }
+        }
+    }
+}
+
 const Home = () => {
     const device = useDeviceDetect();
 
@@ -21,7 +61,7 @@ const Home = () => {
     const [showShimmer, setShowShimmer] = useState<boolean>(false)
 
     // Page Data
-    const [pageData, setPageData] = useState<object[]>([]);
+    const [pageData, setPageData] = useState<ApiResponse[] | []>([]);
 
     // API Call
     useEffect(() => {
@@ -37,8 +77,6 @@ const Home = () => {
 
                 // Hide Shimmer
                 setShowShimmer(false)
-
-                console.log(responseData?.data?.success?.cards);
 
             } catch (error) {
                 setShowShimmer(true);
@@ -63,7 +101,7 @@ const Home = () => {
                     <div className="flex flex-col gap-12 px-4 pt-4">
                         {/* Restaurants and Instamart Banner */}
                         <div className="flex items-center justify-between gap-4">
-                            {pageData?.at(0)?.gridWidget?.gridElements?.infoWithStyle?.info.map((card, index) => (
+                            {pageData[0]?.gridWidget?.gridElements?.infoWithStyle?.info.map((card, index) => (
                                 <RestroInstaWidget
                                     key={card.id}
                                     type={card?.accessibility?.altText}
@@ -81,7 +119,7 @@ const Home = () => {
                                 <p className="font-bold text-lg">Top Picks For You</p>
                             </div>
                             <div className="restro no-scrollbar flex items-start justify-start gap-[3%] overflow-x-scroll overflow-y-hidden">
-                                {pageData?.at(1)?.gridWidget?.gridElements?.infoWithStyle?.restaurants?.map(restro => (
+                                {pageData[1]?.gridWidget?.gridElements?.infoWithStyle?.restaurants?.map(restro => (
                                     <TopPicks
                                         key={restro.info?.id}
                                         imgSrc={restro.info?.cloudinaryImageId}
@@ -97,9 +135,9 @@ const Home = () => {
                             </div>
                         </div>
 
-                        {/* Offer Slider */}
+                        {/* Big Offers Slider */}
                         <div className="flex gap-4 items-center no-scrollbar overflow-x-scroll overflow-y-hidden">
-                            {pageData?.at(2)?.gridWidget?.gridElements?.infoWithStyle?.info?.map(slide => (
+                            {pageData[2]?.gridWidget?.gridElements?.infoWithStyle?.info?.map(slide => (
                                 <img key={slide.id} className="w-[80%] rounded-xl" src={CONSTANTS.IMG_CDN + slide.imageId} alt={slide.accessibility?.altText} />
                             ))}
                         </div>
@@ -108,7 +146,7 @@ const Home = () => {
                         <div className="">
                             <p className="font-bold text-lg pb-4">Offers For You</p>
                             <div className="flex gap-2 items-center no-scrollbar overflow-x-scroll overflow-y-hidden">
-                                {pageData?.at(3)?.gridWidget?.gridElements?.infoWithStyle?.info?.map(slide => (
+                                {pageData[3]?.gridWidget?.gridElements?.infoWithStyle?.info?.map(slide => (
                                     <img key={slide.id} className="w-[35%] rounded-xl" src={CONSTANTS.IMG_CDN + slide.imageId} alt={slide.accessibility?.altText} />
                                 ))}
                             </div>
@@ -125,7 +163,7 @@ const Home = () => {
                             </div>
 
                             <div className="restro no-scrollbar flex flex-col items-start justify-start gap-8 overflow-x-scroll overflow-y-hidden">
-                                {pageData?.at(1)?.gridWidget?.gridElements?.infoWithStyle?.restaurants?.map(restro => (
+                                {pageData[1]?.gridWidget?.gridElements?.infoWithStyle?.restaurants?.map(restro => (
                                     <RestroNearBy
                                         key={restro.info?.id}
                                         imgSrc={restro.info?.cloudinaryImageId}
