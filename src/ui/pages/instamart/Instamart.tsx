@@ -1,6 +1,10 @@
+import HomeShimmer from "../home/HomeShimmer"
+
 const Instamart = () => {
     return (
-        <div>Instamart Page</div>
+        <div>
+            <HomeShimmer />
+        </div>
     )
 }
 

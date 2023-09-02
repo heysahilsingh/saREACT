@@ -18,12 +18,12 @@ const TopPicks = (props: TopPicksProps) => {
             <div className="col1 relative">
                 <img className="rounded-[8px] aspect-square" src={CONSTANTS.IMG_CDN + props.imgSrc} alt={props.restroName} />
                 {props.offerHeading && props.offerSubHeading && (
-                    <div className="absolute -bottom-[5px] left-2/4 -translate-x-2/4 rounded-[4px] shadow-lg bg-white flex flex-col gap-0 leading-[1.2] font-bold text-center text-primary leading offer py-1 px-2">
-                        <span className="text-[0.93rem]">{props.offerHeading}</span>
-                        <span className="text-[0.57rem]">• {props.offerSubHeading} •</span>
+                    <div className="absolute w-[90%] -bottom-[5px] left-2/4 -translate-x-2/4 rounded-[4px] shadow-lg bg-white flex flex-col gap-0 leading-[1.2] font-black text-center text-primary leading offer p-1">
+                        <span className="text-[13px]">{props.offerHeading}</span>
+                        <span className="text-[8px]">• {props.offerSubHeading} •</span>
                     </div>
                 )}
-                {props.isPromoted && <div className="absolute top-2 left-2 opacity-70 rounded-[4px] bg-zinc-600 py-1 px-2 leading-none text-[10px] text-white">AD</div>}
+                {props.isPromoted && <div className="absolute top-2 left-2 opacity-70 rounded-[4px] bg-zinc-600 py-1 px-2 leading-none text-[10px] text-white">Ad</div>}
             </div>
             <div className="col2 text-[14px] pt-[10px] leading-[16px]">
                 <p className="line-clamp-2" style={{display: "-webkit-box"}}>{props.restroName}</p>
