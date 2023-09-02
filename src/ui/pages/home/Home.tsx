@@ -70,17 +70,21 @@ const Home = () => {
                         </div>
 
                         {/* Top Picks Setion */}
-                        {pageData?.at(1)?.gridWidget?.gridElements?.infoWithStyle?.restaurants?.map(restro => (
-                            <TopPicks
-                                key={restro.info?.id}
-                                imgSrc={restro.info?.cloudinaryImageId}
-                                offerHeading={restro.info?.aggregatedDiscountInfoV3?.header}
-                                offerSubHeading={restro.info?.aggregatedDiscountInfoV3?.subHeader}
-                                restroName={restro.info?.name}
-                                deliveryTime={restro.info?.sla?.deliveryTime}
-                                link={restro.info?.id}
-                            />
-                        ))}
+                        <div className="no-scrollbar flex items-start justify-start gap-[3%] overflow-x-scroll overflow-y-hidden">
+                            {pageData?.at(1)?.gridWidget?.gridElements?.infoWithStyle?.restaurants?.map(restro => (
+                                <TopPicks
+                                    key={restro.info?.id}
+                                    imgSrc={restro.info?.cloudinaryImageId}
+                                    offerHeading={restro.info?.aggregatedDiscountInfoV3?.header}
+                                    offerSubHeading={restro.info?.aggregatedDiscountInfoV3?.subHeader}
+                                    restroName={restro.info?.name}
+                                    deliveryTime={restro.info?.sla?.deliveryTime}
+                                    link={restro.info?.id}
+                                    isPromoted={restro.info?.promoted}
+                                    className="min-w-[21%]"
+                                />
+                            ))}
+                        </div>
 
                     </div>
                 )}
