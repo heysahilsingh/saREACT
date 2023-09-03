@@ -1,5 +1,4 @@
 import { useContext, useState, useEffect } from "react";
-import { useParams } from "react-router-dom"
 import UserContext from "../../../context/UserContext";
 import useDeviceDetect from "../../../hooks/useDeviceDetect";
 import CONSTANTS from "../../../constants";
@@ -8,74 +7,28 @@ import ErrorComp from "../../components/ErrorComp";
 import Page from "../Page";
 import TopHeader from "../../components/TopHeader";
 
-type Api_Response_Card = {
-    gridWidget: {
-        id: string,
-        gridElements: {
-            infoWithStyle: {
-                info: [],
-                restaurants: []
-            }
-        }
-    }
+type Api_Card = {
+    id: string,
+    accessibility: {
+        altText: "RESTAURANT" | "INSTAMART",
+        altTextCta: string
+    },
+    imageId: string
 }
-
-type Api_Response_Card_Info = [
-    {
-        id: string,
-        accessibility: {
-            altText: "RESTAURANT" | "INSTAMART",
-            altTextCta: string
-        },
-        imageId: string,
-    }
-]
-
-type Api_Response_Card_Restaurants = [
-    {
-        info: {
-            id: string,
-            cloudinaryImageId: string,
-            aggregatedDiscountInfoV3: {
-                header: string,
-                subHeader: string
-            },
-            name: string,
-            sla: {
-                deliveryTime: number
-            },
-            promoted: boolean,
-            avgRating: string,
-            costForTwo: string,
-            cuisines: string[],
-            locality: string,
-            areaName: string
-        }
-    }
-]
 
 type PageData = {
     success: boolean,
-
-    banner: {} | null,
-
-    mind: {} | null,
-
-    topRestro: {} | null,
-
-    onlineRestroTitle: {} | null,
-
-    onlineRestroFilters: {} | null,
-
+    banner: Api_Card[] | null,
+    mind: Api_Card[] | null,
+    topRestro: Api_Card[] | null,
+    onlineRestroTitle: Api_Card[] | null,
+    onlineRestroFilters: Api_Card[] | null,
 }
 
 const Restaurants = () => {
     const { userInfo } = useContext(UserContext);
 
     const device = useDeviceDetect();
-
-    const slug = useParams()
-    const restroId = slug?.restaurantSlug?.split("-").slice(-1)[0];
 
     const API_URL = device.isDesk ? CONSTANTS.API_PAGE_RESTAURANTS.desk : CONSTANTS.API_PAGE_RESTAURANTS.mob;
 
@@ -160,7 +113,32 @@ const Restaurants = () => {
 
                 {/* Page Content */}
                 {!showShimmer && !showError && pageData.success && (
-                    <div>Data has been loaded successfully.</div>
+                    <div className="flex flex-col gap-12">
+
+                        {/* Banner */}
+                        {pageData.banner && (
+                            <div className="flex gap-4 items-center no-scrollbar overflow-x-scroll overflow-y-hidden">
+                                {pageData.banner?.map(slide => (
+                                    <img key={slide.id} className="w-[80%] rounded-xl" src={CONSTANTS.IMG_CDN + slide.imageId} alt={slide.accessibility?.altText} />
+                                ))}
+                            </div>
+                        )}
+
+                        {/* What's in ming */}
+                        {pageData.mind && (
+                            <div className="">
+                                <p className="font-bold text-lg pb-4">What's on your mind?</p>
+                                <div className="grid grid-cols-[repeat(10,80px)] gap-2 items-center no-scrollbar overflow-x-scroll overflow-y-hidden">
+                                    {pageData.mind?.map(option => (
+                                        <img key={option.id} className="min-w-[80px] w-[22%] rounded-xl" src={CONSTANTS.IMG_CDN + option.imageId} alt={option.accessibility?.altText} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="divider border-b border-zinc-300 dark:border-zinc-800"></div>
+
+                    </div>
                 )}
             </div>
 
