@@ -12,6 +12,7 @@ import Cart from "./pages/cart/Cart";
 import Near from "./pages/near/Near";
 import { UserContextProvider } from "../context/UserContext";
 import Restaurants from "./pages/restaurants/Restaurants";
+import Restaurant from "./pages/restaurants/Restaurant.tsx/Restaurant";
 
 const UI = () => {
   return (
@@ -34,7 +35,8 @@ export const routePaths = {
   near: "/near/:name",
   offers: "/offers",
   search: "/search",
-  restaurants: "/restaurants"
+  restaurants: "/restaurants",
+  restaurant: "/restaurants/:restaurantSlug",
 }
 
 export const routes = createBrowserRouter([
@@ -80,7 +82,11 @@ export const routes = createBrowserRouter([
       },
       {
         path: routePaths.restaurants,
-        element: <Restaurants />
+        element: <Restaurants />,
+      },
+      {
+        path: routePaths.restaurant,
+        element: <Restaurant />,
       }
     ]
   },

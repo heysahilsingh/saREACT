@@ -120,6 +120,16 @@ const LocationSearch = (props: LocationSearchProps) => {
                 comp?.types?.includes("locality")
             );
 
+            // City Name
+            const city_Name = data?.data[0]?.address_components?.find((comp: { types: string[] }) =>
+                comp?.types?.includes("city")
+            );
+
+            // State Name
+            const state_Name = data?.data[0]?.address_components?.find((comp: { types: string[] }) =>
+                comp?.types?.includes("state")
+            );
+
             // Update UserInfo Context
             updateUserInfo({
                 ...userInfo,
@@ -129,7 +139,9 @@ const LocationSearch = (props: LocationSearchProps) => {
                         longitude: data?.data[0]?.geometry?.location?.lng,
                         place_id: data?.data[0]?.place_id,
                         main_text: main_Text ? main_Text.long_name : data?.data[0]?.place_type,
-                        secondary_text: data?.data[0]?.formatted_address
+                        secondary_text: data?.data[0]?.formatted_address,
+                        cityName: city_Name ? city_Name.long_name : null,
+                        stateName: state_Name ? state_Name.long_name : null
                     },
                     isInstamartEnabled: userInfo.location.isInstamartEnabled
                 }

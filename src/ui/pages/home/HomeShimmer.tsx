@@ -1,6 +1,6 @@
 const HomeShimmer = () => {
     return (
-        <div className="shimmer flex flex-col gap-12 px-4 pt-4 shimmer-bg-2">
+        <div className="shimmer flex flex-col gap-12 shimmer-bg-2">
             <div className="flex items-center justify-between gap-4">
                 <div className="grow px-3 py-4 pr-10 rounded-[20px] h-[150px] shimmer-bg"></div>
                 <div className="grow px-3 py-4 pr-10 rounded-[20px] h-[150px] shimmer-bg"></div>

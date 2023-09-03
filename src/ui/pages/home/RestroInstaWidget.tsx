@@ -1,10 +1,11 @@
 import { IconArrowNarrowRight } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
 import { routePaths } from '../../Ui';
+import RestroImg from "../../../assets/images/home-restro-insta-widget-restro.png"
+import InstamartImg from "../../../assets/images/home-restro-insta-widget-insta.png"
 
 interface RestroInstaWidgetProps {
     type: "RESTAURANT" | "INSTAMART",
-    imgId: number,
     imgAlt?: string,
 }
 
@@ -15,7 +16,7 @@ const RestroInstaWidget = (props: RestroInstaWidgetProps) => {
                 <p className="font-bold text-xl text-zinc-800 dark:text-zinc-200">{props.type === "INSTAMART" ? "Instamart" : "Restaurant"}</p>
                 <span className="mt-1 mb-2 text-[14px]">{props.type === "INSTAMART" ? "Groceries in under 30 min" : "Enjoy your favorite treats"}</span>
                 <IconArrowNarrowRight className="" size={30} stroke={1} />
-                <img className="absolute right-0 -bottom-1 h-[80%] object-cover" src={`../.././assets/images/home-restro-insta-widget-${props.imgId}.png`} alt={props?.imgAlt} />
+                <img className="absolute right-0 -bottom-1 h-[90%] object-cover" src={props.type === "INSTAMART" ? InstamartImg : RestroImg} alt={props?.imgAlt} />
             </div>
         </Link>
     )

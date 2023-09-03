@@ -15,6 +15,8 @@ type UserInfo = {
             place_id: string | null
             main_text: string | null
             secondary_text: string | null
+            cityName: string | null
+            stateName: string | null
         }
     }
 }
@@ -46,7 +48,9 @@ const initialUserInfo: UserInfo = (() => {
                     longitude: null,
                     place_id: null,
                     main_text: null,
-                    secondary_text: null
+                    secondary_text: null,
+                    cityName: null,
+                    stateName: null
                 }
             }
         }
