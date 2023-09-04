@@ -6,6 +6,8 @@ import RestaurantsShimmer from "./RestaurantsShimmer";
 import ErrorComp from "../../components/ErrorComp";
 import Page from "../Page";
 import TopHeader from "../../components/TopHeader";
+import SwiggyNotPresent from "../../components/SwiggyNotPresent";
+import TopRestaurant from "./TopRestaurant";
 
 type Api_Card = {
     id: string,
@@ -13,11 +15,21 @@ type Api_Card = {
         altText: "RESTAURANT" | "INSTAMART",
         altTextCta: string
     },
-    imageId: string
+    imageId: string,
+    cloudinaryImageId: string,
+    name: string,
+    avgRating: number,
+    cuisines: string[],
+    aggregatedDiscountInfoV3: {
+        header: string,
+        subHeader: string
+    }
 }
 
 type PageData = {
     success: boolean,
+    isSwiggyPresent: boolean,
+    isSwiggyAvailable: boolean,
     banner: Api_Card[] | null,
     mind: Api_Card[] | null,
     topRestro: Api_Card[] | null,
@@ -41,6 +53,8 @@ const Restaurants = () => {
     // Page Data
     const [pageData, setPageData] = useState<PageData>({
         success: false,
+        isSwiggyAvailable: true,
+        isSwiggyPresent: true,
         banner: null,
         mind: null,
         topRestro: null,
@@ -51,6 +65,9 @@ const Restaurants = () => {
     useEffect(() => {
         async function fetchData() {
             try {
+
+                setShowShimmer(true)
+
                 const url = `${API_URL}lat=${userInfo.location.cityInfo.latitude}&lng=${userInfo.location.cityInfo.longitude}`;
                 const response = await fetch(url);
                 const responseData = await response.json();
@@ -70,11 +87,13 @@ const Restaurants = () => {
 
                     setPageData({
                         success: true,
-                        banner: findCard(["topical_banner"])?.info,
-                        mind: findCard(["whats_on_your_mind"])?.info,
+                        isSwiggyPresent: data.find((d: { id: string }) => d.id === "SwiggyNotPresent_Widget") ? false : true,
+                        isSwiggyAvailable: data.find((d: { id: string }) => d.id === "swiggy_not_present") ? false : true,
+                        banner: findCard(["topical_banner"])?.info || null,
+                        mind: findCard(["whats_on_your_mind"])?.info || null,
                         topRestro: findCard(["top_brands_for_you"])?.restaurants?.map((restro: { info: [] }) => restro?.info) || null,
-                        onlineRestroFilters: findCard(["topical_banner"])?.info,
-                        onlineRestroTitle: findCard(["topical_banner"])?.info,
+                        onlineRestroFilters: findCard(["topical_banner"])?.info || null,
+                        onlineRestroTitle: findCard(["topical_banner"])?.info || null,
                     });
 
                     // Hide Shimmer
@@ -111,8 +130,11 @@ const Restaurants = () => {
                 {/* Error */}
                 {showError && <ErrorComp />}
 
+                {/* If Swiggy Not Present or Available */}
+                {!pageData.isSwiggyPresent || !pageData.isSwiggyAvailable && <SwiggyNotPresent heading="Location Unserviceable" />}
+
                 {/* Page Content */}
-                {!showShimmer && !showError && pageData.success && (
+                {!showShimmer && !showError && pageData.isSwiggyPresent && pageData.isSwiggyAvailable && pageData.success && (
                     <div className="flex flex-col gap-12">
 
                         {/* Banner */}
@@ -124,13 +146,32 @@ const Restaurants = () => {
                             </div>
                         )}
 
-                        {/* What's in ming */}
+                        {/* What's on mind */}
                         {pageData.mind && (
                             <div className="">
                                 <p className="font-bold text-lg pb-4">What's on your mind?</p>
                                 <div className="grid grid-cols-[repeat(10,80px)] gap-2 items-center no-scrollbar overflow-x-scroll overflow-y-hidden">
                                     {pageData.mind?.map(option => (
                                         <img key={option.id} className="min-w-[80px] w-[22%] rounded-xl" src={CONSTANTS.IMG_CDN + option.imageId} alt={option.accessibility?.altText} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Top Restro */}
+                        {pageData.mind && (
+                            <div className="">
+                                <p className="font-bold text-lg pb-4">Top restaurant chains in {userInfo.location.cityInfo.cityName}</p>
+                                <div className="flex gap-2 items-center no-scrollbar overflow-x-scroll overflow-y-hidden">
+                                    {pageData.topRestro?.map(restro => (
+                                        <TopRestaurant
+                                            name={restro.name}
+                                            averageRating={restro.avgRating}
+                                            cuisines={restro.cuisines}
+                                            imageId={restro.cloudinaryImageId}
+                                            offerHeader={restro.aggregatedDiscountInfoV3.header}
+                                            offerSubHeader={restro.aggregatedDiscountInfoV3.subHeader}
+                                        />
                                     ))}
                                 </div>
                             </div>

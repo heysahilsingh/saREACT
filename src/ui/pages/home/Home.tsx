@@ -12,6 +12,8 @@ import { routePaths } from "../../Ui";
 import { Link } from "react-router-dom";
 import HomeShimmer from "./HomeShimmer";
 import ErrorComp from "../../components/ErrorComp";
+import SwiggyNotPresent from "../../components/SwiggyNotPresent";
+import SwiggyNotAvailable from "../../components/SwiggyNotAvailable";
 
 type Api_Card = {
     id: string,
@@ -41,6 +43,8 @@ type Api_Card = {
 
 type PageData = {
     success: boolean,
+    isSwiggyPresent: boolean,
+    isSwiggyAvailable: boolean,
     banner: Api_Card[] | null,
     bigOffer: Api_Card[] | null,
     offer: Api_Card[] | null,
@@ -62,6 +66,8 @@ const Home = () => {
     // Page Data
     const [pageData, setPageData] = useState<PageData>({
         success: false,
+        isSwiggyAvailable: true,
+        isSwiggyPresent: true,
         banner: null,
         bigOffer: null,
         offer: null,
@@ -73,6 +79,7 @@ const Home = () => {
     useEffect(() => {
         async function fetchData() {
             try {
+                setShowShimmer(true)
 
                 const url = `${CONSTANTS.API_PAGE_HOME.mob}lat=${userInfo?.location?.cityInfo?.latitude}&lng=${userInfo?.location?.cityInfo?.longitude}`;
 
@@ -96,10 +103,12 @@ const Home = () => {
 
                     // Set Data
                     setPageData({
-                        success: true,
-                        banner: findCard(["ScrollNavSplitP2_latebinding", "ScrollNavFullBleedP2_latebinding"])?.info,
-                        bigOffer: findCard(["Homepage_Version4_Topical_Fullbleed"])?.info,
-                        offer: findCard(["Home_P2_Food_Offerwidget_MainComponent_Scrollcards"])?.info,
+                        success: responseData?.data?.success ? true : false,
+                        isSwiggyPresent: findCard(["SwiggyNotPresent_Widget"]) ? false : true,
+                        isSwiggyAvailable: findCard(["BlackZone_Widget"]) ? false : true,
+                        banner: findCard(["ScrollNavSplitP2_latebinding", "ScrollNavFullBleedP2_latebinding"])?.info || null,
+                        bigOffer: findCard(["Homepage_Version4_Topical_Fullbleed"])?.info || null,
+                        offer: findCard(["Home_P2_Food_Offerwidget_MainComponent_Scrollcards"])?.info || null,
                         topPicks: findCard(["Updated_4_favourites_SimRestoRelevance"])?.restaurants?.map((restro: { info: [] }) => restro?.info) || null,
                         restro: findCard(["restaurantCollectionDeliveringNowTheme"])?.restaurants?.map((restro: { info: [] }) => restro?.info) || null
                     })
@@ -139,8 +148,14 @@ const Home = () => {
                     {/* Error */}
                     {showError && <ErrorComp />}
 
+                    {/* If Swiggy Not Present */}
+                    {!pageData.isSwiggyPresent && <SwiggyNotPresent />}
+
+                    {/* If Swiggy Not Available */}
+                    {!pageData.isSwiggyAvailable && <SwiggyNotAvailable />}
+
                     {/* Page Content */}
-                    {!showShimmer && !showError && pageData.success && (
+                    {!showShimmer && !showError && pageData.isSwiggyPresent && pageData.isSwiggyAvailable && pageData.success && (
                         <div className="flex flex-col gap-12">
                             {/* Restaurants and Instamart Banner */}
                             {pageData.banner && (
