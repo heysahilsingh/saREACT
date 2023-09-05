@@ -8,6 +8,7 @@ import Page from "../Page";
 import TopHeader from "../../components/TopHeader";
 import TopRestaurant from "./TopRestaurant";
 import SwiggyError from "../../components/SwiggyError";
+import { routePaths } from "../../Ui";
 
 type Api_Card = {
     id: string,
@@ -20,6 +21,8 @@ type Api_Card = {
     name: string,
     avgRating: number,
     cuisines: string[],
+    areaName: string,
+    locality: string,
     aggregatedDiscountInfoV3: {
         header: string,
         subHeader: string
@@ -166,29 +169,37 @@ const Restaurants = () => {
                             </div>
                         )}
 
+                        <div className="divider -mt-[10px] border-b border-zinc-300 dark:border-zinc-800"></div>
+
                         {/* Top Restro */}
                         {pageData.mind && (
                             <div className="">
                                 <p className="font-bold text-lg pb-4">Top restaurant chains in {userInfo.location.cityInfo.cityName}</p>
-                                <div className="flex gap-2 items-start no-scrollbar overflow-x-scroll overflow-y-hidden">
-                                    {pageData.topRestro?.map(restro => (
-                                        <TopRestaurant
-                                            key={restro.id}
-                                            name={restro?.name}
-                                            link="#"
-                                            averageRating={restro?.avgRating}
-                                            cuisines={restro?.cuisines}
-                                            imageId={restro?.cloudinaryImageId}
-                                            offerHeader={restro?.aggregatedDiscountInfoV3?.header}
-                                            offerSubHeader={restro?.aggregatedDiscountInfoV3?.subHeader}
-                                            className = "min-w-[35%]"
-                                        />
-                                    ))}
+                                <div className="flex gap-[16px] items-start no-scrollbar overflow-x-scroll overflow-y-hidden">
+                                    {pageData.topRestro?.map(restro => {
+
+                                        const link = routePaths.restaurants + "/" + [restro.name, restro.locality, restro.areaName, userInfo.location.cityInfo.cityName, restro.id].map(value => value ? value.replace(/[^a-zA-Z0-9]/g, '-') : "").join("-").toLowerCase();
+
+                                        return (
+                                            <TopRestaurant
+                                                key={restro.id}
+                                                name={restro?.name}
+                                                link={link}
+                                                averageRating={restro?.avgRating}
+                                                cuisines={restro?.cuisines}
+                                                areaName={restro?.areaName}
+                                                imageId={restro?.cloudinaryImageId}
+                                                offerHeader={restro?.aggregatedDiscountInfoV3?.header}
+                                                offerSubHeader={restro?.aggregatedDiscountInfoV3?.subHeader}
+                                                className="min-w-[35%]"
+                                            />
+                                        )
+                                    })}
                                 </div>
                             </div>
                         )}
 
-                        <div className="divider border-b border-zinc-300 dark:border-zinc-800"></div>
+
 
                     </div>
                 )}

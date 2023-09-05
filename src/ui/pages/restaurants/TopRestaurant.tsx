@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom"
 import CONSTANTS from "../../../constants"
+import { IconStarFilled } from '@tabler/icons-react';
 
-interface TopRestaurantProps{
+interface TopRestaurantProps {
     imageId: string,
     name: string,
     averageRating: number,
     cuisines: string[],
+    areaName: string,
     link: string,
     offerHeader: string,
     offerSubHeader: string,
@@ -14,21 +16,28 @@ interface TopRestaurantProps{
 
 const TopRestaurant = (props: TopRestaurantProps) => {
     return (
-        <Link to={props.link} className={props?.className + " flex flex-col gap-2 items-start justify-start"}>
-        <div className="col1 relative">
-            <img className="rounded-2xl aspect-[4/5]" src={CONSTANTS.IMG_CDN + props.imageId} alt={props.name} />
-            {props.offerHeader && props.offerSubHeader && (
-                <div className="absolute w-[90%] -bottom-[5px] left-2/4 -translate-x-2/4 rounded-[4px] shadow-lg bg-white flex flex-col gap-0 leading-[1.2] font-black text-center text-primary leading offer p-1">
-                    <span className="text-[13px]">{props.offerHeader}</span>
-                    <span className="text-[8px]">• {props.offerSubHeader} •</span>
+        <Link to={props.link} className={props?.className + " hover:scale-95 flex flex-col items-start justify-start"}>
+            <div className="col1 w-full relative rounded-2xl overflow-hidden">
+                <img className="aspect-[4/5] object-cover" src={CONSTANTS.IMG_CDN + props.imageId} alt={props.name} />
+                {props.offerHeader && props.offerSubHeader && (
+                    <div className="text-white absolute w-full h-[60%] bottom-0 left-0 flex flex-col gap-0 items-start justify-end leading-[1.2] p-2 pb-1.5 pl-3 bg-gradient-to-t from-black to-transparent font-black text-[18px]">
+                        <span className="">{props.offerHeader}</span>
+                        <span className="">{props.offerSubHeader}</span>
+                    </div>
+                )}
+            </div>
+            <div className="col2 text-[14px] pt-[10px] leading-[16px]">
+                <p className="line-clamp-2 font-bold" style={{ display: "-webkit-box" }}>{props.name}</p>
+                <div className="rating flex gap-2 pt-1 pb-1.5">
+                    <div className="relative bg-green-600 rounded-full aspect-square overflow-hidden w-[15px]">
+                        <IconStarFilled className="text-white absolute top-2/4 left-2/4 -translate-x-[50%] -translate-y-[50%] w-[60%] h-[60%]" />
+                    </div>
+                    <p>{props.averageRating}</p>
                 </div>
-            )}
-        </div>
-        <div className="col2 text-[14px] pt-[10px] leading-[16px max-w-[80px]">
-            <p className="line-clamp-2" style={{display: "-webkit-box"}}>{props.name}</p>
-            <p className="pt-[4px] text-zinc-400">{props.cuisines.join(", ")}</p>
-        </div>
-    </Link>
+                <p className="text-[13px] text-zinc-400 line-clamp-1" style={{ display: "-webkit-box" }}>{props.cuisines.join(", ")}</p>
+                <p className="text-[13px] text-zinc-400 line-clamp-1" style={{ display: "-webkit-box" }}>{props.areaName}</p>
+            </div>
+        </Link>
     )
 }
 

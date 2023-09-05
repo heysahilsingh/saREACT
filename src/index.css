@@ -47,6 +47,10 @@ html.dark .shimmer-bg {
   background-color: rgb(39,39,42);
 }
 
+img{
+  background-color: rgba(0,0,0,0.1);
+}
+
 /* Shimmer */
 .shimmer-bg {
   background: linear-gradient(90deg, rgb(228,228,231) 25%, rgb(203, 203, 207) 50%, rgb(228,228,231) 75%);

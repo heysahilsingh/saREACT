@@ -25,7 +25,7 @@ const TopPicks = (props: TopPicksProps) => {
                 )}
                 {props.isPromoted && <div className="absolute top-2 left-2 opacity-70 rounded-[4px] bg-zinc-600 py-1 px-2 leading-none text-[10px] text-white">Ad</div>}
             </div>
-            <div className="col2 text-[14px] pt-[10px] leading-[16px max-w-[80px]">
+            <div className="col2 text-[14px] pt-[10px] leading-[16px] max-w-[80px]">
                 <p className="line-clamp-2" style={{display: "-webkit-box"}}>{props.restroName}</p>
                 <p className="pt-[4px] text-zinc-400">{props.deliveryTime} min</p>
             </div>
