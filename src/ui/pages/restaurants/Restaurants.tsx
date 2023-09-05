@@ -36,7 +36,7 @@ type PageData = {
     banner: Api_Card[] | null,
     mind: Api_Card[] | null,
     topRestro: Api_Card[] | null,
-    onlineRestroTitle: Api_Card[] | null,
+    onlineRestroTitle: string | null,
     onlineRestroFilters: Api_Card[] | null,
 }
 
@@ -70,6 +70,7 @@ const Restaurants = () => {
             try {
 
                 setShowShimmer(true)
+                if (showError) setShowError(false)
 
                 const url = `${API_URL}lat=${userInfo.location.cityInfo.latitude}&lng=${userInfo.location.cityInfo.longitude}`;
                 const response = await fetch(url);
@@ -90,13 +91,13 @@ const Restaurants = () => {
 
                     setPageData({
                         success: true,
-                        isSwiggyPresent: data.find((d: { id: string }) => d.id === "SwiggyNotPresent_Widget") ? false : true,
-                        isSwiggyAvailable: data.find((d: { id: string }) => d.id === "swiggy_not_present") ? false : true,
+                        isSwiggyPresent: data.find((card: { id: string }) => card.id === "SwiggyNotPresent_Widget") ? false : true,
+                        isSwiggyAvailable: data.find((card: { id: string }) => card.id === "swiggy_not_present") ? false : true,
                         banner: findCard(["topical_banner"])?.info || null,
                         mind: findCard(["whats_on_your_mind"])?.info || null,
                         topRestro: findCard(["top_brands_for_you"])?.restaurants?.map((restro: { info: [] }) => restro?.info) || null,
-                        onlineRestroFilters: findCard(["topical_banner"])?.info || null,
-                        onlineRestroTitle: findCard(["topical_banner"])?.info || null,
+                        onlineRestroFilters: data.find((card: { facetList: [] }) => card.facetList)?.facetList || null,
+                        onlineRestroTitle: data.find((card: { id: string }) => card.id === "popular_restaurants_title")?.title || null,
                     });
 
                     // Hide Shimmer
@@ -199,7 +200,19 @@ const Restaurants = () => {
                             </div>
                         )}
 
+                        <div className="divider -mt-[10px] border-b border-zinc-300 dark:border-zinc-800"></div>
 
+                        {/* Online Restaurants */}
+                        {pageData.onlineRestroTitle && (
+                            <div className="">
+                                <p className="font-bold text-lg pb-4">{pageData?.onlineRestroTitle}</p>
+                                <div className="grid grid-cols-[repeat(10,80px)] gap-2 items-center no-scrollbar overflow-x-scroll overflow-y-hidden">
+                                    {pageData.mind?.map(option => (
+                                        <img key={option?.id} className="min-w-[80px] w-[22%] rounded-xl" src={CONSTANTS.IMG_CDN + option?.imageId} alt={option?.accessibility?.altText} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
                     </div>
                 )}
