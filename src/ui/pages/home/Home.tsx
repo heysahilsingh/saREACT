@@ -12,8 +12,8 @@ import { routePaths } from "../../Ui";
 import { Link } from "react-router-dom";
 import HomeShimmer from "./HomeShimmer";
 import ErrorComp from "../../components/ErrorComp";
-import SwiggyNotPresent from "../../components/SwiggyNotPresent";
-import SwiggyNotAvailable from "../../components/SwiggyNotAvailable";
+import SwiggyError from "../../components/SwiggyError";
+import SwiggyNotAvailableImg from "../../../assets/images/swiggy-not-available.jpeg";
 
 type Api_Card = {
     id: string,
@@ -149,10 +149,27 @@ const Home = () => {
                     {showError && <ErrorComp />}
 
                     {/* If Swiggy Not Present */}
-                    {!pageData.isSwiggyPresent && <SwiggyNotPresent />}
+                    {!pageData.isSwiggyPresent && (
+                        <SwiggyError
+                        heading={"Swiggy not present in " + (userInfo.location.cityInfo.cityName || userInfo.location.cityInfo.stateName)}
+                        caption="We don't have any services here till now. Try changing the location."
+                        showButton= {true}
+                        buttonText="Change Location"
+                        buttonOnClick={() => console.log("object")}
+                        />
+                    )}
 
                     {/* If Swiggy Not Available */}
-                    {!pageData.isSwiggyAvailable && <SwiggyNotAvailable />}
+                    {!pageData.isSwiggyAvailable && (
+                        <SwiggyError
+                        image={SwiggyNotAvailableImg}
+                        heading={"Due to operational exigencies, we are temporarily unserviceable"}
+                        caption="Some restaurants around you are not serviceable due to operational exigencies. Please bear with us."
+                        showButton= {true}
+                        buttonText="Change Location"
+                        buttonOnClick={() => console.log("object")}
+                        />
+                    )}
 
                     {/* Page Content */}
                     {!showShimmer && !showError && pageData.isSwiggyPresent && pageData.isSwiggyAvailable && pageData.success && (

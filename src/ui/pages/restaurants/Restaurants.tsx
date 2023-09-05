@@ -6,8 +6,8 @@ import RestaurantsShimmer from "./RestaurantsShimmer";
 import ErrorComp from "../../components/ErrorComp";
 import Page from "../Page";
 import TopHeader from "../../components/TopHeader";
-import SwiggyNotPresent from "../../components/SwiggyNotPresent";
 import TopRestaurant from "./TopRestaurant";
+import SwiggyError from "../../components/SwiggyError";
 
 type Api_Card = {
     id: string,
@@ -131,7 +131,15 @@ const Restaurants = () => {
                 {showError && <ErrorComp />}
 
                 {/* If Swiggy Not Present or Available */}
-                {!pageData.isSwiggyPresent || !pageData.isSwiggyAvailable && <SwiggyNotPresent heading="Location Unserviceable" />}
+                {!pageData.isSwiggyPresent || !pageData.isSwiggyAvailable && (
+                    <SwiggyError
+                        heading="Location unserviceable"
+                        caption="We don't have any services here till now. Try changing the location."
+                        showButton={true}
+                        buttonText="Change Location"
+                        buttonOnClick={() => console.log("object")}
+                    />
+                )}
 
                 {/* Page Content */}
                 {!showShimmer && !showError && pageData.isSwiggyPresent && pageData.isSwiggyAvailable && pageData.success && (
@@ -141,7 +149,7 @@ const Restaurants = () => {
                         {pageData.banner && (
                             <div className="flex gap-4 items-center no-scrollbar overflow-x-scroll overflow-y-hidden">
                                 {pageData.banner?.map(slide => (
-                                    <img key={slide.id} className="w-[80%] rounded-xl" src={CONSTANTS.IMG_CDN + slide.imageId} alt={slide.accessibility?.altText} />
+                                    <img key={slide?.id} className="w-[80%] rounded-xl" src={CONSTANTS.IMG_CDN + slide?.imageId} alt={slide?.accessibility?.altText} />
                                 ))}
                             </div>
                         )}
@@ -152,7 +160,7 @@ const Restaurants = () => {
                                 <p className="font-bold text-lg pb-4">What's on your mind?</p>
                                 <div className="grid grid-cols-[repeat(10,80px)] gap-2 items-center no-scrollbar overflow-x-scroll overflow-y-hidden">
                                     {pageData.mind?.map(option => (
-                                        <img key={option.id} className="min-w-[80px] w-[22%] rounded-xl" src={CONSTANTS.IMG_CDN + option.imageId} alt={option.accessibility?.altText} />
+                                        <img key={option?.id} className="min-w-[80px] w-[22%] rounded-xl" src={CONSTANTS.IMG_CDN + option?.imageId} alt={option?.accessibility?.altText} />
                                     ))}
                                 </div>
                             </div>
@@ -162,15 +170,18 @@ const Restaurants = () => {
                         {pageData.mind && (
                             <div className="">
                                 <p className="font-bold text-lg pb-4">Top restaurant chains in {userInfo.location.cityInfo.cityName}</p>
-                                <div className="flex gap-2 items-center no-scrollbar overflow-x-scroll overflow-y-hidden">
+                                <div className="flex gap-2 items-start no-scrollbar overflow-x-scroll overflow-y-hidden">
                                     {pageData.topRestro?.map(restro => (
                                         <TopRestaurant
-                                            name={restro.name}
-                                            averageRating={restro.avgRating}
-                                            cuisines={restro.cuisines}
-                                            imageId={restro.cloudinaryImageId}
-                                            offerHeader={restro.aggregatedDiscountInfoV3.header}
-                                            offerSubHeader={restro.aggregatedDiscountInfoV3.subHeader}
+                                            key={restro.id}
+                                            name={restro?.name}
+                                            link="#"
+                                            averageRating={restro?.avgRating}
+                                            cuisines={restro?.cuisines}
+                                            imageId={restro?.cloudinaryImageId}
+                                            offerHeader={restro?.aggregatedDiscountInfoV3?.header}
+                                            offerSubHeader={restro?.aggregatedDiscountInfoV3?.subHeader}
+                                            className = "min-w-[35%]"
                                         />
                                     ))}
                                 </div>
