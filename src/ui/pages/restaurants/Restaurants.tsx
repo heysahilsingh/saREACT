@@ -9,6 +9,8 @@ import TopHeader from "../../components/TopHeader";
 import TopRestaurant from "./TopRestaurant";
 import SwiggyError from "../../components/SwiggyError";
 import { routePaths } from "../../Ui";
+import FiltersButton from "./FiltersButton";
+import { IconAdjustmentsHorizontal, IconChevronDown } from '@tabler/icons-react';
 
 type Api_Card = {
     id: string,
@@ -26,7 +28,8 @@ type Api_Card = {
     aggregatedDiscountInfoV3: {
         header: string,
         subHeader: string
-    }
+    },
+    info: Api_Card,
 }
 
 type PageData = {
@@ -36,6 +39,7 @@ type PageData = {
     banner: Api_Card[] | null,
     mind: Api_Card[] | null,
     topRestro: Api_Card[] | null,
+    onlineRestroLists: Api_Card[] | null,
     onlineRestroTitle: string | null,
     onlineRestroFilters: Api_Card[] | null,
 }
@@ -61,6 +65,7 @@ const Restaurants = () => {
         banner: null,
         mind: null,
         topRestro: null,
+        onlineRestroLists: null,
         onlineRestroTitle: null,
         onlineRestroFilters: null
     });
@@ -96,6 +101,7 @@ const Restaurants = () => {
                         banner: findCard(["topical_banner"])?.info || null,
                         mind: findCard(["whats_on_your_mind"])?.info || null,
                         topRestro: findCard(["top_brands_for_you"])?.restaurants?.map((restro: { info: [] }) => restro?.info) || null,
+                        onlineRestroLists: findCard(["restaurant_grid_listing"])?.restaurants || null,
                         onlineRestroFilters: data.find((card: { facetList: [] }) => card.facetList)?.facetList || null,
                         onlineRestroTitle: data.find((card: { id: string }) => card.id === "popular_restaurants_title")?.title || null,
                     });
@@ -147,7 +153,7 @@ const Restaurants = () => {
 
                 {/* Page Content */}
                 {!showShimmer && !showError && pageData.isSwiggyPresent && pageData.isSwiggyAvailable && pageData.success && (
-                    <div className="flex flex-col gap-12">
+                    <div className="flex flex-col gap-10">
 
                         {/* Banner */}
                         {pageData.banner && (
@@ -203,13 +209,40 @@ const Restaurants = () => {
                         <div className="divider -mt-[10px] border-b border-zinc-300 dark:border-zinc-800"></div>
 
                         {/* Online Restaurants */}
-                        {pageData.onlineRestroTitle && (
+                        {pageData.onlineRestroTitle && pageData.onlineRestroLists && (
                             <div className="">
-                                <p className="font-bold text-lg pb-4">{pageData?.onlineRestroTitle}</p>
-                                <div className="grid grid-cols-[repeat(10,80px)] gap-2 items-center no-scrollbar overflow-x-scroll overflow-y-hidden">
-                                    {pageData.mind?.map(option => (
-                                        <img key={option?.id} className="min-w-[80px] w-[22%] rounded-xl" src={CONSTANTS.IMG_CDN + option?.imageId} alt={option?.accessibility?.altText} />
-                                    ))}
+                                <p className="title font-bold text-lg">{pageData?.onlineRestroTitle}</p>
+                                <div className="filters flex gap-2 mt-3 mb-6 overflow-x-scroll overflow-y-hidden no-scrollbar">
+                                    <FiltersButton text="Filters" icon={<IconAdjustmentsHorizontal className="text-zinc-700 dark:text-zinc-400" size={15} />} />
+                                    <FiltersButton text="Sort by" icon={<IconChevronDown className="text-zinc-700 dark:text-zinc-400" size={18} />} />
+                                    <FiltersButton text="Fast Delivery" />
+                                    <FiltersButton text="New on Swiggy" />
+                                    <FiltersButton text="Rating 4.0+" />
+                                    <FiltersButton text="Pure Veg" />
+                                    <FiltersButton text="Pure Offers" />
+                                    <FiltersButton text="Rs 300 - 600" />
+                                    <FiltersButton text="Less than 300" />
+                                </div>
+                                <div className="lists grid grid-cols-2 gap-x-4 gap-y-8">
+                                    {pageData.onlineRestroLists?.map((restro: Api_Card) => {
+
+                                        const link = routePaths.restaurants + "/" + [restro.info?.name, restro.info?.locality, restro.info?.areaName, userInfo.location.cityInfo.cityName, restro.info?.id].map(value => value ? value.replace(/[^a-zA-Z0-9]/g, '-') : "").join("-").toLowerCase();
+
+                                        return (
+                                            <TopRestaurant
+                                                key={restro?.info?.id}
+                                                name={restro?.info?.name}
+                                                link={link}
+                                                averageRating={restro?.info?.avgRating}
+                                                cuisines={restro?.info?.cuisines}
+                                                areaName={restro?.info?.areaName}
+                                                imageId={restro?.info?.cloudinaryImageId}
+                                                offerHeader={restro?.info?.aggregatedDiscountInfoV3?.header}
+                                                offerSubHeader={restro?.info?.aggregatedDiscountInfoV3?.subHeader}
+                                                className="min-w-[35%]"
+                                            />
+                                        )
+                                    })}
                                 </div>
                             </div>
                         )}

@@ -18,7 +18,7 @@ const TopRestaurant = (props: TopRestaurantProps) => {
     return (
         <Link to={props.link} className={props?.className + " hover:scale-95 flex flex-col items-start justify-start"}>
             <div className="col1 w-full relative rounded-2xl overflow-hidden">
-                <img className="aspect-[4/5] object-cover" src={CONSTANTS.IMG_CDN + props.imageId} alt={props.name} />
+                <img className="w-full aspect-[4/5] object-cover" src={CONSTANTS.IMG_CDN + props.imageId} alt={props.name} />
                 {props.offerHeader && props.offerSubHeader && (
                     <div className="text-white absolute w-full h-[60%] bottom-0 left-0 flex flex-col gap-0 items-start justify-end leading-[1.2] p-2 pb-1.5 pl-3 bg-gradient-to-t from-black to-transparent font-black text-[18px]">
                         <span className="">{props.offerHeader}</span>
