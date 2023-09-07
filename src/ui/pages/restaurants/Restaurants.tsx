@@ -70,6 +70,13 @@ const Restaurants = () => {
         onlineRestroFilters: null
     });
 
+    // Active FIlters Count
+    const [activeFilters, setActiveFilters] = useState<number>(0);
+
+    const addActiveFilters = () => setActiveFilters(prev => prev + 1)
+
+    const removeActiveFilters = () => setActiveFilters(prev => prev - 1)
+
     useEffect(() => {
         async function fetchData() {
             try {
@@ -211,18 +218,35 @@ const Restaurants = () => {
                         {/* Online Restaurants */}
                         {pageData.onlineRestroTitle && pageData.onlineRestroLists && (
                             <div className="">
+                                {/* Heading */}
                                 <p className="title font-bold text-lg">{pageData?.onlineRestroTitle}</p>
-                                <div className="filters flex gap-2 mt-3 mb-6 overflow-x-scroll overflow-y-hidden no-scrollbar">
-                                    <FiltersButton text="Filters" icon={<IconAdjustmentsHorizontal className="text-zinc-700 dark:text-zinc-400" size={15} />} />
-                                    <FiltersButton text="Sort by" icon={<IconChevronDown className="text-zinc-700 dark:text-zinc-400" size={18} />} />
-                                    <FiltersButton text="Fast Delivery" />
-                                    <FiltersButton text="New on Swiggy" />
-                                    <FiltersButton text="Rating 4.0+" />
-                                    <FiltersButton text="Pure Veg" />
-                                    <FiltersButton text="Pure Offers" />
-                                    <FiltersButton text="Rs 300 - 600" />
-                                    <FiltersButton text="Less than 300" />
+                                {/* Filters */}
+                                <div className="filters flex gap-2 mt-3 mb-6 items-center overflow-x-scroll overflow-y-hidden no-scrollbar">
+
+                                    <FiltersButton disableClick={true} className= {activeFilters > 0 ? "border-zinc-400 bg-zinc-200 dark:bg-zinc-800 dark:border-zinc-600" : ""}>
+                                        {activeFilters > 0 && (
+                                            <div className="active-filters bg-primary rounded-full w-4 h-4 relative">
+                                                <span className="text-xs absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 leading-none text-white">{activeFilters}</span>
+                                            </div>
+                                        )}
+                                        Filters
+                                        <IconAdjustmentsHorizontal className="text-zinc-700 dark:text-zinc-400" size={15} />
+                                    </FiltersButton>
+
+                                    <FiltersButton disableClick={true}>
+                                        Sort by
+                                        <IconChevronDown className="text-zinc-700 dark:text-zinc-400" size={16} />
+                                    </FiltersButton>
+
+                                    <FiltersButton onSelect={addActiveFilters} onDeSelect={removeActiveFilters}>Free Delivery</FiltersButton>
+                                    <FiltersButton onSelect={addActiveFilters} onDeSelect={removeActiveFilters}>New on Swiggy</FiltersButton>
+                                    <FiltersButton onSelect={addActiveFilters} onDeSelect={removeActiveFilters}>Ratings 4.0+</FiltersButton>
+                                    <FiltersButton onSelect={addActiveFilters} onDeSelect={removeActiveFilters}>Pure Veg</FiltersButton>
+                                    <FiltersButton onSelect={addActiveFilters} onDeSelect={removeActiveFilters}>Offers</FiltersButton>
+                                    <FiltersButton onSelect={addActiveFilters} onDeSelect={removeActiveFilters}>Rs. 300-Rs. 600</FiltersButton>
+                                    <FiltersButton onSelect={addActiveFilters} onDeSelect={removeActiveFilters}>Less than Rs. 300</FiltersButton>
                                 </div>
+                                {/* Restaurants */}
                                 <div className="lists grid grid-cols-2 gap-x-4 gap-y-8">
                                     {pageData.onlineRestroLists?.map((restro: Api_Card) => {
 
