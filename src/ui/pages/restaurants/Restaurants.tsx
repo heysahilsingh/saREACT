@@ -30,6 +30,11 @@ type Api_Card = {
         subHeader: string
     },
     info: Api_Card,
+    facetInfo: [{
+        openFilter: boolean,
+        label: string,
+        id: string
+    }]
 }
 
 type PageData = {
@@ -70,12 +75,11 @@ const Restaurants = () => {
         onlineRestroFilters: null
     });
 
-    // Active FIlters Count
+    // Filters
     const [activeFilters, setActiveFilters] = useState<number>(0);
-
-    const addActiveFilters = () => setActiveFilters(prev => prev + 1)
-
-    const removeActiveFilters = () => setActiveFilters(prev => prev - 1)
+    const [sortFilterSelected, setSortFilterSelected] = useState<string>("Sort by");
+    const [showSortFilterOptions, setShowSortFilterOptions] = useState<boolean>(false);
+    const filterClickHandle = (status: number) => setActiveFilters(prev => prev + status)
 
     useEffect(() => {
         async function fetchData() {
@@ -221,9 +225,9 @@ const Restaurants = () => {
                                 {/* Heading */}
                                 <p className="title font-bold text-lg">{pageData?.onlineRestroTitle}</p>
                                 {/* Filters */}
-                                <div className="filters flex gap-2 mt-3 mb-6 items-center overflow-x-scroll overflow-y-hidden no-scrollbar">
+                                <div className="filters flex-wrap flex gap-2 mt-3 mb-6 items-center overflow-x-scroll overflow-y-hidden no-scrollbar">
 
-                                    <FiltersButton disableClick={true} className= {activeFilters > 0 ? "border-zinc-400 bg-zinc-200 dark:bg-zinc-800 dark:border-zinc-600" : ""}>
+                                    <FiltersButton disableClick={true} className={activeFilters > 0 ? "border-zinc-400 bg-zinc-200 dark:bg-zinc-800 dark:border-zinc-600" : ""}>
                                         {activeFilters > 0 && (
                                             <div className="active-filters bg-primary rounded-full w-4 h-4 relative">
                                                 <span className="text-xs absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 leading-none text-white">{activeFilters}</span>
@@ -233,19 +237,39 @@ const Restaurants = () => {
                                         <IconAdjustmentsHorizontal className="text-zinc-700 dark:text-zinc-400" size={15} />
                                     </FiltersButton>
 
-                                    <FiltersButton disableClick={true}>
-                                        Sort by
+                                    <FiltersButton disableClick={true} className="relative">
+                                        {sortFilterSelected}
+
+                                        <div className="sa absolute top-0 left-0 w-full rounded-[15px] border-2 border-zinc-200 bg-white dark:border-zinc-800">
+                                            <div className="flex flex-col gap-2 py-3 px-2">
+                                                <div className="flex justify-between items-center gap-3">
+                                                    <label htmlFor="">Relavance</label>
+                                                    <input type="radio" name="" id="" />
+                                                </div>
+                                            </div>
+                                            <button className="p-4 text-primary">Apply</button>
+                                        </div>
+
                                         <IconChevronDown className="text-zinc-700 dark:text-zinc-400" size={16} />
                                     </FiltersButton>
 
-                                    <FiltersButton onSelect={addActiveFilters} onDeSelect={removeActiveFilters}>Free Delivery</FiltersButton>
-                                    <FiltersButton onSelect={addActiveFilters} onDeSelect={removeActiveFilters}>New on Swiggy</FiltersButton>
-                                    <FiltersButton onSelect={addActiveFilters} onDeSelect={removeActiveFilters}>Ratings 4.0+</FiltersButton>
-                                    <FiltersButton onSelect={addActiveFilters} onDeSelect={removeActiveFilters}>Pure Veg</FiltersButton>
-                                    <FiltersButton onSelect={addActiveFilters} onDeSelect={removeActiveFilters}>Offers</FiltersButton>
-                                    <FiltersButton onSelect={addActiveFilters} onDeSelect={removeActiveFilters}>Rs. 300-Rs. 600</FiltersButton>
-                                    <FiltersButton onSelect={addActiveFilters} onDeSelect={removeActiveFilters}>Less than Rs. 300</FiltersButton>
+                                    {pageData?.onlineRestroFilters
+                                        ?.filter(filter => filter.id !== "catalog_cuisines")
+                                        .map(filter => filter.facetInfo?.find(value => value?.openFilter === true)).map(filter => {
+                                            return (
+                                                <FiltersButton
+                                                    onSelect={() => filterClickHandle(1)}
+                                                    onDeSelect={() => filterClickHandle(-1)}
+                                                    key={filter?.id}
+                                                >
+                                                    {filter?.label}
+                                                </FiltersButton>
+                                            )
+                                        })
+                                    }
+
                                 </div>
+
                                 {/* Restaurants */}
                                 <div className="lists grid grid-cols-2 gap-x-4 gap-y-8">
                                     {pageData.onlineRestroLists?.map((restro: Api_Card) => {

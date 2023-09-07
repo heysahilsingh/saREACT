@@ -8,8 +8,8 @@ const CONSTANTS = {
       // location after "?" in "lat=2&lng=2"
    }, 
    API_PAGE_RESTAURANTS: {
-      mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&",
-      desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&"
+      mob: "https://www.swiggy.com/mapi/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&",
+      desk: "https://www.swiggy.com/dapi/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&"
       // location after "&" in "lat=2&lng=2"
    }, 
 
