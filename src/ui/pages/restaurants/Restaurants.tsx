@@ -13,8 +13,9 @@ import FiltersButton from "./FiltersButton";
 import { IconAdjustmentsHorizontal, IconChevronDown } from '@tabler/icons-react';
 import LightBox from "../../components/LightBox";
 import Filters from "./Filters";
+import OnlineRestroShimmer from "./OnlineRestroShimmer";
 
-type Api_Card = {
+export type Api_Card = {
     id: string,
     accessibility: {
         altText: "RESTAURANT" | "INSTAMART",
@@ -55,6 +56,10 @@ type PageData = {
     onlineRestroFilters: { facetList: Api_Card[], sortConfigs: Api_Card[] } | null,
 }
 
+type OnlineRestroData = {
+    onlineRestroLists: Api_Card[] | null,
+}
+
 const Restaurants = () => {
     const { userInfo } = useContext(UserContext);
 
@@ -80,8 +85,22 @@ const Restaurants = () => {
         onlineRestroTitle: null,
         onlineRestroFilters: null
     });
+    const [onlineRestroData, setOnlineRestroData] = useState<Partial<OnlineRestroData>>({
+        onlineRestroLists: null,
+    })
 
     // Filters
+    const filterAPICall = () => {
+        console.log("Filtered Restro API Called")
+        setOnlineRestroData({})
+
+        setTimeout(() => {
+            setOnlineRestroData({
+                onlineRestroLists: pageData?.onlineRestroLists
+            })
+        }, 1000)
+    };
+
     const [showFilters, setShowFilters] = useState(false);
     const [activeFiltersCount, setActiveFiltersCount] = useState<number>(0);
 
@@ -92,6 +111,7 @@ const Restaurants = () => {
         id: "relevance",
         value: "Relevance (Default)"
     });
+
     const sortFilterSubmission = (e: FormEvent) => {
         e.preventDefault();
 
@@ -109,9 +129,16 @@ const Restaurants = () => {
         }
 
         setShowSortFilterContainer(false);
+        // Call Updattion API
+        filterAPICall()
     }
 
-    const filterClickHandle = (count: number) => setActiveFiltersCount(prev => prev + count)
+    const filterClickHandle = (count: number) => {
+        setActiveFiltersCount(prev => prev + count),
+
+            // Call Updattion API
+            filterAPICall()
+    }
 
     useEffect(() => {
         async function fetchData() {
@@ -149,6 +176,10 @@ const Restaurants = () => {
                         onlineRestroTitle: data.find((card: { id: string }) => card.id === "popular_restaurants_title")?.title || null,
                     });
 
+                    setOnlineRestroData({
+                        onlineRestroLists: findCard(["restaurant_grid_listing"])?.restaurants || null,
+                    })
+
                     // Hide Shimmer
                     setShowShimmer(false);
 
@@ -175,28 +206,45 @@ const Restaurants = () => {
 
             <div className="flex flex-col px-4 pt-4">
 
-                {/* <button onClick={() => console.log(pageData)}>Load Page Data</button> */}
+                <button onClick={() => console.log(pageData)}>Load Page Data</button>
 
-                {/* Filter Options */}
+                {/* Shimmer */}
+                {showShimmer && <RestaurantsShimmer />}
+
+                {/* Error */}
+                {showError && <NetworkError />}
+
+                {/* If Swiggy Not Present or Available */}
+                {!pageData.isSwiggyPresent || !pageData.isSwiggyAvailable && (
+                    <SwiggyError
+                        heading="Location unserviceable"
+                        caption="We don't have any services here till now. Try changing the location."
+                        showButton={true}
+                        buttonText="Change Location"
+                        buttonOnClick={() => console.log("object")}
+                    />
+                )}
+
+                {/* LightBox Filter Options */}
                 {showFilters && pageData?.onlineRestroFilters?.facetList && (
                     <LightBox
                         onCLose={() => setShowFilters(false)}
-                        wrapperClasses="flex items-center justify-center z-20 h-full w-full p-10"
+                        wrapperClasses="flex items-center justify-center z-20 mt-auto mb-0 max-h-[70vh] w-full rounded p-10 bg-white dark:bg-neutral-950"
                         closeBtnClasses="top-3 right-3 lg:top-8 lg:right-8 text-white"
                     >
-                        <Filters />
+                        <Filters data={pageData?.onlineRestroFilters} onApply={filterAPICall} />
 
                     </LightBox>
                 )}
 
-                {/* Filter Sort By Options */}
+                {/* LightBox Filter Sort By Options */}
                 {showSortFilterContainer && pageData?.onlineRestroFilters?.sortConfigs && (
                     <LightBox
                         onCLose={() => setShowSortFilterContainer(false)}
                         wrapperClasses="flex items-center justify-center z-20 h-full w-full p-10"
                         closeBtnClasses="top-3 right-3 lg:top-8 lg:right-8 text-white"
                     >
-                        <form onSubmit={sortFilterSubmission} className="shadow-xl w-max rounded-[15px] border-2 border-zinc-200 bg-white dark:bg-zinc-900 dark:border-zinc-800 flex flex-col z-10 text-left">
+                        <form onSubmit={sortFilterSubmission} className="shadow-xl w-max rounded-[15px] border-2 border-zinc-200 bg-white dark:bg-neutral-950 dark:border-zinc-800 flex flex-col z-10 text-left">
                             <div className="flex leading-[120%] flex-col gap-6 py-6 px-4">
                                 {pageData?.onlineRestroFilters?.sortConfigs?.map(config => {
                                     return (
@@ -225,23 +273,6 @@ const Restaurants = () => {
                         </form>
 
                     </LightBox>
-                )}
-
-                {/* Shimmer */}
-                {showShimmer && <RestaurantsShimmer />}
-
-                {/* Error */}
-                {showError && <NetworkError />}
-
-                {/* If Swiggy Not Present or Available */}
-                {!pageData.isSwiggyPresent || !pageData.isSwiggyAvailable && (
-                    <SwiggyError
-                        heading="Location unserviceable"
-                        caption="We don't have any services here till now. Try changing the location."
-                        showButton={true}
-                        buttonText="Change Location"
-                        buttonOnClick={() => console.log("object")}
-                    />
                 )}
 
                 {/* Page Content */}
@@ -301,7 +332,7 @@ const Restaurants = () => {
                         )}
 
                         {/* Online Restaurants */}
-                        {pageData.onlineRestroTitle && pageData.onlineRestroLists && (
+                        {pageData.onlineRestroTitle && pageData.onlineRestroFilters && (
                             <>
                                 <div className="divider -mt-[10px] border-b border-zinc-300 dark:border-zinc-800"></div>
                                 <div>
@@ -310,65 +341,68 @@ const Restaurants = () => {
                                     <p className="title font-bold text-lg lg:text-2xl">{pageData?.onlineRestroTitle}</p>
 
                                     {/* Filters */}
-                                    {pageData?.onlineRestroFilters && (
-                                        <div className="filters sticky lg:top-0 top-[64px] z-10 bg-white dark:bg-neutral-950 py-3 lg:py-6">
-                                            <div className="flex gap-2 items-center no-scrollbar overflow-scroll">
+                                    <div className="filters sticky lg:top-0 top-[64px] z-10 bg-white dark:bg-neutral-950 py-3 lg:py-6">
+                                        <div className="flex gap-2 items-center no-scrollbar overflow-scroll">
 
-                                                <div onClick={() => setShowFilters(true)} className={`min-w-fit flex items-center gap-2 py-2.5 px-3.5 text-[15px] leading-none border-2 rounded-full ${(activeFiltersCount > 0 ? "border-zinc-400 bg-zinc-200 dark:bg-zinc-800 dark:border-zinc-600" : "border-zinc-200 bg-transparent dark:border-zinc-800")}`}>
-                                                    {activeFiltersCount > 0 && (
-                                                        <div className="active-filters bg-primary rounded-full w-4 h-4 relative">
-                                                            <span className="text-xs absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 leading-none text-white">{activeFiltersCount}</span>
-                                                        </div>
-                                                    )}
-                                                    Filters
-                                                    <IconAdjustmentsHorizontal className="text-zinc-700 dark:text-zinc-400" size={15} />
-                                                </div>
-
-                                                <div onClick={() => setShowSortFilterContainer(true)} className="cursor-pointer min-w-fit flex items-center gap-2 py-2.5 px-3.5 text-[15px] leading-none border-2 rounded-full border-zinc-200 bg-transparent dark:border-zinc-800">
-                                                    {sortFilterText}
-                                                    <IconChevronDown className="text-zinc-700 dark:text-zinc-400" size={16} />
-                                                </div>
-
-                                                {pageData?.onlineRestroFilters
-                                                    ?.facetList?.filter(filter => filter.id !== "catalog_cuisines")
-                                                    .map(filter => filter.facetInfo?.find(value => value?.openFilter === true)).map(filter => {
-                                                        return (
-                                                            <FiltersButton
-                                                                onSelect={() => filterClickHandle(1)}
-                                                                onDeSelect={() => filterClickHandle(-1)}
-                                                                key={filter?.id}
-                                                            >
-                                                                {filter?.label}
-                                                            </FiltersButton>
-                                                        )
-                                                    })
-                                                }
+                                            <div onClick={() => setShowFilters(true)} className={`min-w-fit flex items-center gap-2 py-2.5 px-3.5 text-[15px] leading-none border-2 rounded-full ${(activeFiltersCount > 0 ? "border-zinc-400 bg-zinc-200 dark:bg-zinc-800 dark:border-zinc-600" : "border-zinc-200 bg-transparent dark:border-zinc-800")}`}>
+                                                {activeFiltersCount > 0 && (
+                                                    <div className="active-filters bg-primary rounded-full w-4 h-4 relative">
+                                                        <span className="text-xs absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 leading-none text-white">{activeFiltersCount}</span>
+                                                    </div>
+                                                )}
+                                                Filters
+                                                <IconAdjustmentsHorizontal className="text-zinc-700 dark:text-zinc-400" size={15} />
                                             </div>
+
+                                            <div onClick={() => setShowSortFilterContainer(true)} className="cursor-pointer min-w-fit flex items-center gap-2 py-2.5 px-3.5 text-[15px] leading-none border-2 rounded-full border-zinc-200 bg-transparent dark:border-zinc-800">
+                                                {sortFilterText}
+                                                <IconChevronDown className="text-zinc-700 dark:text-zinc-400" size={16} />
+                                            </div>
+
+                                            {pageData?.onlineRestroFilters?.facetList?.filter(filter => filter.id !== "catalog_cuisines")
+                                                .map(filter => filter.facetInfo?.find(value => value?.openFilter === true)).map(filter => {
+                                                    return (
+                                                        <FiltersButton
+                                                            onSelect={() => filterClickHandle(1)}
+                                                            onDeSelect={() => filterClickHandle(-1)}
+                                                            key={filter?.id}
+                                                        >
+                                                            {filter?.label}
+                                                        </FiltersButton>
+                                                    )
+                                                })
+                                            }
                                         </div>
-                                    )}
-
-                                    {/* Restaurants */}
-                                    <div className="lists grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 lg:gap-8 pt-3 lg:pt-5 no-scrollbar overflow-x-scroll overflow-y-hidden">
-                                        {pageData.onlineRestroLists?.map((restro: Api_Card) => {
-
-                                            const link = routePaths.restaurants + "/" + [restro.info?.name, restro.info?.locality, restro.info?.areaName, userInfo.location.cityInfo.cityName, restro.info?.id].map(value => value ? value.replace(/[^a-zA-Z0-9]/g, '-') : "").join("-").toLowerCase();
-
-                                            return (
-                                                <TopRestaurant
-                                                    key={restro?.info?.id}
-                                                    name={restro?.info?.name}
-                                                    link={link}
-                                                    averageRating={restro?.info?.avgRating}
-                                                    cuisines={restro?.info?.cuisines}
-                                                    areaName={restro?.info?.areaName}
-                                                    imageId={restro?.info?.cloudinaryImageId}
-                                                    offerHeader={restro?.info?.aggregatedDiscountInfoV3?.header}
-                                                    offerSubHeader={restro?.info?.aggregatedDiscountInfoV3?.subHeader}
-                                                    className="min-w-[35% lg:min-w-[27%]"
-                                                />
-                                            )
-                                        })}
                                     </div>
+
+                                    {!onlineRestroData?.onlineRestroLists && <OnlineRestroShimmer />}
+
+                                    {onlineRestroData?.onlineRestroLists && (
+                                        <>
+                                            {/* Restaurants */}
+                                            <div className="lists grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 lg:gap-8 pt-3 lg:pt-5 no-scrollbar overflow-x-scroll overflow-y-hidden">
+                                                {pageData.onlineRestroLists?.map((restro: Api_Card) => {
+
+                                                    const link = routePaths.restaurants + "/" + [restro.info?.name, restro.info?.locality, restro.info?.areaName, userInfo.location.cityInfo.cityName, restro.info?.id].map(value => value ? value.replace(/[^a-zA-Z0-9]/g, '-') : "").join("-").toLowerCase();
+
+                                                    return (
+                                                        <TopRestaurant
+                                                            key={restro?.info?.id}
+                                                            name={restro?.info?.name}
+                                                            link={link}
+                                                            averageRating={restro?.info?.avgRating}
+                                                            cuisines={restro?.info?.cuisines}
+                                                            areaName={restro?.info?.areaName}
+                                                            imageId={restro?.info?.cloudinaryImageId}
+                                                            offerHeader={restro?.info?.aggregatedDiscountInfoV3?.header}
+                                                            offerSubHeader={restro?.info?.aggregatedDiscountInfoV3?.subHeader}
+                                                            className="min-w-[35% lg:min-w-[27%]"
+                                                        />
+                                                    )
+                                                })}
+                                            </div>
+                                        </>
+                                    )}
 
                                 </div>
                             </>
