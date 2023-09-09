@@ -1,9 +1,9 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, FormEvent } from "react";
 import UserContext from "../../../context/UserContext";
 import useDeviceDetect from "../../../hooks/useDeviceDetect";
 import CONSTANTS from "../../../constants";
 import RestaurantsShimmer from "./RestaurantsShimmer";
-import ErrorComp from "../../components/ErrorComp";
+import NetworkError from "../../components/NetworkError";
 import Page from "../Page";
 import TopHeader from "../../components/TopHeader";
 import TopRestaurant from "./TopRestaurant";
@@ -34,7 +34,11 @@ type Api_Card = {
         openFilter: boolean,
         label: string,
         id: string
-    }]
+    }],
+    facetList: string,
+    key: string,
+    title: string,
+    selected: boolean
 }
 
 type PageData = {
@@ -46,7 +50,7 @@ type PageData = {
     topRestro: Api_Card[] | null,
     onlineRestroLists: Api_Card[] | null,
     onlineRestroTitle: string | null,
-    onlineRestroFilters: Api_Card[] | null,
+    onlineRestroFilters: { facetList: Api_Card[], sortConfigs: Api_Card[] } | null,
 }
 
 const Restaurants = () => {
@@ -76,10 +80,35 @@ const Restaurants = () => {
     });
 
     // Filters
-    const [activeFilters, setActiveFilters] = useState<number>(0);
-    const [sortFilterSelected, setSortFilterSelected] = useState<string>("Sort by");
-    const [showSortFilterOptions, setShowSortFilterOptions] = useState<boolean>(false);
-    const filterClickHandle = (status: number) => setActiveFilters(prev => prev + status)
+    const [activeFiltersCount, setActiveFiltersCount] = useState<number>(0);
+
+    const [sortCount, setSortCount] = useState(0);
+    const [sortFilterText, setSortFilterText] = useState<string>("Sort by");
+    const [showSortFilterContainer, setShowSortFilterContainer] = useState<boolean>(false);
+    const [sortFilterSelectedOption, setSortFilterSelectedOption] = useState({
+        id: "relevance",
+        value: "Relevance (Default)"
+    });
+    const sortFilterSubmission = (e: FormEvent) => {
+        e.preventDefault();
+
+        if (sortFilterSelectedOption.id !== "relevance") {
+            setSortFilterText(sortFilterSelectedOption.value);
+            if (sortCount === 0) {
+                setSortCount(1)
+                filterClickHandle(1);
+            }
+        }
+        else {
+            setSortFilterText("Sort by");
+            setSortCount(0)
+            if (sortCount === 1) filterClickHandle(-1)
+        }
+
+        setShowSortFilterContainer(false);
+    }
+
+    const filterClickHandle = (count: number) => setActiveFiltersCount(prev => prev + count)
 
     useEffect(() => {
         async function fetchData() {
@@ -113,7 +142,7 @@ const Restaurants = () => {
                         mind: findCard(["whats_on_your_mind"])?.info || null,
                         topRestro: findCard(["top_brands_for_you"])?.restaurants?.map((restro: { info: [] }) => restro?.info) || null,
                         onlineRestroLists: findCard(["restaurant_grid_listing"])?.restaurants || null,
-                        onlineRestroFilters: data.find((card: { facetList: [] }) => card.facetList)?.facetList || null,
+                        onlineRestroFilters: data.find((card: { facetList: [] }) => card.facetList) || null,
                         onlineRestroTitle: data.find((card: { id: string }) => card.id === "popular_restaurants_title")?.title || null,
                     });
 
@@ -149,7 +178,7 @@ const Restaurants = () => {
                 {showShimmer && <RestaurantsShimmer />}
 
                 {/* Error */}
-                {showError && <ErrorComp />}
+                {showError && <NetworkError />}
 
                 {/* If Swiggy Not Present or Available */}
                 {!pageData.isSwiggyPresent || !pageData.isSwiggyAvailable && (
@@ -177,7 +206,7 @@ const Restaurants = () => {
 
                         {/* What's on mind */}
                         {pageData.mind && (
-                            <div className="">
+                            <div>
                                 <p className="font-bold text-lg pb-4">What's on your mind?</p>
                                 <div className="grid grid-cols-[repeat(10,80px)] gap-2 items-center no-scrollbar overflow-x-scroll overflow-y-hidden">
                                     {pageData.mind?.map(option => (
@@ -187,112 +216,137 @@ const Restaurants = () => {
                             </div>
                         )}
 
-                        <div className="divider -mt-[10px] border-b border-zinc-300 dark:border-zinc-800"></div>
-
                         {/* Top Restro */}
                         {pageData.mind && (
-                            <div className="">
-                                <p className="font-bold text-lg pb-4">Top restaurant chains in {userInfo.location.cityInfo.cityName}</p>
-                                <div className="flex gap-[16px] items-start no-scrollbar overflow-x-scroll overflow-y-hidden">
-                                    {pageData.topRestro?.map(restro => {
+                            <>
+                                <div className="divider -mt-[10px] border-b border-zinc-300 dark:border-zinc-800"></div>
+                                <div>
+                                    <p className="font-bold text-lg pb-4">Top restaurant chains in {userInfo.location.cityInfo.cityName}</p>
+                                    <div className="flex gap-[16px] items-start no-scrollbar overflow-x-scroll overflow-y-hidden">
+                                        {pageData.topRestro?.map(restro => {
 
-                                        const link = routePaths.restaurants + "/" + [restro.name, restro.locality, restro.areaName, userInfo.location.cityInfo.cityName, restro.id].map(value => value ? value.replace(/[^a-zA-Z0-9]/g, '-') : "").join("-").toLowerCase();
+                                            const link = routePaths.restaurants + "/" + [restro.name, restro.locality, restro.areaName, userInfo.location.cityInfo.cityName, restro.id].map(value => value ? value.replace(/[^a-zA-Z0-9]/g, '-') : "").join("-").toLowerCase();
 
-                                        return (
-                                            <TopRestaurant
-                                                key={restro.id}
-                                                name={restro?.name}
-                                                link={link}
-                                                averageRating={restro?.avgRating}
-                                                cuisines={restro?.cuisines}
-                                                areaName={restro?.areaName}
-                                                imageId={restro?.cloudinaryImageId}
-                                                offerHeader={restro?.aggregatedDiscountInfoV3?.header}
-                                                offerSubHeader={restro?.aggregatedDiscountInfoV3?.subHeader}
-                                                className="min-w-[35%]"
-                                            />
-                                        )
-                                    })}
+                                            return (
+                                                <TopRestaurant
+                                                    key={restro.id}
+                                                    name={restro?.name}
+                                                    link={link}
+                                                    averageRating={restro?.avgRating}
+                                                    cuisines={restro?.cuisines}
+                                                    areaName={restro?.areaName}
+                                                    imageId={restro?.cloudinaryImageId}
+                                                    offerHeader={restro?.aggregatedDiscountInfoV3?.header}
+                                                    offerSubHeader={restro?.aggregatedDiscountInfoV3?.subHeader}
+                                                    className="min-w-[35%]"
+                                                />
+                                            )
+                                        })}
+                                    </div>
                                 </div>
-                            </div>
+                            </>
                         )}
-
-                        <div className="divider -mt-[10px] border-b border-zinc-300 dark:border-zinc-800"></div>
 
                         {/* Online Restaurants */}
                         {pageData.onlineRestroTitle && pageData.onlineRestroLists && (
-                            <div className="">
-                                {/* Heading */}
-                                <p className="title font-bold text-lg">{pageData?.onlineRestroTitle}</p>
-                                {/* Filters */}
-                                <div className="filters flex-wrap flex gap-2 mt-3 mb-6 items-center overflow-x-scroll overflow-y-hidden no-scrollbar">
+                            <>
+                                <div className="divider -mt-[10px] border-b border-zinc-300 dark:border-zinc-800"></div>
+                                <div>
 
-                                    <FiltersButton disableClick={true} className={activeFilters > 0 ? "border-zinc-400 bg-zinc-200 dark:bg-zinc-800 dark:border-zinc-600" : ""}>
-                                        {activeFilters > 0 && (
-                                            <div className="active-filters bg-primary rounded-full w-4 h-4 relative">
-                                                <span className="text-xs absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 leading-none text-white">{activeFilters}</span>
-                                            </div>
-                                        )}
-                                        Filters
-                                        <IconAdjustmentsHorizontal className="text-zinc-700 dark:text-zinc-400" size={15} />
-                                    </FiltersButton>
+                                    {/* Heading */}
+                                    <p className="title font-bold text-lg">{pageData?.onlineRestroTitle}</p>
 
-                                    <FiltersButton disableClick={true} className="relative">
-                                        {sortFilterSelected}
+                                    {/* Filters */}
+                                    <div className="filters flex gap-2 mt-3 mb-6 items-center no-scrollbar overflow-scroll">
 
-                                        <div className="sa absolute top-0 left-0 w-full rounded-[15px] border-2 border-zinc-200 bg-white dark:border-zinc-800">
-                                            <div className="flex flex-col gap-2 py-3 px-2">
-                                                <div className="flex justify-between items-center gap-3">
-                                                    <label htmlFor="">Relavance</label>
-                                                    <input type="radio" name="" id="" />
+                                        <FiltersButton disableClick={true} className={activeFiltersCount > 0 ? "border-zinc-400 bg-zinc-200 dark:bg-zinc-800 dark:border-zinc-600" : ""}>
+                                            {activeFiltersCount > 0 && (
+                                                <div className="active-filters bg-primary rounded-full w-4 h-4 relative">
+                                                    <span className="text-xs absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 leading-none text-white">{activeFiltersCount}</span>
                                                 </div>
-                                            </div>
-                                            <button className="p-4 text-primary">Apply</button>
+                                            )}
+                                            Filters
+                                            <IconAdjustmentsHorizontal className="text-zinc-700 dark:text-zinc-400" size={15} />
+                                        </FiltersButton>
+
+                                        <div onClick={() => setShowSortFilterContainer(true)} className="relative min-w-fit flex items-center gap-2 py-2.5 px-3.5 text-[15px] leading-none border-2 rounded-full border-zinc-200 bg-transparent dark:border-zinc-800">
+                                            {sortFilterText}
+
+                                            {showSortFilterContainer && (
+                                                <form onSubmit={sortFilterSubmission} className="shadow-m absolute -top-[2px] -left-[2px] max-w-[184px] w-max rounded-[15px] border-2 border-zinc-200 bg-white dark:bg-zinc-900 dark:border-zinc-800 flex flex-col z-10 text-left">
+                                                    <div className="flex leading-[120%] flex-col gap-4 py-6 px-4">
+                                                        {pageData?.onlineRestroFilters?.sortConfigs?.map(config => {
+                                                            return (
+                                                                <div key={config?.key} className="flex justify-between items-center gap-4">
+                                                                    <label htmlFor={config?.key}>{config?.title}</label>
+                                                                    <input
+                                                                        type="radio"
+                                                                        id={config?.key}
+                                                                        value={config?.title}
+                                                                        name="sortBy"
+                                                                        checked={sortFilterSelectedOption?.id === config?.key}
+                                                                        onChange={(e) => setSortFilterSelectedOption(
+                                                                            {
+                                                                                id: e.target.id,
+                                                                                value: e.target.value,
+                                                                            }
+                                                                        )}
+                                                                        className="relative h-5 w-5 appearance-none rounded-full border-2 border-solid border-neutral-300 before:pointer-events-none before:absolute before:h-4 before:w-4 before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-[0px_0px_0px_13px_transparent] before:content-[''] after:absolute after:z-[1] after:block after:h-4 after:w-4 after:rounded-full after:content-[''] checked:border-primary checked:before:opacity-[0.16] checked:after:absolute checked:after:left-1/2 checked:after:top-1/2 checked:after:h-[0.625rem] checked:after:w-[0.625rem] checked:after:rounded-full checked:after:border-primary checked:after:bg-primary checked:after:content-[''] checked:after:[transform:translate(-50%,-50%)] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:shadow-none focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:border-primary checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:border-neutral-600 dark:checked:border-primary dark:checked:after:border-primary dark:checked:after:bg-primary dark:focus:before:shadow-[0px_0px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:border-primary dark:checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca]"
+                                                                    />
+                                                                </div>
+
+                                                            )
+                                                        })}
+                                                    </div>
+                                                    <button type="submit" className="p-4 text-primary border-t-2 border-zinc-200 dark:border-zinc-800">Apply</button>
+                                                </form>
+                                            )}
+
+                                            <IconChevronDown className="text-zinc-700 dark:text-zinc-400" size={16} />
                                         </div>
 
-                                        <IconChevronDown className="text-zinc-700 dark:text-zinc-400" size={16} />
-                                    </FiltersButton>
+                                        {pageData?.onlineRestroFilters
+                                            ?.facetList?.filter(filter => filter.id !== "catalog_cuisines")
+                                            .map(filter => filter.facetInfo?.find(value => value?.openFilter === true)).map(filter => {
+                                                return (
+                                                    <FiltersButton
+                                                        onSelect={() => filterClickHandle(1)}
+                                                        onDeSelect={() => filterClickHandle(-1)}
+                                                        key={filter?.id}
+                                                    >
+                                                        {filter?.label}
+                                                    </FiltersButton>
+                                                )
+                                            })
+                                        }
 
-                                    {pageData?.onlineRestroFilters
-                                        ?.filter(filter => filter.id !== "catalog_cuisines")
-                                        .map(filter => filter.facetInfo?.find(value => value?.openFilter === true)).map(filter => {
+                                    </div>
+
+                                    {/* Restaurants */}
+                                    <div className="lists grid grid-cols-2 gap-x-4 gap-y-8">
+                                        {pageData.onlineRestroLists?.map((restro: Api_Card) => {
+
+                                            const link = routePaths.restaurants + "/" + [restro.info?.name, restro.info?.locality, restro.info?.areaName, userInfo.location.cityInfo.cityName, restro.info?.id].map(value => value ? value.replace(/[^a-zA-Z0-9]/g, '-') : "").join("-").toLowerCase();
+
                                             return (
-                                                <FiltersButton
-                                                    onSelect={() => filterClickHandle(1)}
-                                                    onDeSelect={() => filterClickHandle(-1)}
-                                                    key={filter?.id}
-                                                >
-                                                    {filter?.label}
-                                                </FiltersButton>
+                                                <TopRestaurant
+                                                    key={restro?.info?.id}
+                                                    name={restro?.info?.name}
+                                                    link={link}
+                                                    averageRating={restro?.info?.avgRating}
+                                                    cuisines={restro?.info?.cuisines}
+                                                    areaName={restro?.info?.areaName}
+                                                    imageId={restro?.info?.cloudinaryImageId}
+                                                    offerHeader={restro?.info?.aggregatedDiscountInfoV3?.header}
+                                                    offerSubHeader={restro?.info?.aggregatedDiscountInfoV3?.subHeader}
+                                                    className="min-w-[35%]"
+                                                />
                                             )
-                                        })
-                                    }
+                                        })}
+                                    </div>
 
                                 </div>
-
-                                {/* Restaurants */}
-                                <div className="lists grid grid-cols-2 gap-x-4 gap-y-8">
-                                    {pageData.onlineRestroLists?.map((restro: Api_Card) => {
-
-                                        const link = routePaths.restaurants + "/" + [restro.info?.name, restro.info?.locality, restro.info?.areaName, userInfo.location.cityInfo.cityName, restro.info?.id].map(value => value ? value.replace(/[^a-zA-Z0-9]/g, '-') : "").join("-").toLowerCase();
-
-                                        return (
-                                            <TopRestaurant
-                                                key={restro?.info?.id}
-                                                name={restro?.info?.name}
-                                                link={link}
-                                                averageRating={restro?.info?.avgRating}
-                                                cuisines={restro?.info?.cuisines}
-                                                areaName={restro?.info?.areaName}
-                                                imageId={restro?.info?.cloudinaryImageId}
-                                                offerHeader={restro?.info?.aggregatedDiscountInfoV3?.header}
-                                                offerSubHeader={restro?.info?.aggregatedDiscountInfoV3?.subHeader}
-                                                className="min-w-[35%]"
-                                            />
-                                        )
-                                    })}
-                                </div>
-                            </div>
+                            </>
                         )}
 
                     </div>

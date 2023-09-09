@@ -5,7 +5,7 @@ import useDeviceDetect from "../../../../hooks/useDeviceDetect";
 import CONSTANTS from "../../../../constants";
 import Page from "../../Page";
 import RestaurantShimmer from "./RestaurantShimmer";
-import ErrorComp from "../../../components/ErrorComp";
+import ErrorComp from "../../../components/NetworkError";
 
 // name + locality + arean name + city + restroId  Slug
 

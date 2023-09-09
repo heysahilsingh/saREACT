@@ -11,7 +11,7 @@ import RestroNearBy from "./RestroNearBy";
 import { routePaths } from "../../Ui";
 import { Link } from "react-router-dom";
 import HomeShimmer from "./HomeShimmer";
-import ErrorComp from "../../components/ErrorComp";
+import NetworkError from "../../components/NetworkError";
 import SwiggyError from "../../components/SwiggyError";
 import SwiggyNotAvailableImg from "../../../assets/images/swiggy-not-available.jpeg";
 
@@ -146,7 +146,7 @@ const Home = () => {
                     {showShimmer && <HomeShimmer />}
 
                     {/* Error */}
-                    {showError && <ErrorComp />}
+                    {showError && <NetworkError />}
 
                     {/* If Swiggy Not Present */}
                     {!pageData.isSwiggyPresent && (
