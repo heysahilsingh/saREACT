@@ -20,7 +20,12 @@ const TopHeader = (props: TopHeaderProps) => {
     return (
         <>
             {openLightBox && (
-                <LightBox isOpen={openLightBox} onCLose={() => setOpenLightBox(false)}>
+                <LightBox
+                    isOpen={openLightBox}
+                    onCLose={() => setOpenLightBox(false)}
+                    wrapperClasses="mr-auto ml-0 relative z-20 bg-white h-full w-full p-3 pt-16 lg:w-[700px] lg:p-10 dark:bg-neutral-900"
+                    closeBtnClasses="top-3 right-3 lg:top-8 lg:right-8"
+                >
                     <LocationSearch onSelect={() => setOpenLightBox(false)} screen="mob" />
                 </LightBox>
             )}
