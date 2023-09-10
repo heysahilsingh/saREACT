@@ -38,10 +38,13 @@ export type Api_Card = {
         label: string,
         id: string
     }],
+    sortConfigs: { title: string, selected: boolean, key: string, defaultSelection: boolean }[],
     facetList: string,
     key: string,
     title: string,
-    selected: boolean
+    selected: boolean,
+    label: string,
+    subLabel: string,
 }
 
 type PageData = {
@@ -229,8 +232,8 @@ const Restaurants = () => {
                 {showFilters && pageData?.onlineRestroFilters?.facetList && (
                     <LightBox
                         onCLose={() => setShowFilters(false)}
-                        wrapperClasses="flex items-center justify-center z-20 mt-auto mb-0 max-h-[70vh] w-full rounded p-10 bg-white dark:bg-neutral-950"
-                        closeBtnClasses="top-3 right-3 lg:top-8 lg:right-8 text-white"
+                        wrapperClasses="flex z-20 mt-auto mb-0 max-h-[75vh] rounded-t-[25px] w-full overflow-hidden bg-white dark:bg-zinc-900 lg:m-auto lg:rounded-[25px] lg:w-[55vw] lg:max-h-[65vh]"
+                        closeBtnClasses="top-[26.4%] h-[35px] w-[35px] text-black rounded-full shadow-md p-1.5 leading-none right-3.5 lg:top-[19%] lg:right-[23%] dark:bg-zinc-900 dark:text-zinc-400"
                     >
                         <Filters data={pageData?.onlineRestroFilters} onApply={filterAPICall} />
 
@@ -244,7 +247,7 @@ const Restaurants = () => {
                         wrapperClasses="flex items-center justify-center z-20 h-full w-full p-10"
                         closeBtnClasses="top-3 right-3 lg:top-8 lg:right-8 text-white"
                     >
-                        <form onSubmit={sortFilterSubmission} className="shadow-xl w-max rounded-[15px] border-2 border-zinc-200 bg-white dark:bg-neutral-950 dark:border-zinc-800 flex flex-col z-10 text-left">
+                        <form onSubmit={sortFilterSubmission} className="shadow-xl w-max rounded-[15px] border-2 border-zinc-200 bg-white dark:bg-zinc-900 dark:border-zinc-800 flex flex-col z-10 text-left">
                             <div className="flex leading-[120%] flex-col gap-6 py-6 px-4">
                                 {pageData?.onlineRestroFilters?.sortConfigs?.map(config => {
                                     return (
@@ -262,7 +265,6 @@ const Restaurants = () => {
                                                         value: e.target.value,
                                                     }
                                                 )}
-                                                className="relative h-5 w-5 appearance-none rounded-full border-2 border-solid border-neutral-300 before:pointer-events-none before:absolute before:h-4 before:w-4 before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-[0px_0px_0px_13px_transparent] before:content-[''] after:absolute after:z-[1] after:block after:h-4 after:w-4 after:rounded-full after:content-[''] checked:border-primary checked:before:opacity-[0.16] checked:after:absolute checked:after:left-1/2 checked:after:top-1/2 checked:after:h-[0.625rem] checked:after:w-[0.625rem] checked:after:rounded-full checked:after:border-primary checked:after:bg-primary checked:after:content-[''] checked:after:[transform:translate(-50%,-50%)] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:shadow-none focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:border-primary checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:border-neutral-600 dark:checked:border-primary dark:checked:after:border-primary dark:checked:after:bg-primary dark:focus:before:shadow-[0px_0px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:border-primary dark:checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca]"
                                             />
                                         </div>
 
@@ -344,7 +346,7 @@ const Restaurants = () => {
                                     <div className="filters sticky lg:top-0 top-[64px] z-10 bg-white dark:bg-neutral-950 py-3 lg:py-6">
                                         <div className="flex gap-2 items-center no-scrollbar overflow-scroll">
 
-                                            <div onClick={() => setShowFilters(true)} className={`min-w-fit flex items-center gap-2 py-2.5 px-3.5 text-[15px] leading-none border-2 rounded-full ${(activeFiltersCount > 0 ? "border-zinc-400 bg-zinc-200 dark:bg-zinc-800 dark:border-zinc-600" : "border-zinc-200 bg-transparent dark:border-zinc-800")}`}>
+                                            <div onClick={() => setShowFilters(true)} className={`cursor-pointer min-w-fit flex items-center gap-2 py-2.5 px-3.5 text-[15px] leading-none border-2 rounded-full ${(activeFiltersCount > 0 ? "border-zinc-400 bg-zinc-200 dark:bg-zinc-800 dark:border-zinc-600" : "border-zinc-200 bg-transparent dark:border-zinc-800")}`}>
                                                 {activeFiltersCount > 0 && (
                                                     <div className="active-filters bg-primary rounded-full w-4 h-4 relative">
                                                         <span className="text-xs absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 leading-none text-white">{activeFiltersCount}</span>

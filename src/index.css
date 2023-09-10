@@ -74,6 +74,45 @@ html.dark .shimmer-bg {
 }
 
 
+/* SAAA */
+input[type="radio"]{
+  border:2px solid white;
+  box-shadow:0 0 0 1px #02060c99;
+  appearance:none;
+  border-radius:50%;
+  width:12px;
+  height:12px;
+  background-color: transparent;
+  transition:all ease-in 0.2s;
+}
+
+html.dark input[type="radio"] {
+  border-color: rgba(255,255,255,0.4);
+
+}
+
+input[type="radio"]:checked{
+  background-color: #fc8019;
+  box-shadow:0 0 0 1px #fc8019;
+}
+
+
+#yes{
+  border:2px solid white;
+  box-shadow:0 0 0 1px #392;
+  appearance:none;
+  border-radius:50%;
+  width:12px;
+  height:12px;
+  background-color: red;
+  transition:all ease-in 0.2s;
+
+}
+#yes:checked{
+  background-color:#392;
+}
+
+
 
 
 
