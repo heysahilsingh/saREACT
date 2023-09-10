@@ -12,8 +12,8 @@ import { routePaths } from "../../Ui";
 import FiltersButton from "./FiltersButton";
 import { IconAdjustmentsHorizontal, IconChevronDown } from '@tabler/icons-react';
 import LightBox from "../../components/LightBox";
-import Filters from "./Filters";
 import OnlineRestroShimmer from "./OnlineRestroShimmer";
+import RestroFilters, { FilterOptions } from './../../components/RestroFilters';
 
 export type Api_Card = {
     id: string,
@@ -43,6 +43,9 @@ export type Api_Card = {
     key: string,
     title: string,
     selected: boolean,
+    selection: string,
+    defaultSelection: boolean,
+    openFilter: boolean,
     label: string,
     subLabel: string,
 }
@@ -56,7 +59,10 @@ type PageData = {
     topRestro: Api_Card[] | null,
     onlineRestroLists: Api_Card[] | null,
     onlineRestroTitle: string | null,
-    onlineRestroFilters: { facetList: Api_Card[], sortConfigs: Api_Card[] } | null,
+    onlineRestroFilters: {
+        facetList: FilterOptions[],
+        sortConfigs: FilterOptions[]
+    } | null,
 }
 
 type OnlineRestroData = {
@@ -209,8 +215,6 @@ const Restaurants = () => {
 
             <div className="flex flex-col px-4 pt-4">
 
-                <button onClick={() => console.log(pageData)}>Load Page Data</button>
-
                 {/* Shimmer */}
                 {showShimmer && <RestaurantsShimmer />}
 
@@ -235,7 +239,7 @@ const Restaurants = () => {
                         wrapperClasses="flex z-20 mt-auto mb-0 max-h-[75vh] rounded-t-[25px] w-full overflow-hidden bg-white dark:bg-zinc-900 lg:m-auto lg:rounded-[25px] lg:w-[55vw] lg:max-h-[65vh]"
                         closeBtnClasses="top-[26.4%] h-[35px] w-[35px] text-black rounded-full shadow-md p-1.5 leading-none right-3.5 lg:top-[19%] lg:right-[23%] dark:bg-zinc-900 dark:text-zinc-400"
                     >
-                        <Filters data={pageData?.onlineRestroFilters} onApply={filterAPICall} />
+                        <RestroFilters data={pageData?.onlineRestroFilters || null} onApply={() => {filterAPICall(); setShowFilters(false)}} />
 
                     </LightBox>
                 )}
@@ -285,7 +289,7 @@ const Restaurants = () => {
                         {pageData.banner && (
                             <div className="flex gap-4 items-center no-scrollbar overflow-x-scroll overflow-y-hidden">
                                 {pageData.banner?.map(slide => (
-                                    <img key={slide?.id} className="w-[80%] lg:w-[40%] rounded-xl" src={CONSTANTS.IMG_CDN + slide?.imageId} alt={slide?.accessibility?.altText} />
+                                    <img key={slide?.id} className="w-[80%] lg:w-[40%] rounded-[25px]" src={CONSTANTS.IMG_CDN + slide?.imageId} alt={slide?.accessibility?.altText} />
                                 ))}
                             </div>
                         )}
@@ -368,9 +372,7 @@ const Restaurants = () => {
                                                             onSelect={() => filterClickHandle(1)}
                                                             onDeSelect={() => filterClickHandle(-1)}
                                                             key={filter?.id}
-                                                        >
-                                                            {filter?.label}
-                                                        </FiltersButton>
+                                                        >{filter?.label}</FiltersButton>
                                                     )
                                                 })
                                             }

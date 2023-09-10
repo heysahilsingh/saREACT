@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-type FilterOptions = {
+export type FilterOptions = {
     id: string,
     key: string,
     label: string,
@@ -18,7 +18,7 @@ type FilterOptionsFunction = {
     input: "CHECKBOX" | "RADIO"
 }
 
-interface FiltersProps {
+interface RestroFiltersProps {
     data: {
         facetList: FilterOptions[],
         sortConfigs: FilterOptions[]
@@ -26,7 +26,9 @@ interface FiltersProps {
     onApply: () => void,
 }
 
-const Filters = (props: FiltersProps) => {
+const RestroFilters = (props: RestroFiltersProps) => {
+    const [applyFilters, setApplyFilters] = useState<boolean>(false)
+
     const [filterCaption, setFilterCaption] = useState("Sort by");
 
     const [filterOptions, setFilterOptions] = useState<FilterOptionsFunction>({
@@ -35,17 +37,16 @@ const Filters = (props: FiltersProps) => {
     });
 
     const printFilterOptions = (arg: FilterOptionsFunction) => {
-        console.log(arg);
 
         const { options, input } = arg;
 
         const inputType = input === "CHECKBOX" ? "checkbox" : "radio";
 
         return (
-            <div className="overflow-scroll no-scrollbar flex flex-col gap-[16px] justify-start items-start h-full">
+            <div className="overflow-scroll no-scrollbar flex flex-col gap-[16px] justify-start items-start h-full pl-1">
                 {options?.map((option) => (
-                    <span className="flex gap-2 items-center" key={(option?.key) || (option?.id + option?.label)}>
-                        <input className="appearance-none checked:bg-blue-500" type={inputType} name="filteroptions" value={option?.title || option?.label} id={(option?.key) || option?.id} />
+                    <span onClick={() => setApplyFilters(true)} className="flex gap-2 items-center" key={(option?.key) || (option?.id + option?.label)}>
+                        <input type={inputType} name="filteroptions" value={option?.title || option?.label} id={(option?.key) || option?.id} />
                         <label htmlFor={(option?.key) || option?.id}>{option?.title || option?.label}</label>
                     </span>
                 ))}
@@ -55,9 +56,9 @@ const Filters = (props: FiltersProps) => {
 
     return (
         <div className="filters flex flex-col w-full max-h-[inherit]">
-            <div className="heading border-b py-4 px-6 font-bold text-xl dark:border-zinc-800">Filters</div>
+            <div className="border-b py-4 px-6 font-bold text-xl dark:border-zinc-800">Filters</div>
             <div className="flex min-h-[50px] grow">
-                <div className="headings flex flex-col border-r dark:border-zinc-800 w-[45%] lg:w-[30%]">
+                <div className="headings heading no-scrollbar overflow-scroll flex flex-col border-r dark:border-zinc-800 w-[45%] lg:w-[30%]">
                     <ul>
                         <li
                             className="cursor-pointer font-bold text-zinc-500 py-[18px] px-[24px]"
@@ -96,8 +97,14 @@ const Filters = (props: FiltersProps) => {
                     </div>
                 </div>
             </div>
+            {applyFilters && (
+                <div className="apply flex gap-6 font-bold bg-white dark:bg-zinc-800 w-full justify-end py-3 px-5 shadow-[0_0px_10px_0px_rgba(40,44,63,0.1)]">
+                    <button onClick={() => setApplyFilters(false)} className="text-primary">Clear Filters</button>
+                    <button onClick={() => props?.onApply && props.onApply()} className="text-white bg-primary rounded-xl py-2.5 px-6">Apply</button>
+                </div>
+            )}
         </div>
     )
 }
 
-export default Filters
+export default RestroFilters

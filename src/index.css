@@ -48,7 +48,7 @@ html.dark .shimmer-bg {
 }
 
 img{
-  background-color: rgba(0,0,0,0.1);
+  /* background-color: rgba(0,0,0,0.1); */
 }
 
 /* Shimmer */
@@ -74,9 +74,15 @@ html.dark .shimmer-bg {
 }
 
 
-/* SAAA */
+/* INPUT TYPE RADIO AND CHECKBOX */
+input[type="checkbox"]{
+  accent-color: #fc8019;
+  width: 15px;
+  height: 15px;
+}
+
 input[type="radio"]{
-  border:2px solid white;
+  border: 2px solid white;
   box-shadow:0 0 0 1px #02060c99;
   appearance:none;
   border-radius:50%;
@@ -84,32 +90,23 @@ input[type="radio"]{
   height:12px;
   background-color: transparent;
   transition:all ease-in 0.2s;
+  width: 15px;
+  height: 15px;
 }
 
 html.dark input[type="radio"] {
-  border-color: rgba(255,255,255,0.4);
+  border: 2px solid rgb(24,24,27);
+  box-shadow:0 0 0 1px rgba(255,255,255,0.3);
 
+}
+
+html.dark input[type="radio"]:checked{
+  box-shadow:0 0 0 1px #fc8019;
 }
 
 input[type="radio"]:checked{
   background-color: #fc8019;
   box-shadow:0 0 0 1px #fc8019;
-}
-
-
-#yes{
-  border:2px solid white;
-  box-shadow:0 0 0 1px #392;
-  appearance:none;
-  border-radius:50%;
-  width:12px;
-  height:12px;
-  background-color: red;
-  transition:all ease-in 0.2s;
-
-}
-#yes:checked{
-  background-color:#392;
 }
 
 
@@ -140,40 +137,40 @@ input[type="radio"]:checked{
 }
 
 .sa-dark-toggle:checked {
-  background-color: green;
+  background-color: green !important;
 }
 
 .sa-dark-toggle:checked:after {
-  transform: translate(23px, -50%);
+  transform: translate(23px, -50%) !important;
 }
 
 .sa-dark-toggle {
-  height: 28px;
-  width: 52px;
-  border-radius: 15px;
-  display: inline-block;
-  position: relative;
-  margin: 0;
-  background: grey;
-  transition: all 0.2s;
-  appearance: none;
-  outline: none;
-  position: fixed;
-  z-index: 999999;
-  bottom: 50px;
-  left: 50px;
+  height: 28px !important;
+  width: 52px !important;
+  border-radius: 15px !important;
+  display: inline-block !important;
+  position: relative !important;
+  margin: 0 !important;
+  background: grey !important;
+  transition: all 0.2s !important;
+  appearance: none !important;
+  outline: none !important;
+  position: fixed !important;
+  z-index: 999999 !important;
+  bottom: 50px !important;
+  left: 50px !important;
 }
 
 .sa-dark-toggle:after {
   content: '';
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 3px;
-  width: 23px;
-  height: 23px;
-  border-radius: 50%;
-  background: white;
-  box-shadow: var(--box-shadow);
-  transition: all 0.2s cubic-bezier(0.5, 0.1, 0.75, 1.35);
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  left: 3px !important;
+  width: 23px !important;
+  height: 23px !important;
+  border-radius: 50% !important;
+  background: white !important;
+  box-shadow: var(--box-shadow) !important;
+  transition: all 0.2s cubic-bezier(0.5, 0.1, 0.75, 1.35) !important;
 }

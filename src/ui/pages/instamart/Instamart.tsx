@@ -1,9 +1,9 @@
-import HomeShimmer from "../home/HomeShimmer"
+import RestaurantsShimmer from "../restaurants/RestaurantsShimmer"
 
 const Instamart = () => {
     return (
         <div>
-            <HomeShimmer />
+            <RestaurantsShimmer />
         </div>
     )
 }

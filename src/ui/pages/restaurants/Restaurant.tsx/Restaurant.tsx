@@ -7,8 +7,6 @@ import Page from "../../Page";
 import RestaurantShimmer from "./RestaurantShimmer";
 import ErrorComp from "../../../components/NetworkError";
 
-// name + locality + arean name + city + restroId  Slug
-
 const Restaurant = () => {
     const { userInfo } = useContext(UserContext);
 

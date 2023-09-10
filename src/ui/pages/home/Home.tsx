@@ -14,6 +14,7 @@ import HomeShimmer from "./HomeShimmer";
 import NetworkError from "../../components/NetworkError";
 import SwiggyError from "../../components/SwiggyError";
 import SwiggyNotAvailableImg from "../../../assets/images/swiggy-not-available.jpeg";
+import { useNavigate } from "react-router-dom";
 
 type Api_Card = {
     id: string,
@@ -54,6 +55,8 @@ type PageData = {
 
 const Home = () => {
     const device = useDeviceDetect();
+
+    const navigate = useNavigate();
 
     const { userInfo } = useContext(UserContext);
 
@@ -133,7 +136,7 @@ const Home = () => {
         if (!device.isDesk) fetchData();
     }, [userInfo]);
 
-    if (device.isDesk) return
+    if (device.isDesk) navigate(routePaths.restaurants);
     else {
         return (
             <Page pageName="home">

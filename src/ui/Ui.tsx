@@ -13,6 +13,7 @@ import Near from "./pages/near/Near";
 import { UserContextProvider } from "../context/UserContext";
 import Restaurants from "./pages/restaurants/Restaurants";
 import Restaurant from "./pages/restaurants/Restaurant.tsx/Restaurant";
+import Collections from "./pages/collections/Collections";
 
 const UI = () => {
   return (
@@ -37,6 +38,7 @@ export const routePaths = {
   search: "/search",
   restaurants: "/restaurants",
   restaurant: "/restaurants/:restaurantSlug",
+  collections: "/collections/:collectionId"
 }
 
 export const routes = createBrowserRouter([
@@ -87,6 +89,10 @@ export const routes = createBrowserRouter([
       {
         path: routePaths.restaurant,
         element: <Restaurant />,
+      },
+      {
+        path: routePaths.collections,
+        element: <Collections />,
       }
     ]
   },

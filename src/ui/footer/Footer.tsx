@@ -4,8 +4,13 @@ import CONSTANTS from "../../constants"
 import Logo from "../../theme/Logo"
 import InfoCardSection from "./InfoCardSection";
 import { routePaths } from "../Ui";
+import useDeviceDetect from "../../hooks/useDeviceDetect";
 
 const Footer = () => {
+
+    const device = useDeviceDetect();
+
+    const homeURL = device?.isDesk ? routePaths.restaurants : routePaths.home;
 
     return (
         <footer className="footer mt-12">
@@ -35,7 +40,7 @@ const Footer = () => {
                 <div className="px-5 pt-8 pb-40 grid grid-cols-2 gap-x-[10%] gap-y-[6%] lg:px-0 lg:pt-12 lg:pb-28 lg:grid-cols-4 lg:gap-x-[5%] lg:gap-y-[0] sa-container">
                     <div className="col-start-1 col-end-3 lg:col-span-1 lg:row-start-1 lg:row-end-5 lg:col-start-1 lg:col-end-auto">
                         <div className="flex w-fit items-center justify-start gap-2 lg:gap-3 text-white">
-                            <Link to={routePaths.home}>
+                            <Link to={homeURL}>
                                 <Logo className="w-6 lg:w-8" />
                             </Link>
                             <span className="font-bold leading-none text-xl">Swiggy</span>

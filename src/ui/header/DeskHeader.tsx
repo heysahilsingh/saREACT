@@ -6,9 +6,14 @@ import UserContext from "../../context/UserContext";
 import { routePaths } from "../Ui";
 import LightBox from "../components/LightBox";
 import LocationSearch from "../components/LocationSearch/LocationSearch";
+import useDeviceDetect from "../../hooks/useDeviceDetect";
 
 const DeskHeader = () => {
     const { userInfo } = useContext(UserContext);
+
+    const device = useDeviceDetect();
+
+    const homeURL = device?.isDesk ? routePaths.restaurants : routePaths.home;
 
     const [openLightBox, setOpenLightBox] = useState<boolean>(false);
 
@@ -16,18 +21,16 @@ const DeskHeader = () => {
         <>
             {openLightBox && (
                 <LightBox 
-                isOpen={openLightBox}
                 onCLose={() => setOpenLightBox(false)}
                 wrapperClasses="mr-auto ml-0 relative z-20 bg-white h-full w-full p-3 pt-16 lg:w-[700px] lg:p-10 dark:bg-neutral-900"
-                closeBtnClasses ="top-3 right-3 lg:top-8 lg:right-8 text-black dark:text-zinc-400 lg:text-white"
-                >
+                closeBtnClasses ="top-3 right-3 lg:top-8 lg:right-8 text-black dark:text-zinc-400 lg:text-white">
                     <LocationSearch onSelect={() => setOpenLightBox(false)} screen="desk" />
                 </LightBox>
             )}
 
             <div className="desk shadow-[0_15px_40px_-20px_rgba(40,44,63,.3)] bg-white text-black dark:shadow-[0_15px_40px_-20px_rgba(0,0,0,1)] dark:bg-neutral-950 dark:text-slate-200 dark:border-b dark:border-neutral-800">
                 <div className="sa-container mx-auto flex gap-10 items-center p-4">
-                    <NavLink to={routePaths.home} className="logo">
+                    <NavLink to={homeURL} className="logo">
                         <Logo fill="gradient" className="w-8" />
                     </NavLink>
                     <div onClick={() => setOpenLightBox(true)} className="location flex gap-2 items-center justify-start cursor-pointer text-sm">
