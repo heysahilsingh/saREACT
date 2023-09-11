@@ -17,7 +17,7 @@ const LightBox = (props: LightBoxProps) => {
 
     return (
         <div className="lightbox fixed top-0 left-0 w-full min-h-full z-[999] flex flex-col items-start justify-start">
-            <div className={props?.wrapperClasses + " wrapper grow"}>
+            <div className={props?.wrapperClasses + " wrapper grow z-20"}>
                 {props?.children}
             </div>
             <div className="backdrop z-10 absolute top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.8)]"></div>
