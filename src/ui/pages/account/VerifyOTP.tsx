@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { ActionProps } from './Account';
 import { useNavigate } from 'react-router-dom';
 import { routePaths } from '../../Ui';
 import useDeviceDetect from '../../../hooks/useDeviceDetect';
+import UserContext from '../../../context/UserContext';
 
 const VerifyOTP = (props: ActionProps) => {
 
-    // Define other action
-    props.setOtherAction(null)
-    // Define the other action heading
-    props.setOtherActionHeading("We've sent an OTP to your phone number");
+    useEffect(() => {
+        // Define other action
+        props.setOtherAction(null)
+        // Define the other action heading
+        props.setOtherActionHeading("We've sent an OTP to your phone number");
+    }, [])
+
+    const userInfo = useContext(UserContext);
 
     const navigate = useNavigate();
 
@@ -37,6 +42,11 @@ const VerifyOTP = (props: ActionProps) => {
     const verifyOTPHandler = () => {
         if (inputValue !== "") {
             if (inputValue === "123456") {
+                userInfo.updateUserInfo({
+                    ...userInfo.userInfo,
+                    isLoggedIn: true
+                })
+
                 navigate(device.isDesk ? routePaths.restaurants : routePaths.home)
             } else {
                 setErrorMessage("Invalid OTP, Please try again. ( Use 123456 )")

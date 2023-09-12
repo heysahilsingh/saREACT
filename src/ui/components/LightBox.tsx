@@ -6,13 +6,13 @@ interface LightBoxProps {
     children: ReactNode,
     wrapperClasses: string,
     closeBtnClasses: string,
-    onCLose?: () => void
+    onClose?: () => void
 }
 
 const LightBox = (props: LightBoxProps) => {
 
     const closeLightBox = () => {
-        if (props.onCLose) props.onCLose()
+        if (props.onClose) props.onClose()
     }
 
     return (

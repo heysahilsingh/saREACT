@@ -235,7 +235,7 @@ const Restaurants = () => {
                 {/* LightBox Filter Options */}
                 {showFilters && pageData?.onlineRestroFilters?.facetList && (
                     <LightBox
-                        onCLose={() => setShowFilters(false)}
+                        onClose={() => setShowFilters(false)}
                         wrapperClasses="flex z-20 mt-auto mb-0 max-h-[75vh] rounded-t-[25px] w-full overflow-hidden bg-white dark:bg-zinc-900 lg:m-auto lg:rounded-[25px] lg:w-[55vw] lg:max-h-[65vh]"
                         closeBtnClasses="top-[26.4%] h-[35px] w-[35px] text-black rounded-full shadow-md p-1.5 leading-none right-3.5 lg:top-[19%] lg:right-[23%] dark:bg-zinc-900 dark:text-zinc-400"
                     >
@@ -247,7 +247,7 @@ const Restaurants = () => {
                 {/* LightBox Filter Sort By Options */}
                 {showSortFilterContainer && pageData?.onlineRestroFilters?.sortConfigs && (
                     <LightBox
-                        onCLose={() => setShowSortFilterContainer(false)}
+                        onClose={() => setShowSortFilterContainer(false)}
                         wrapperClasses="flex items-center justify-center z-20 h-full w-full p-10"
                         closeBtnClasses="top-3 right-3 lg:top-8 lg:right-8 text-white"
                     >

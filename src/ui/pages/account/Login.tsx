@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ActionProps } from './Account';
 
 const Login = (props: ActionProps) => {
-    // Define other action
-    props.setOtherAction("Sign up")
-    // Define the other action heading
-    props.setOtherActionHeading("or create an account");
+
+    useEffect(() => {
+        // Define other action
+        props.setOtherAction("Sign up")
+        // Define the other action heading
+        props.setOtherActionHeading("or create an account");
+    }, []);
 
     const [inputValue, setInputValue] = useState("");
     const [isShowingError, setIsShowingError] = useState<boolean>(false);

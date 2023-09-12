@@ -21,7 +21,7 @@ const DeskHeader = () => {
         <>
             {openLightBox && (
                 <LightBox 
-                onCLose={() => setOpenLightBox(false)}
+                onClose={() => setOpenLightBox(false)}
                 wrapperClasses="mr-auto ml-0 relative z-20 bg-white h-full w-full p-3 pt-16 lg:w-[700px] lg:p-10 dark:bg-neutral-900"
                 closeBtnClasses ="top-3 right-3 lg:top-8 lg:right-8 text-black dark:text-zinc-400 lg:text-white">
                     <LocationSearch onSelect={() => setOpenLightBox(false)} screen="desk" />

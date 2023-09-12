@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import IMG from "../../../assets/images/account-page.png";
 import Login from "./Login";
 import SignUp from "./SignUp";
@@ -7,6 +7,8 @@ import useDeviceDetect from "../../../hooks/useDeviceDetect";
 import LightBox from "../../components/LightBox";
 import { useNavigate } from "react-router-dom";
 import { routePaths } from "../../Ui";
+import UserContext from "../../../context/UserContext";
+import Page from "../Page";
 
 export type validActions = "Login" | "Sign up" | "Verify OTP" | null;
 
@@ -19,6 +21,8 @@ export interface ActionProps {
 
 const Account = () => {
     const device = useDeviceDetect();
+
+    const userInfo = useContext(UserContext);
 
     const [isLightBoxOpen, setIsLightBoxOpen] = useState<boolean>(true);
 
@@ -74,25 +78,41 @@ const Account = () => {
         );
     }
 
-    if (device.isDesk && isLightBoxOpen) {
+    // Return JSX
+    if (userInfo.userInfo.isLoggedIn) {
         return (
-            <LightBox
-                wrapperClasses="h-full w-[25%] max-w-[450px] ml-auto top-0 bg-white"
-                closeBtnClasses="right-4 top-4 text-black"
-                onCLose={() => {
-                    navigate(device.isDesk ? routePaths.restaurants : routePaths.home)
-                    setIsLightBoxOpen(false)
-                }}
-            >
-                {form()}
-            </LightBox>
+            <Page pageName="my-account">
+                <div className="flex items-center justify-center p-8">
+                    <button
+                        onClick={() => {
+                            userInfo.updateUserInfo({ ...userInfo.userInfo, isLoggedIn: false });
+                            navigate(device.isDesk ? routePaths.restaurants : routePaths.home)
+                        }}
+                        className="p-4 font-bold text-[14px] leading-none uppercase bg-primary text-white">Logout</button>
+                </div>
+            </Page>
         )
     }
-
     else {
-        return form()
+        return (
+            <Page pageName="my-account">
+                {
+                    device.isDesk && isLightBoxOpen ? (
+                        <LightBox
+                            wrapperClasses="h-full w-[25%] max-w-[450px] ml-auto top-0 bg-white"
+                            closeBtnClasses="right-4 top-4 text-black"
+                            onClose={() => {
+                                navigate(device.isDesk ? routePaths.restaurants : routePaths.home);
+                                setIsLightBoxOpen(false);
+                            }}
+                        >
+                            {form()}
+                        </LightBox>
+                    ) : form()
+                }
+            </Page>
+        )
     }
-
 };
 
 export default Account;
