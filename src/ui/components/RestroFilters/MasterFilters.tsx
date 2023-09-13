@@ -58,7 +58,7 @@ const MasterFilters = (props: MasterFiltersProps) => {
 
                                     const filter = props.filters[filterKey as keyof FiltersInterface];
 
-                                    if (filter?.filterInfo?.id)
+                                    if (filter?.filterInfo?.id && filter.filterOptions.length > 0)
                                         return (
                                             <li
                                                 className="cursor-pointer font-bold text-zinc-500 py-[18px] px-[24px]"
