@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
-import { FilterOption, FiltersInterface } from "./RestroFilters"
+import { FilterOption, FilterType } from "./RestroFilters"
 import OpenFiltersButton from "./OpenFilterButton"
 import { IconChevronDown } from "@tabler/icons-react"
 import LightBox from "../LightBox"
 
 interface SortByFilterProps {
-    filters: FiltersInterface,
+    sortFilter: FilterType | undefined,
     onApply: (selectedOption: FilterOption | undefined) => void
 }
 
@@ -17,9 +17,9 @@ const SortByFilter = (props: SortByFilterProps) => {
 
     useEffect(() => {
         setSelectedOption(
-            props.filters.sortBy?.filterOptions?.find(option => option.selected === true)
+            props.sortFilter?.filterOptions?.find(option => option.selected === true)
         )
-    }, [props.filters])
+    }, [props.sortFilter])
 
     const handleOptionSelection = (selection: FilterOption) => setSelectedOption(selection)
 
@@ -29,11 +29,9 @@ const SortByFilter = (props: SortByFilterProps) => {
         setShowFilterContainer(false)
     }
 
-
-
     return (
         <>
-            {showFilterContainer && props.filters?.sortBy && (
+            {showFilterContainer && props.sortFilter && (
                 <LightBox
                     onClose={() => setShowFilterContainer(false)}
                     wrapperClasses="flex items-center justify-center z-20 h-full w-full p-10"
@@ -41,12 +39,12 @@ const SortByFilter = (props: SortByFilterProps) => {
                 >
                     <div className="shadow-xl w-max rounded-[15px] border-2 border-zinc-200 bg-white dark:bg-zinc-900 dark:border-zinc-800 flex flex-col z-10 text-left">
                         <div className="flex leading-[120%] flex-col gap-6 py-6 px-4">
-                            {props.filters?.sortBy?.filterOptions?.map(option => {
+                            {props.sortFilter?.filterOptions?.map(option => {
                                 return (
                                     <div key={option.id} className="flex justify-between items-center gap-6">
                                         <label className="grow" htmlFor={option.id}>{option.label}</label>
                                         <input
-                                            type="radio"
+                                            type={props.sortFilter?.filterInfo?.selection === "SELECT_TYPE_MULTISELECT" ? "checkbox" : "radio"}
                                             id={option.id}
                                             name="sortBy"
                                             checked={selectedOption?.id === option.id}
@@ -63,7 +61,7 @@ const SortByFilter = (props: SortByFilterProps) => {
                 </LightBox>
             )}
 
-            <OpenFiltersButton onClick={() => setShowFilterContainer(true)} isSelectable={false}>
+            <OpenFiltersButton isPreSelected={false} onClick={() => setShowFilterContainer(true)} isSelectable={false}>
                 {sortFilterText}
                 <IconChevronDown className="text-zinc-700 dark:text-zinc-400" size={16} />
             </OpenFiltersButton>

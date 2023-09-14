@@ -1,9 +1,10 @@
-import { useState, useCallback, ReactNode } from "react";
+import { useState, useEffect, useCallback, ReactNode } from "react";
 import { IconX } from '@tabler/icons-react';
 
 interface OpenFiltersButtonProps {
     children: ReactNode,
     isSelectable: boolean,
+    isPreSelected: boolean,
     onSelect?: () => void,
     onDeSelect?: () => void,
     onClick?: () => void,
@@ -13,6 +14,8 @@ interface OpenFiltersButtonProps {
 const OpenFiltersButton = (props: OpenFiltersButtonProps) => {
 
     const [selected, setSelected] = useState<boolean>(false);
+
+    useEffect(() => setSelected(props.isPreSelected), [props.isPreSelected])
 
     const onSelect = useCallback(() => {
         if (props.isSelectable) {

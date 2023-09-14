@@ -12,15 +12,15 @@ interface MasterFiltersProps {
 const MasterFilters = (props: MasterFiltersProps) => {
 
     useEffect(() => {
-        setDefaultFilter(props.filters.cuisines)
+        setDefaultFilter(props.filters.sortAttribute)
     }, [props.filters]);
 
     // Default Filter
-    const [defaultFilter, setDefaultFilter] = useState(props.filters.sortBy);
+    const [defaultFilter, setDefaultFilter] = useState(props.filters.sortAttribute);
 
     // Print Filters Option for Master Filter
     const printFilterOptions = (filter: FilterType | undefined) => {
-        const filterType = filter?.filterInfo?.selectionType === "SELECT_TYPE_MULTISELECT" ? "checkbox" : "radio";
+        const filterType = filter?.filterInfo?.selection === "SELECT_TYPE_MULTISELECT" ? "checkbox" : "radio";
 
         return (
             <div className="content flex flex-col px-[12px] pb-[24px] grow text-[14px] lg:px-[20px]">
@@ -29,7 +29,7 @@ const MasterFilters = (props: MasterFiltersProps) => {
                     <div className="overflow-scroll no-scrollbar flex flex-col gap-[16px] justify-start items-start h-full pl-1">
                         {filter?.filterOptions?.map((option) => (
                             <span className="flex gap-2 items-center" key={option.id}>
-                                <input type={filterType} name="filteroptions" id={option.id} />
+                                <input type={filterType} name="filteroptions" id={option.id} checked={option.selected}/>
                                 <label htmlFor={option.id}>{option.label}</label>
                             </span>
                         ))}
@@ -39,7 +39,7 @@ const MasterFilters = (props: MasterFiltersProps) => {
         )
     }
 
-    if (props.filters.sortBy) {
+    if (props.filters.sortAttribute) {
         return (
             <LightBox
                 wrapperClasses="flex items-end justify-start lg:items-center lg:justify-center z-20 w-full overflow-hidden"
@@ -58,7 +58,7 @@ const MasterFilters = (props: MasterFiltersProps) => {
 
                                     const filter = props.filters[filterKey as keyof FiltersInterface];
 
-                                    if (filter?.filterInfo?.id && filter.filterOptions.length > 0)
+                                    if ((filter?.filterInfo?.id && filter?.filterOptions?.length) ?? 0 > 0) {
                                         return (
                                             <li
                                                 className="cursor-pointer font-bold text-zinc-500 py-[18px] px-[24px]"
@@ -66,6 +66,7 @@ const MasterFilters = (props: MasterFiltersProps) => {
                                                 onClick={() => setDefaultFilter(filter)}
                                             >{filter?.filterInfo?.label}</li>
                                         )
+                                    }
                                 })}
                             </ul>
                         </div>

@@ -1,17 +1,17 @@
-import { useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import OpenFiltersButton from "./OpenFilterButton"
 import { IconAdjustmentsHorizontal } from "@tabler/icons-react"
 import MasterFilters from "./MasterFilters"
 import SortByFilter from "./SortByFilter"
+import useDeviceDetect from "../../../hooks/useDeviceDetect"
 import CONSTANTS from "../../../constants"
-import UserContext from "../../../context/UserContext"
 
 
 type FilterInfo = {
-    id: string | undefined,
+    id: "deliveryTime" | "catalog_cuisines" | "explore" | "rating" | "isVeg" | "restaurantOfferMultiTd" | "costForTwo" | "sortAttribute" | undefined,
     label: string | undefined,
     subLabel: string | undefined,
-    selectionType: "SELECT_TYPE_MULTISELECT" | "SELECT_TYPE_SINGLESELECT" | undefined,
+    selection: "SELECT_TYPE_MULTISELECT" | "SELECT_TYPE_SINGLESELECT" | undefined,
 }
 
 export type FilterOption = {
@@ -27,70 +27,72 @@ export type FilterType = {
 }
 
 export interface FiltersInterface {
-    sortBy: FilterType | undefined,
+    sortAttribute: FilterType | undefined,
     deliveryTime: FilterType | undefined,
-    cuisines: FilterType | undefined,
+    catalog_cuisines: FilterType | undefined,
     explore: FilterType | undefined,
-    ratings: FilterType | undefined,
-    vegNonveg: FilterType | undefined,
-    offers: FilterType | undefined,
+    rating: FilterType | undefined,
+    isVeg: FilterType | undefined,
+    restaurantOfferMultiTd: FilterType | undefined,
     costForTwo: FilterType | undefined
 }
 
 interface RestroFiltersProps {
-    data: {
+    filters: {
         sortConfigs: { key: string, title: string, selected: boolean }[],
-        facetList: {
-            id: string | undefined,
-            label: string | undefined,
-            subLabel: string | undefined,
-            selection: "SELECT_TYPE_MULTISELECT" | "SELECT_TYPE_SINGLESELECT" | undefined,
+        facetList: (FilterInfo & {
             facetInfo: FilterOption[]
-        }[],
-    }
+        })[]
+    } | null,
+    setFilters: (filters: {
+        sortConfigs: { key: string, title: string, selected: boolean }[],
+        facetList: (FilterInfo & {
+            facetInfo: FilterOption[]
+        })[]
+    } | null) => void,
+    setRestrosList: [],
 }
 
 const RestroFIlters = (props: RestroFiltersProps) => {
 
-    const { userInfo } = useContext(UserContext);
-
-    // ActiveFilters
-    const ActiveFilters: FilterOption[] = [];
+    const device = useDeviceDetect();
 
     // Filters Data
     const [filters, setFilters] = useState<FiltersInterface>({
-        sortBy: undefined,
+        sortAttribute: undefined,
         deliveryTime: undefined,
-        cuisines: undefined,
+        catalog_cuisines: undefined,
         explore: undefined,
-        ratings: undefined,
-        vegNonveg: undefined,
-        offers: undefined,
+        rating: undefined,
+        isVeg: undefined,
+        restaurantOfferMultiTd: undefined,
         costForTwo: undefined
 
     })
+
+    // const [filterfetchBody]
 
     const [showMasterFilter, setShowMasterFilter] = useState<boolean>(false);
     const [activeFiltersCount, setActiveFiltersCount] = useState<number>(0);
 
     useEffect(() => {
 
-        const deliveryFilter = props?.data?.facetList?.find(filter => filter.id === "deliveryTime");
-        const cuisinesFilter = props?.data?.facetList?.find(filter => filter.id === "catalog_cuisines");
-        const exploreFilter = props?.data?.facetList?.find(filter => filter.id === "explore");
-        const ratingsFilter = props?.data?.facetList?.find(filter => filter.id === "rating");
-        const vegNonVegFilter = props?.data?.facetList?.find(filter => filter.id === "isVeg");
-        const offersFilter = props?.data?.facetList?.find(filter => filter.id === "restaurantOfferMultiTd");
-        const costForTwoFilter = props?.data?.facetList?.find(filter => filter.id === "costForTwo");
+        const deliveryFilter = props.filters?.facetList?.find(filter => filter.id === "deliveryTime");
+        const cuisinesFilter = props.filters?.facetList?.find(filter => filter.id === "catalog_cuisines");
+        const exploreFilter = props.filters?.facetList?.find(filter => filter.id === "explore");
+        const ratingsFilter = props.filters?.facetList?.find(filter => filter.id === "rating");
+        const vegNonVegFilter = props.filters?.facetList?.find(filter => filter.id === "isVeg");
+        const offersFilter = props.filters?.facetList?.find(filter => filter.id === "restaurantOfferMultiTd");
+        const costForTwoFilter = props.filters?.facetList?.find(filter => filter.id === "costForTwo");
 
 
         setFilters({
-            sortBy: {
-                filterOptions: props?.data?.sortConfigs?.map(value => {
+            sortAttribute: {
+                filterOptions: props.filters?.sortConfigs?.map(value => {
                     return {
                         id: value?.key,
                         label: value?.title,
-                        openFilter: undefined,
+                        openFilter: false,
                         selected: value.selected ? true : false
                     }
                 }),
@@ -98,7 +100,7 @@ const RestroFIlters = (props: RestroFiltersProps) => {
                     id: "sortAttribute",
                     label: "Sort by",
                     subLabel: "Sort by",
-                    selectionType: "SELECT_TYPE_SINGLESELECT"
+                    selection: "SELECT_TYPE_SINGLESELECT"
                 }
             },
             deliveryTime: {
@@ -106,30 +108,30 @@ const RestroFIlters = (props: RestroFiltersProps) => {
                     id: deliveryFilter?.id,
                     label: deliveryFilter?.label,
                     subLabel: deliveryFilter?.subLabel,
-                    selectionType: deliveryFilter?.selection
+                    selection: deliveryFilter?.selection
                 },
                 filterOptions: deliveryFilter?.facetInfo?.map(v => {
                     return {
                         id: v?.id,
                         label: v?.label,
                         openFilter: v?.openFilter,
-                        selected: false
+                        selected: v?.selected
                     }
                 })
             },
-            cuisines: {
+            catalog_cuisines: {
                 filterInfo: {
                     id: cuisinesFilter?.id,
                     label: cuisinesFilter?.label,
                     subLabel: cuisinesFilter?.subLabel,
-                    selectionType: cuisinesFilter?.selection
+                    selection: cuisinesFilter?.selection
                 },
                 filterOptions: cuisinesFilter?.facetInfo?.map(v => {
                     return {
                         id: v?.id,
                         label: v?.label,
                         openFilter: v?.openFilter,
-                        selected: false
+                        selected: v?.selected
                     }
                 })
             },
@@ -138,62 +140,62 @@ const RestroFIlters = (props: RestroFiltersProps) => {
                     id: exploreFilter?.id,
                     label: exploreFilter?.label,
                     subLabel: exploreFilter?.subLabel,
-                    selectionType: exploreFilter?.selection
+                    selection: exploreFilter?.selection
                 },
                 filterOptions: exploreFilter?.facetInfo?.map(v => {
                     return {
                         id: v?.id,
                         label: v?.label,
                         openFilter: v?.openFilter,
-                        selected: false
+                        selected: v?.selected
                     }
                 })
             },
-            ratings: {
+            rating: {
                 filterInfo: {
                     id: ratingsFilter?.id,
                     label: ratingsFilter?.label,
                     subLabel: ratingsFilter?.subLabel,
-                    selectionType: ratingsFilter?.selection
+                    selection: ratingsFilter?.selection
                 },
                 filterOptions: ratingsFilter?.facetInfo?.map(v => {
                     return {
                         id: v?.id,
                         label: v?.label,
                         openFilter: v?.openFilter,
-                        selected: false
+                        selected: v?.selected
                     }
                 })
             },
-            vegNonveg: {
+            isVeg: {
                 filterInfo: {
                     id: vegNonVegFilter?.id,
                     label: vegNonVegFilter?.label,
                     subLabel: vegNonVegFilter?.subLabel,
-                    selectionType: vegNonVegFilter?.selection
+                    selection: vegNonVegFilter?.selection
                 },
                 filterOptions: vegNonVegFilter?.facetInfo?.map(v => {
                     return {
                         id: v?.id,
                         label: v?.label,
                         openFilter: v?.openFilter,
-                        selected: false
+                        selected: v?.selected
                     }
                 })
             },
-            offers: {
+            restaurantOfferMultiTd: {
                 filterInfo: {
                     id: offersFilter?.id,
                     label: offersFilter?.label,
                     subLabel: offersFilter?.subLabel,
-                    selectionType: offersFilter?.selection
+                    selection: offersFilter?.selection
                 },
                 filterOptions: offersFilter?.facetInfo?.map(v => {
                     return {
                         id: v?.id,
                         label: v?.label,
                         openFilter: v?.openFilter,
-                        selected: false
+                        selected: v?.selected
                     }
                 })
             },
@@ -202,54 +204,130 @@ const RestroFIlters = (props: RestroFiltersProps) => {
                     id: costForTwoFilter?.id,
                     label: costForTwoFilter?.label,
                     subLabel: costForTwoFilter?.subLabel,
-                    selectionType: costForTwoFilter?.selection
+                    selection: costForTwoFilter?.selection
                 },
                 filterOptions: costForTwoFilter?.facetInfo?.map(v => {
                     return {
                         id: v?.id,
                         label: v?.label,
                         openFilter: v?.openFilter,
-                        selected: false
+                        selected: v?.selected
                     }
                 })
             },
         })
 
-    }, [props?.data])
+    }, [props.filters])
 
+    // Handle Active Filter Count
+    useEffect(() => {
 
-    // Handle activeFilterCount
-    const handleActiveFiltersCount = (count: number) => {
-        setActiveFiltersCount(prev => prev + count)
-    }
+        // Function to set ActiveFilterCount
+        function handleActiveFilterCount(obj: FiltersInterface) {
+
+            for (const key in obj) {
+                const filterOptions = obj[key as keyof FiltersInterface]?.filterOptions;
+                if (filterOptions) {
+                    if (filterOptions.some(option => option.selected && option.id !== "relevance")) {
+                        setActiveFiltersCount(prev => prev + 1)
+                    }
+                }
+            }
+        }
+
+        handleActiveFilterCount(filters);
+
+    }, [filters])
+
 
     // Return Filtered Restro List
-    const filterRestro = async () => {
+    const FilterApplied = async (count: number) => {
         try {
-            console.log(ActiveFilters);
 
-            // https://www.swiggy.com/api/seo/getListing?lat=28.65420&lng=77.23730
+            const URL = device.isDesk ? CONSTANTS.API_RESTRO_UPDATE.desk : CONSTANTS.API_RESTRO_UPDATE.mob
 
-            const URL = `${CONSTANTS.API_RESTRO_FILTERED}lat=${userInfo.location.cityInfo.latitude}&lng=${userInfo.location.cityInfo.longitude}`;
+            const requestBody = {
+                "filters": {
+                    "isFiltered": true,
+                    "facets": {
+                        "deliveryTime": [
+                        ],
+                        "isVeg": [
+                            {
+                                "value": "isVegfacetquery2"
+                            }
+                        ],
+                        "restaurantOfferMultiTd": [
+                            {
+                                "value": "restaurantOfferMultiTdfacetquery3"
+                            }
+                        ],
+                        "costForTwo": [
+                            {
+                                "value": "costForTwofacetquery5"
+                            }
+                        ],
+                        "rating": [
+                            {
+                                "value": "ratingfacetquery4"
+                            }
+                        ],
+                        "catalog_cuisines": [
+                            {
+                                "value": "query_biryani"
+                            },
+                            {
+                                "value": "query_barbecue"
+                            },
+                            {
+                                "value": "query_beverages"
+                            },
+                            {
+                                "value": "query_chinese"
+                            },
+                            {
+                                "value": "query_desserts"
+                            }
+                        ]
+                    },
+                    "sortAttribute": "deliveryTimeAsc"
+                },
+                "lat": 28.410492,
+                "lng": 77.0463719,
+                "widgetOffset": {
+                    "collectionV5RestaurantListWidget_SimRestoRelevance_food_seo": `${count}`,
+                },
+            }
 
-            const response = await fetch(URL,)
+            // Request options
+            const requestOptions = {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify(requestBody)
+            };
 
+            // Send the request
+            const response = await fetch(URL, requestOptions);
             const responseData = await response.json();
 
+            props.setFilters(responseData?.data?.cards?.find((value: {card: {card: {facetList: []}}}) => value.card?.card?.facetList)?.card?.card);
+            // console.log(responseData?.data?.cards?.find(d => d.card?.card?.facetList)?.card?.card);
+            // console.log(responseData?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
 
-
-
-            console.log(responseData);
+            // props.setFilters(responseData?.data?.success?.cards[0]?.card?.card)
 
         } catch (error) {
-            console.log(error);
+            console.error("Error:", error);
         }
-    }
+    };
 
-    if (filters.sortBy) {
+    if ((filters?.sortAttribute?.filterOptions || []).length > 0) {
         return (
             <div className="filters sticky lg:top-0 top-[64px] z-10 bg-white dark:bg-neutral-950 py-3 lg:py-6">
                 <div className="flex gap-2 items-center no-scrollbar overflow-scroll">
+
+                    <button onClick={() => FilterApplied(13)}>First: 13</button>
+                    <button onClick={() => FilterApplied(25)}>Next: 25</button>
 
                     {/* Master Filter */}
                     {showMasterFilter && (
@@ -259,6 +337,7 @@ const RestroFIlters = (props: RestroFiltersProps) => {
                     {/* Master Filter Button */}
                     <OpenFiltersButton
                         isSelectable={false}
+                        isPreSelected={false}
                         onClick={() => setShowMasterFilter(true)}
                         className={`${activeFiltersCount > 0 ? "border-zinc-400 bg-zinc-200 dark:bg-zinc-800 dark:border-zinc-600" : "border-zinc-200 bg-transparent dark:border-zinc-800"}`}>
                         {activeFiltersCount > 0 && (
@@ -272,21 +351,22 @@ const RestroFIlters = (props: RestroFiltersProps) => {
 
                     {/* Sort by FIlter */}
                     <SortByFilter
-                        filters={filters}
+                        sortFilter={filters?.sortAttribute}
                         onApply={(data) => console.log(data)}
                     />
 
                     {/* Open Filters */}
                     {Object.keys(filters).map((filterKey) => {
-                        if (filterKey !== "cuisines") {
+                        if (filterKey !== "catalog_cuisines") {
                             const openFilter = filters[filterKey as keyof FiltersInterface]?.filterOptions?.filter(option => option.openFilter === true);
                             return openFilter?.map(filter => {
                                 return (
                                     <OpenFiltersButton
                                         isSelectable={true}
+                                        isPreSelected={filter.selected ? true : false}
                                         key={filter?.id}
-                                        onSelect={() => { handleActiveFiltersCount(1); filterRestro() }}
-                                        onDeSelect={() => { handleActiveFiltersCount(-1); filterRestro() }}
+                                        onSelect={() => FilterApplied(13)}
+                                        onDeSelect={() => FilterApplied(25)}
                                     >
                                         {filter?.label}
                                     </OpenFiltersButton>

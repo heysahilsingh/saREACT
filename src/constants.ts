@@ -6,12 +6,12 @@ const CONSTANTS = {
       mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/homepage/getCards?",
       desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/homepage/getCards?"
       // location after "?" in "lat=2&lng=2"
-   }, 
+   },
    API_PAGE_RESTAURANTS: {
       mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&",
       desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&"
       // location after "&" in "lat=2&lng=2"
-   }, 
+   },
 
    API_PAGE_RESTAURANT: {
       mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&",
@@ -22,6 +22,11 @@ const CONSTANTS = {
    API_RESTRO_NEAR: "https://corsproxy.io/?https://www.swiggy.com/api/seo/getListing?", // location after "?" in "lat=2&lng=2"
 
    API_RESTRO_FILTERED: "https://corsproxy.io/?https://www.swiggy.com/api/seo/getListing?", // location after "?" in "lat=2&lng=2"
+
+   API_RESTRO_UPDATE: {
+      mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/list/update",
+      desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/restaurants/list/update"
+   },
 
    API_LOCATION_SUGGESTION: {
       mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc/place-autocomplete?input=",
@@ -40,6 +45,66 @@ const CONSTANTS = {
          // after ? "latlng=28.721152%2C77.0605056"
       }
    },
+}
+
+export type TypeRestroCard = {
+   aggregatedDiscountInfoV2: object,
+   aggregatedDiscountInfoV3: {
+      header: string,
+      subHeader: string
+  }
+   areaName: string,
+   availability: {
+      nextCloseTime: string,
+      opened: boolean
+   },
+   avgRating: number,
+   avgRatingString: string,
+   badges: object,
+   badgesV2: {
+      cloudinaryImageId: string,
+      costForTwo: string,
+      entityBadges: {
+         imageBased: object,
+         textBased: object,
+         textExtendedBadges: object
+      }
+   },
+   cloudinaryImageId: string,
+   costForTwo: string,
+   cuisines: string[],
+   differentiatedUi: {
+      displayType: string,
+      differentiatedUiMediaDetails: {
+         lottie: object,
+         mediaType: string,
+         video: object
+      }
+   },
+   displayType: string,
+   feeDetails: {
+      fees: {name: string, fee: number}[],
+      restaurantId: string,
+      totalFee: number
+   },
+   id: string,
+   isOpen: boolean,
+   locality: string,
+   name: string,
+   parentId: string,
+   restaurantOfferPresentationInfo: object,
+   reviewsSummary: object,
+   sla: {
+      deliveryTime: number,
+      iconType: string,
+      lastMileTravel: number,
+      lastMileTravelString: string,
+      serviceability: string,
+      slaString: string
+   },
+   totalRatingsString: string,
+   type: string,
+   veg: boolean
 }
 
 export default CONSTANTS

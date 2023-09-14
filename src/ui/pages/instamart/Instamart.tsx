@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from "react";
-import RestroFIlters from "../../components/RestroFilters/RestroFilters"
 import useDeviceDetect from "../../../hooks/useDeviceDetect";
 import CONSTANTS from "../../../constants";
 import UserContext from "../../../context/UserContext";
+import FilteredRestro from "../../components/FilteredRestro/FilteredRestro";
 
 const Instamart = () => {
 
-    const [data, setData] = useState(null);
+    const [restroFilter, setRestroFilter] = useState(null);
+    const [restrosList, setRestrosList] = useState(null);
 
     const { userInfo } = useContext(UserContext);
     const device = useDeviceDetect();
@@ -23,7 +24,8 @@ const Instamart = () => {
                 if (responseData?.data?.cards) {
                     const data = responseData?.data?.cards?.map((card: { card: { card: [] } }) => card?.card?.card);
 
-                    setData(data.find(d => d.facetList))
+                    setRestroFilter(data.find((d: {facetList: object, id: string}) => d.facetList))
+                    setRestrosList(data.find((d: {facetList: object, id: string}) => d.id === "restaurant_grid_listing")?.gridElements?.infoWithStyle?.restaurants)
 
                 } else {
                     throw new Error(responseData?.data?.statusMessage);
@@ -39,7 +41,10 @@ const Instamart = () => {
 
     return (
         <div>
-            <RestroFIlters data={data} />
+            <FilteredRestro
+            filters={restroFilter}
+            restros={restrosList}
+            />
         </div>
     )
 }
