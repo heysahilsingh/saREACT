@@ -48,7 +48,11 @@ const CONSTANTS = {
 }
 
 export type TypeRestroCard = {
-   aggregatedDiscountInfoV2: object,
+   aggregatedDiscountInfoV2: {
+      header: string,
+      descriptionList: {discountType: string, meta: string, operationType: string}[],
+      shortDescriptionList: {discountType: string, meta: string, operationType: string}[],
+   },
    aggregatedDiscountInfoV3: {
       header: string,
       subHeader: string

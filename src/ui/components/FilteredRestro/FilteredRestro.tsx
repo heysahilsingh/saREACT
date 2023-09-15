@@ -1,7 +1,11 @@
 
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { routePaths } from '../../Ui';
 import { TypeRestroCard } from '../../../constants';
+import RestroCard, { RestroCardShimmer } from '../RestroCard';
+import UserContext from '../../../context/UserContext';
+import FilteredRestroFilters from './FilteredRestroFilters/FilteredRestroFilters';
+import FilteredRestroFiltersShimmer from './FilteredRestroFilters/FilteredRestroFiltersShimmer';
 
 export type FilterInfo = {
     id: "deliveryTime" | "catalog_cuisines" | "explore" | "rating" | "isVeg" | "restaurantOfferMultiTd" | "costForTwo" | "sortAttribute" | undefined,
@@ -22,9 +26,9 @@ export type FiltersProp = {
     facetList: (FilterInfo & {
         facetInfo: FilterOption[]
     })[]
-} | null
+} | undefined
 
-export type RestrosProp = TypeRestroCard[] | null
+export type RestrosProp = { info: TypeRestroCard }[] | undefined
 
 interface FilteredRestroProps {
     filters: FiltersProp,
@@ -33,31 +37,49 @@ interface FilteredRestroProps {
 
 const FilteredRestro = (props: FilteredRestroProps) => {
 
-    const [restros, setRestros] = useState(props.restros);
+    const { userInfo } = useContext(UserContext);
+    const [restros, setRestros] = useState<TypeRestroCard[] | undefined>(undefined);
+    const [filters, setFilters] = useState<FiltersProp | undefined>(undefined);
 
-    console.log(props);
+    useEffect(() => {
+        setRestros(
+            props?.restros?.map(restro => restro?.info)
+        );
+
+        setFilters(props.filters)
+
+    }, [props.restros, props.filters])
 
     return (
-        <div className="lists grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 lg:gap-8 pt-3 lg:pt-5 no-scrollbar overflow-x-scroll overflow-y-hidden">
-            {restros?.map(restro => {
+        <div className="container flex flex-col px-4">
+            {/* Filters */}
+            {filters ? <FilteredRestroFilters filters={filters} setFilters={setFilters} setRestro={setRestros} /> : <FilteredRestroFiltersShimmer />}
 
-                const link = routePaths.restaurants + "/" + [restro.name, restro.locality, restro.areaName, userInfo.location.cityInfo.cityName, restro.id].map(value => value ? value.replace(/[^a-zA-Z0-9]/g, '-') : "").join("-").toLowerCase();
+            {/* Restros */}
+            <div className="restros lists grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 lg:gap-8 pt-3 lg:pt-5 no-scrollbar overflow-x-scroll overflow-y-hidden">
+                {/* Restros SHimmer */}
+                {!restros && [1,2,3,4,5,6,7,8,9,10,11,12].map((v: number) => <RestroCardShimmer key={v}/>)}
 
-                return (
-                    <TopRestaurant
-                        key={restro?.id}
-                        name={restro?.name}
-                        link={link}
-                        averageRating={restro?.avgRating}
-                        cuisines={restro?.cuisines}
-                        areaName={restro?.areaName}
-                        imageId={restro?.cloudinaryImageId}
-                        offerHeader={restro?.aggregatedDiscountInfoV3?.header}
-                        offerSubHeader={restro?.aggregatedDiscountInfoV3?.subHeader}
-                        className="min-w-[35% lg:min-w-[27%]"
-                    />
-                )
-            })}
+                {(restros && restros?.length > 0) && restros?.map(restro => {
+                    const link = `${routePaths.restaurants}/${[restro.name, restro.locality, restro.areaName, userInfo.location.cityInfo.cityName, restro.id].map(value => value ? value.replace(/[^a-zA-Z0-9]/g, '-') : "").join("-").toLowerCase()}`;
+
+                    return (
+                        <RestroCard
+                            key={restro.id}
+                            imageId={restro.cloudinaryImageId}
+                            offerHeader={restro.aggregatedDiscountInfoV3?.header ? restro.aggregatedDiscountInfoV3?.header : restro.aggregatedDiscountInfoV2?.header}
+                            offerSubHeader={restro.aggregatedDiscountInfoV3?.subHeader}
+                            name={restro.name}
+                            avgRating={restro.avgRating}
+                            cuisines={restro.cuisines}
+                            areaName={restro.areaName}
+                            link={link}
+                        />
+                    )
+                })}
+            </div>
+
+            <button className='w-full border p-3'>Show More</button>
         </div>
     )
 }
