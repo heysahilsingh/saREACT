@@ -3,9 +3,7 @@ import OpenFiltersButton from "./OpenFilterButton"
 import { IconAdjustmentsHorizontal } from "@tabler/icons-react"
 import MasterFilters from "./MasterFilters"
 import SortByFilter from "./SortByFilter"
-import useDeviceDetect from "../../../../hooks/useDeviceDetect"
-import CONSTANTS, { TypeRestroCard } from "../../../../constants"
-import { FiltersProp } from "../FilteredRestro"
+import { APIRequestBodyType, FiltersProp } from "../FilteredRestro"
 
 
 type FilterInfo = {
@@ -40,17 +38,10 @@ export interface FiltersInterface {
 
 interface FilteredRestroFiltersProps {
     filters: FiltersProp | undefined,
-    setFilters: (filters: FiltersProp | undefined) => void,
-    setRestros: (restros: TypeRestroCard[] | undefined) => void,
-    nextRestrosOffset: number,
-    setNextRestrosOffset: (offset: number) => void
+    setAPIRequestBody: (newBody: APIRequestBodyType) => void
 }
 
 const FilteredRestroFilters = (props: FilteredRestroFiltersProps) => {
-
-    console.log("Re rendered filtered");
-
-    const device = useDeviceDetect();
 
     // Filters Data
     const [filters, setFilters] = useState<FiltersInterface>({
@@ -231,102 +222,6 @@ const FilteredRestroFilters = (props: FilteredRestroFiltersProps) => {
 
     }, [filters])
 
-    // Return Filtered Restro List
-    const FilterApplied = async (method: "UPDATE" | "LOAD_MORE") => {
-        if (props.nextRestrosOffset !== 0) {
-            try {
-
-                const URL = device.isDesk ? CONSTANTS.API_RESTRO_UPDATE.desk : CONSTANTS.API_RESTRO_UPDATE.mob
-                const requestBody = {
-                    "filters": {
-                        "isFiltered": true,
-                        "facets": {
-                            "deliveryTime": [
-                            ],
-                            "isVeg": [
-                                {
-                                    "value": "isVegfacetquery2"
-                                }
-                            ],
-                            "restaurantOfferMultiTd": [
-                                {
-                                    "value": "restaurantOfferMultiTdfacetquery3"
-                                }
-                            ],
-                            "costForTwo": [
-                                {
-                                    "value": "costForTwofacetquery5"
-                                }
-                            ],
-                            "rating": [
-                                {
-                                    "value": "ratingfacetquery4"
-                                }
-                            ],
-                            "catalog_cuisines": [
-                                {
-                                    "value": "query_biryani"
-                                },
-                                {
-                                    "value": "query_barbecue"
-                                },
-                                {
-                                    "value": "query_beverages"
-                                },
-                                {
-                                    "value": "query_chinese"
-                                },
-                                {
-                                    "value": "query_desserts"
-                                }
-                            ]
-                        },
-                        "sortAttribute": "deliveryTimeAsc"
-                    },
-                    "lat": 28.410492,
-                    "lng": 77.0463719,
-                    "widgetOffset": {
-                        "collectionV5RestaurantListWidget_SimRestoRelevance_food_seo": `${props.nextRestrosOffset}`,
-                    },
-                }
-                // Request options
-                // const requestOptions = {
-                //     method: "POST",
-                //     headers: { "content-type": "application/json" },
-                //     body: JSON.stringify(requestBody)
-                // };
-
-                // if (method === "LOAD_MORE") {   
-                //     // Send the request
-                //     const response = await fetch(URL, requestOptions);
-                //     const responseData = await response.json();
-
-                //     props.setRestros((prev) => [...prev, ...responseData?.data?.cards?.find((value: { card: { card: { id: string } } }) => value.card?.card?.id === "restaurant_grid_listing")?.card?.card?.gridElements?.infoWithStyle?.restaurants?.map((restro: { info: object }) => restro?.info)]);
-                //     props.setNextRestrosOffset(Number(responseData?.data?.pageOffset?.widgetOffset?.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo))
-                // }
-                // else {
-                //     props.setFilters(undefined)
-                //     props.setRestros(undefined)
-
-                //     // Send the request
-                //     const response = await fetch(URL, requestOptions);
-                //     const responseData = await response.json();
-
-                //     props.setFilters(responseData?.data?.cards?.find((value: { card: { card: { facetList: [] } } }) => value.card?.card?.facetList)?.card?.card);
-
-                //     props.setRestros(responseData?.data?.cards?.find((value: { card: { card: { id: string } } }) => value.card?.card?.id === "restaurant_grid_listing")?.card?.card?.gridElements?.infoWithStyle?.restaurants?.map((restro: { info: object }) => restro?.info));
-
-                //     props.setNextRestrosOffset(Number(responseData?.data?.pageOffset?.widgetOffset?.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo))
-                // }
-
-                console.log(URL, requestBody, method);
-
-            } catch (error) {
-                console.warn("Error:", error);
-            }
-        }
-    };
-
     if ((filters?.sortAttribute?.filterOptions || []).length > 0) {
         return (
             <div className="filters sticky lg:top-0 top-[0] z-10 bg-white dark:bg-neutral-950 py-3 lg:py-6">
@@ -363,8 +258,8 @@ const FilteredRestroFilters = (props: FilteredRestroFiltersProps) => {
                                         isSelectable={true}
                                         isPreSelected={filter.selected ? true : false}
                                         key={filter?.id}
-                                        onSelect={() => FilterApplied("LOAD_MORE")}
-                                        onDeSelect={() => FilterApplied("UPDATE")}
+                                        onSelect={() => console.log("LOAD_MORE")}
+                                        onDeSelect={() => console.log("UPDATE")}
                                     >
                                         {filter?.label}
                                     </OpenFiltersButton>

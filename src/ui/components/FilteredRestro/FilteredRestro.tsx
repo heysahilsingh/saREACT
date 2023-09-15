@@ -8,6 +8,25 @@ import FilteredRestroFilters from './FilteredRestroFilters/FilteredRestroFilters
 import FilteredRestroFiltersShimmer from './FilteredRestroFilters/FilteredRestroFiltersShimmer';
 import useDeviceDetect from '../../../hooks/useDeviceDetect';
 
+export type APIRequestBodyType = {
+    filters: {
+        isFiltered: true,
+        facets: {
+            deliveryTime: { value: string }[] | [],
+            isVeg: { value: string }[] | [],
+            restaurantOfferMultiTd: { value: string }[] | [],
+            explore: { value: string }[] | [],
+            costForTwo: { value: string }[] | [],
+            rating: { value: string }[] | [],
+            catalog_cuisines: { value: string }[] | []
+        },
+        sortAttribute: string
+    },
+    lat: number,
+    lng: number,
+    widgetOffset: { collectionV5RestaurantListWidget_SimRestoRelevance_food_seo: string },
+}
+
 export type FilterInfo = {
     id: "deliveryTime" | "catalog_cuisines" | "explore" | "rating" | "isVeg" | "restaurantOfferMultiTd" | "costForTwo" | "sortAttribute" | undefined,
     label: string | undefined,
@@ -34,11 +53,47 @@ export type RestrosProp = { info: TypeRestroCard }[] | undefined
 interface FilteredRestroProps {
     filters: FiltersProp,
     restros: RestrosProp,
-    nextRestrosOffset: number,
+    nextRestrosOffset: string,
     restrosLoadType: "INFINITE" | "ON_CLICK"
 }
 
 const FilteredRestro = (props: FilteredRestroProps) => {
+
+    const [APIRequestBody, setAPIRequestBody] = useState<APIRequestBodyType>({
+        filters: {
+            isFiltered: true,
+            facets: {
+                explore: [],
+                deliveryTime: [
+                ],
+                isVeg: [
+                    { value: "isVegfacetquery2" }
+                ],
+                restaurantOfferMultiTd: [
+                    { value: "restaurantOfferMultiTdfacetquery3" }
+                ],
+                costForTwo: [
+                    { value: "costForTwofacetquery5" }
+                ],
+                rating: [
+                    { value: "ratingfacetquery4" }
+                ],
+                catalog_cuisines: [
+                    { value: "query_biryani" },
+                    { value: "query_barbecue" },
+                    { value: "query_beverages" },
+                    { value: "query_chinese" },
+                    { value: "query_desserts" }
+                ]
+            },
+            sortAttribute: "deliveryTimeAsc"
+        },
+        lat: 28.410492,
+        lng: 77.0463719,
+        widgetOffset: {
+            collectionV5RestaurantListWidget_SimRestoRelevance_food_seo: "10",
+        },
+    });
 
     const { userInfo } = useContext(UserContext);
     const device = useDeviceDetect();
@@ -47,77 +102,40 @@ const FilteredRestro = (props: FilteredRestroProps) => {
 
     const [restros, setRestros] = useState<TypeRestroCard[] | undefined>(undefined);
     const [filters, setFilters] = useState<FiltersProp | undefined>(undefined);
-    const [nextRestrosOffset, setNextRestrosOffset] = useState<number>(0);
+    const [nextRestrosOffset, setNextRestrosOffset] = useState<string>("10");
     const loadMoreRestrosBtnRef = useRef<HTMLButtonElement | null>(null)
 
     // Set the restros, filters and nextRestrosOffset
     useEffect(() => {
         setRestros(props?.restros?.map(restro => restro?.info))
         setFilters(props.filters)
-        setNextRestrosOffset(props.nextRestrosOffset ? props.nextRestrosOffset : 10)
+        setNextRestrosOffset(props.nextRestrosOffset ? props.nextRestrosOffset : "10")
     }, [props.restros, props.filters, props.nextRestrosOffset])
 
-    // Intersection Observer for Load more button
+    // Assign Intersection Observer to Load more button
     useEffect(() => {
-        const observer = new IntersectionObserver((entries) => {
-            // Check if the target element is intersecting
-            if (entries[0]?.isIntersecting) {
-                if (nextRestrosOffset !== 0) updateAPICall("LOAD_MORE")
-            }
+        const observer = new IntersectionObserver(entries => {
+            console.log(entries[0]);
+            if (entries[0]?.isIntersecting && nextRestrosOffset !== "") updateAPICall("LOAD_MORE", APIRequestBody)
         });
 
-        if (loadMoreRestrosBtnRef?.current) observer.observe(loadMoreRestrosBtnRef.current);
+        const btn = loadMoreRestrosBtnRef?.current;
+        if (btn) observer.observe(btn);
 
         return () => {
-            if (loadMoreRestrosBtnRef?.current) observer.unobserve(loadMoreRestrosBtnRef?.current);
+            if (btn) observer.unobserve(btn);
         };
 
     }, []);
 
-    useEffect(() => console.log("restro state changed"), [restros])
+    // useEffect(() => console.log(nextRestrosOffset), [nextRestrosOffset])
 
-    const updateAPICall = async (method: "UPDATE" | "LOAD_MORE", d) => {
-        console.log(nextRestrosOffset);
-        if (nextRestrosOffset === 0) return
+    const updateAPICall = async (method: "UPDATE" | "LOAD_MORE", requestBody: APIRequestBodyType) => {
+        if (nextRestrosOffset === "") return
 
         try {
-
             const URL = device.isDesk ? CONSTANTS.API_RESTRO_UPDATE.desk : CONSTANTS.API_RESTRO_UPDATE.mob
-            // Request Body
-            const requestBody = {
-                "filters": {
-                    "isFiltered": true,
-                    "facets": {
-                        "deliveryTime": [
-                        ],
-                        "isVeg": [
-                            { "value": "isVegfacetquery2" }
-                        ],
-                        "restaurantOfferMultiTd": [
-                            { "value": "restaurantOfferMultiTdfacetquery3" }
-                        ],
-                        "costForTwo": [
-                            { "value": "costForTwofacetquery5" }
-                        ],
-                        "rating": [
-                            { "value": "ratingfacetquery4" }
-                        ],
-                        "catalog_cuisines": [
-                            { "value": "query_biryani" },
-                            { "value": "query_barbecue" },
-                            { "value": "query_beverages" },
-                            { "value": "query_chinese" },
-                            { "value": "query_desserts" }
-                        ]
-                    },
-                    "sortAttribute": "deliveryTimeAsc"
-                },
-                "lat": 28.410492,
-                "lng": 77.0463719,
-                "widgetOffset": {
-                    "collectionV5RestaurantListWidget_SimRestoRelevance_food_seo": `${d}`,
-                },
-            }
+
             // Request options
             const requestOptions = {
                 method: "POST",
@@ -127,17 +145,20 @@ const FilteredRestro = (props: FilteredRestroProps) => {
 
             if (method === "LOAD_MORE") {
 
+                // Show restros shimmer
                 setShowRestrosShimmer(true)
 
                 // Send the request
                 const response = await fetch(URL, requestOptions);
                 const responseData = await response.json();
 
-                setRestros((prev) => [...prev, ...responseData?.data?.cards?.find((value: { card: { card: { id: string } } }) => value.card?.card?.id === "restaurant_grid_listing")?.card?.card?.gridElements?.infoWithStyle?.restaurants?.map((restro: { info: object }) => restro?.info)]);
+                // Add more retros to restros state
+                setRestros(responseData?.data?.cards?.find((value: { card: { card: { id: string } } }) => value.card?.card?.id === "restaurant_grid_listing")?.card?.card?.gridElements?.infoWithStyle?.restaurants?.map((restro: { info: object }) => restro?.info));
 
-                setNextRestrosOffset(Number(responseData?.data?.pageOffset?.widgetOffset?.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo))
-                console.log(Number(responseData?.data?.pageOffset?.widgetOffset?.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo));
+                // Update nextOffset
+                setNextRestrosOffset(responseData?.data?.pageOffset?.widgetOffset?.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo)
 
+                // Hide restros shimmer
                 setShowRestrosShimmer(false)
             }
             else {
@@ -152,7 +173,7 @@ const FilteredRestro = (props: FilteredRestroProps) => {
 
                 setRestros(responseData?.data?.cards?.find((value: { card: { card: { id: string } } }) => value.card?.card?.id === "restaurant_grid_listing")?.card?.card?.gridElements?.infoWithStyle?.restaurants?.map((restro: { info: object }) => restro?.info));
 
-                setNextRestrosOffset(Number(responseData?.data?.pageOffset?.widgetOffset?.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo))
+                setNextRestrosOffset(responseData?.data?.pageOffset?.widgetOffset?.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo)
             }
 
         } catch (error) {
@@ -163,18 +184,15 @@ const FilteredRestro = (props: FilteredRestroProps) => {
     return (
         <div className="container flex flex-col px-4">
 
-            <button onClick={() => updateAPICall("LOAD_MORE", 10)}>10</button>
-            <button onClick={() => updateAPICall("LOAD_MORE", 20)}>20</button>
-            <button onClick={() => updateAPICall("LOAD_MORE", 40)}>40</button>
+            <button onClick={() => updateAPICall("LOAD_MORE", APIRequestBody)}>10</button>
+            <button onClick={() => updateAPICall("LOAD_MORE", APIRequestBody)}>20</button>
+            <button onClick={() => updateAPICall("LOAD_MORE", APIRequestBody)}>40</button>
 
             {/* Filters */}
             {!filters ? <FilteredRestroFiltersShimmer /> : (
                 <FilteredRestroFilters
                     filters={filters}
-                    setFilters={setFilters}
-                    setRestros={setRestros}
-                    nextRestrosOffset={nextRestrosOffset}
-                    setNextRestrosOffset={setNextRestrosOffset}
+                    setAPIRequestBody={setAPIRequestBody}
                 />
             )}
 
@@ -205,7 +223,7 @@ const FilteredRestro = (props: FilteredRestroProps) => {
                 {showRestrosShimmer && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((v: number) => <RestroCardShimmer key={v} />)}
             </div>
 
-            <button onClick={() => updateAPICall("LOAD_MORE")} ref={loadMoreRestrosBtnRef} className='w-full lg:max-w-[300px] mt-[40px] mx-auto rounded-xl border border-zinc-200 dark:border-zinc-800 p-3'>Show More</button>
+            <button ref={loadMoreRestrosBtnRef} className='w-full lg:max-w-[300px] mt-[40px] mx-auto rounded-xl border border-zinc-200 dark:border-zinc-800 p-3'>Show More</button>
         </div>
     )
 }

@@ -8,7 +8,7 @@ const Instamart = () => {
 
     const [restroFilter, setRestroFilter] = useState(null);
     const [restrosList, setRestrosList] = useState(null);
-    const [nextOffset, setNextOffset] = useState(10);
+    const [nextOffset, setNextOffset] = useState("10");
 
     const { userInfo } = useContext(UserContext);
     const device = useDeviceDetect();
@@ -27,7 +27,7 @@ const Instamart = () => {
 
                     setRestroFilter(data.find((d: {facetList: object, id: string}) => d.facetList))
                     setRestrosList(data.find((d: {facetList: object, id: string}) => d.id === "restaurant_grid_listing")?.gridElements?.infoWithStyle?.restaurants)
-                    setNextOffset(Number(data.pageOffset?.widgetOffset?.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo))
+                    setNextOffset(data.pageOffset?.widgetOffset?.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo)
 
                 } else {
                     throw new Error(responseData?.data?.statusMessage);
