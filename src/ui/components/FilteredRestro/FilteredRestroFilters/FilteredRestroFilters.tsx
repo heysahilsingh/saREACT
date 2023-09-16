@@ -38,6 +38,7 @@ export interface FiltersInterface {
 
 interface FilteredRestroFiltersProps {
     filters: FiltersProp | undefined,
+    APIRequestBody: APIRequestBodyType,
     setAPIRequestBody: (newBody: APIRequestBodyType) => void
 }
 
@@ -222,6 +223,24 @@ const FilteredRestroFilters = (props: FilteredRestroFiltersProps) => {
 
     }, [filters])
 
+    const handleOpenFilterClick = (parentId: string, filterOption: FilterOption) => {
+        props.setAPIRequestBody((prev) => {
+          return {
+            ...prev,
+            filters: {
+              ...prev.filters,
+              facets: {
+                ...prev.filters.facets,
+                [parentId]: [{ value: filterOption.id }]
+              }
+            }
+          };
+        });
+      };
+      
+      
+
+
     if ((filters?.sortAttribute?.filterOptions || []).length > 0) {
         return (
             <div className="filters sticky lg:top-0 top-[0] z-10 bg-white dark:bg-neutral-950 py-3 lg:py-6">
@@ -258,8 +277,8 @@ const FilteredRestroFilters = (props: FilteredRestroFiltersProps) => {
                                         isSelectable={true}
                                         isPreSelected={filter.selected ? true : false}
                                         key={filter?.id}
-                                        onSelect={() => console.log("LOAD_MORE")}
-                                        onDeSelect={() => console.log("UPDATE")}
+                                        onSelect={() => handleOpenFilterClick(filterKey, filter)}
+                                        onDeSelect={() => handleOpenFilterClick(filterKey, filter)}
                                     >
                                         {filter?.label}
                                     </OpenFiltersButton>

@@ -22,8 +22,8 @@ export type APIRequestBodyType = {
         },
         sortAttribute: string
     },
-    lat: number,
-    lng: number,
+    lat: number | null,
+    lng: number | null,
     widgetOffset: { collectionV5RestaurantListWidget_SimRestoRelevance_food_seo: string },
 }
 
@@ -59,44 +59,29 @@ interface FilteredRestroProps {
 
 const FilteredRestro = (props: FilteredRestroProps) => {
 
+    const { userInfo } = useContext(UserContext);
+    const device = useDeviceDetect();
+
     const [APIRequestBody, setAPIRequestBody] = useState<APIRequestBodyType>({
         filters: {
             isFiltered: true,
             facets: {
                 explore: [],
-                deliveryTime: [
-                ],
-                isVeg: [
-                    { value: "isVegfacetquery2" }
-                ],
-                restaurantOfferMultiTd: [
-                    { value: "restaurantOfferMultiTdfacetquery3" }
-                ],
-                costForTwo: [
-                    { value: "costForTwofacetquery5" }
-                ],
-                rating: [
-                    { value: "ratingfacetquery4" }
-                ],
-                catalog_cuisines: [
-                    { value: "query_biryani" },
-                    { value: "query_barbecue" },
-                    { value: "query_beverages" },
-                    { value: "query_chinese" },
-                    { value: "query_desserts" }
-                ]
+                deliveryTime: [],
+                isVeg: [],
+                restaurantOfferMultiTd: [],
+                costForTwo: [],
+                rating: [],
+                catalog_cuisines: []
             },
-            sortAttribute: "deliveryTimeAsc"
+            sortAttribute: "relevance"
         },
-        lat: 28.410492,
-        lng: 77.0463719,
+        lat: userInfo.location.cityInfo.latitude,
+        lng: userInfo.location.cityInfo.longitude,
         widgetOffset: {
             collectionV5RestaurantListWidget_SimRestoRelevance_food_seo: "10",
         },
     });
-
-    const { userInfo } = useContext(UserContext);
-    const device = useDeviceDetect();
 
     const [showRestrosShimmer, setShowRestrosShimmer] = useState<boolean>(false);
 
@@ -114,21 +99,20 @@ const FilteredRestro = (props: FilteredRestroProps) => {
 
     // Assign Intersection Observer to Load more button
     useEffect(() => {
-        const observer = new IntersectionObserver(entries => {
-            console.log(entries[0]);
-            if (entries[0]?.isIntersecting && nextRestrosOffset !== "") updateAPICall("LOAD_MORE", APIRequestBody)
-        });
+        // const observer = new IntersectionObserver(entries => {
+        //     if (entries[0]?.isIntersecting && nextRestrosOffset !== "") updateAPICall("LOAD_MORE", APIRequestBody)
+        // });
 
-        const btn = loadMoreRestrosBtnRef?.current;
-        if (btn) observer.observe(btn);
+        // const btn = loadMoreRestrosBtnRef?.current;
+        // if (btn) observer.observe(btn);
 
-        return () => {
-            if (btn) observer.unobserve(btn);
-        };
+        // return () => {
+        //     if (btn) observer.unobserve(btn);
+        // };
 
     }, []);
 
-    // useEffect(() => console.log(nextRestrosOffset), [nextRestrosOffset])
+    useEffect(() => console.log(APIRequestBody), [APIRequestBody])
 
     const updateAPICall = async (method: "UPDATE" | "LOAD_MORE", requestBody: APIRequestBodyType) => {
         if (nextRestrosOffset === "") return
@@ -192,6 +176,7 @@ const FilteredRestro = (props: FilteredRestroProps) => {
             {!filters ? <FilteredRestroFiltersShimmer /> : (
                 <FilteredRestroFilters
                     filters={filters}
+                    APIRequestBody={APIRequestBody}
                     setAPIRequestBody={setAPIRequestBody}
                 />
             )}

@@ -10,8 +10,8 @@ type UserInfo = {
     location: {
         isInstamartEnabled: boolean
         cityInfo: {
-            latitude: string | null
-            longitude: string | null
+            latitude: number | null
+            longitude: number | null
             place_id: string | null
             main_text: string | null
             secondary_text: string | null
