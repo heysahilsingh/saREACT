@@ -1,31 +1,11 @@
-
 import { useContext, useEffect, useState, useRef } from 'react';
 import { routePaths } from '../../Ui';
-import CONSTANTS, { TypeRestroCard } from '../../../constants';
+import CONSTANTS, { TypeRestroCard, TypeRestroFilterAPIBody } from '../../../constants';
 import RestroCard, { RestroCardShimmer } from '../RestroCard';
 import UserContext from '../../../context/UserContext';
 import FilteredRestroFilters from './FilteredRestroFilters/FilteredRestroFilters';
 import FilteredRestroFiltersShimmer from './FilteredRestroFilters/FilteredRestroFiltersShimmer';
 import useDeviceDetect from '../../../hooks/useDeviceDetect';
-
-export type APIRequestBodyType = {
-    filters: {
-        isFiltered: true,
-        facets: {
-            deliveryTime: { value: string }[] | [],
-            isVeg: { value: string }[] | [],
-            restaurantOfferMultiTd: { value: string }[] | [],
-            explore: { value: string }[] | [],
-            costForTwo: { value: string }[] | [],
-            rating: { value: string }[] | [],
-            catalog_cuisines: { value: string }[] | []
-        },
-        sortAttribute: string
-    },
-    lat: number | null,
-    lng: number | null,
-    widgetOffset: { collectionV5RestaurantListWidget_SimRestoRelevance_food_seo: string },
-}
 
 export type FilterInfo = {
     id: "deliveryTime" | "catalog_cuisines" | "explore" | "rating" | "isVeg" | "restaurantOfferMultiTd" | "costForTwo" | "sortAttribute" | undefined,
@@ -62,27 +42,6 @@ const FilteredRestro = (props: FilteredRestroProps) => {
     const { userInfo } = useContext(UserContext);
     const device = useDeviceDetect();
 
-    const [APIRequestBody, setAPIRequestBody] = useState<APIRequestBodyType>({
-        filters: {
-            isFiltered: true,
-            facets: {
-                explore: [],
-                deliveryTime: [],
-                isVeg: [],
-                restaurantOfferMultiTd: [],
-                costForTwo: [],
-                rating: [],
-                catalog_cuisines: []
-            },
-            sortAttribute: "relevance"
-        },
-        lat: userInfo.location.cityInfo.latitude,
-        lng: userInfo.location.cityInfo.longitude,
-        widgetOffset: {
-            collectionV5RestaurantListWidget_SimRestoRelevance_food_seo: "10",
-        },
-    });
-
     const [showRestrosShimmer, setShowRestrosShimmer] = useState<boolean>(false);
 
     const [restros, setRestros] = useState<TypeRestroCard[] | undefined>(undefined);
@@ -112,9 +71,7 @@ const FilteredRestro = (props: FilteredRestroProps) => {
 
     }, []);
 
-    useEffect(() => console.log(APIRequestBody), [APIRequestBody])
-
-    const updateAPICall = async (method: "UPDATE" | "LOAD_MORE", requestBody: APIRequestBodyType) => {
+    const updateAPICall = async (method: "UPDATE" | "LOAD_MORE", requestBody: TypeRestroFilterAPIBody) => {
         if (nextRestrosOffset === "") return
 
         try {
@@ -167,17 +124,17 @@ const FilteredRestro = (props: FilteredRestroProps) => {
 
     return (
         <div className="container flex flex-col px-4">
-
+            {/* 
             <button onClick={() => updateAPICall("LOAD_MORE", APIRequestBody)}>10</button>
             <button onClick={() => updateAPICall("LOAD_MORE", APIRequestBody)}>20</button>
-            <button onClick={() => updateAPICall("LOAD_MORE", APIRequestBody)}>40</button>
+            <button onClick={() => updateAPICall("LOAD_MORE", APIRequestBody)}>40</button> */}
 
             {/* Filters */}
             {!filters ? <FilteredRestroFiltersShimmer /> : (
                 <FilteredRestroFilters
                     filters={filters}
-                    APIRequestBody={APIRequestBody}
-                    setAPIRequestBody={setAPIRequestBody}
+                // APIRequestBody={APIRequestBody}
+                // setAPIRequestBody={setAPIRequestBody}
                 />
             )}
 

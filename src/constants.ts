@@ -111,4 +111,23 @@ export type TypeRestroCard = {
    veg: boolean
 }
 
+export type TypeRestroFilterAPIBody = {
+   filters: {
+       isFiltered: true,
+       facets: {
+           deliveryTime: { value: string }[] | [],
+           isVeg: { value: string }[] | [],
+           restaurantOfferMultiTd: { value: string }[] | [],
+           explore: { value: string }[] | [],
+           costForTwo: { value: string }[] | [],
+           rating: { value: string }[] | [],
+           catalog_cuisines: { value: string }[] | []
+       },
+       sortAttribute: string
+   },
+   lat: number | null,
+   lng: number | null,
+   widgetOffset: { collectionV5RestaurantListWidget_SimRestoRelevance_food_seo: string },
+}
+
 export default CONSTANTS
