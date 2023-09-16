@@ -223,23 +223,6 @@ const FilteredRestroFilters = (props: FilteredRestroFiltersProps) => {
 
     }, [filters])
 
-    const handleOpenFilterClick = (parentId: string, filterOption: FilterOption) => {
-        props.setAPIRequestBody((prev) => {
-          return {
-            ...prev,
-            filters: {
-              ...prev.filters,
-              facets: {
-                ...prev.filters.facets,
-                [parentId]: [{ value: filterOption.id }]
-              }
-            }
-          };
-        });
-      };
-      
-      
-
 
     if ((filters?.sortAttribute?.filterOptions || []).length > 0) {
         return (
@@ -277,8 +260,8 @@ const FilteredRestroFilters = (props: FilteredRestroFiltersProps) => {
                                         isSelectable={true}
                                         isPreSelected={filter.selected ? true : false}
                                         key={filter?.id}
-                                        onSelect={() => handleOpenFilterClick(filterKey, filter)}
-                                        onDeSelect={() => handleOpenFilterClick(filterKey, filter)}
+                                        onSelect={() => handleOpenFilterClick(filterKey, filter, "ADD")}
+                                        onDeSelect={() => handleOpenFilterClick(filterKey, filter, "REMOVE")}
                                     >
                                         {filter?.label}
                                     </OpenFiltersButton>
