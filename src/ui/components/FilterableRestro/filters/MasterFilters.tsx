@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
-import LightBox from "../LightBox"
-import { FilterType, FiltersInterface } from "./RestroFilters"
+import LightBox from "../../LightBox"
+import { FilterType, FiltersInterface } from "./Filters"
 
 interface MasterFiltersProps {
     filters: FiltersInterface,

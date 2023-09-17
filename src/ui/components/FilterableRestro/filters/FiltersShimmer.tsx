@@ -1,4 +1,4 @@
-const FilteredRestroFiltersShimmer = () => {
+const FiltersShimmer = () => {
     return (
         <div className="filters sticky lg:top-0 top-[0] z-10 bg-white dark:bg-neutral-950 py-3 lg:py-6">
             <div className="flex gap-2 items-center no-scrollbar overflow-scroll">
@@ -8,4 +8,4 @@ const FilteredRestroFiltersShimmer = () => {
     )
 }
 
-export default FilteredRestroFiltersShimmer
+export default FiltersShimmer

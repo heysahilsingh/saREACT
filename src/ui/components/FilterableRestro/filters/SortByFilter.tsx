@@ -1,31 +1,30 @@
-import { useEffect, useState } from "react"
-import { FilterOption, FilterType } from "./RestroFilters"
+import { useState } from "react"
 import OpenFiltersButton from "./OpenFilterButton"
 import { IconChevronDown } from "@tabler/icons-react"
-import LightBox from "../LightBox"
+import LightBox from "../../LightBox"
+import { FilterType } from "./Filters"
+import { FilterOption } from "../FilterableRestro"
 
 interface SortByFilterProps {
     sortFilter: FilterType | undefined,
-    onApply: (selectedOption: FilterOption | undefined) => void
+    onApply: (selectedOption: FilterOption) => void
 }
 
 const SortByFilter = (props: SortByFilterProps) => {
 
+    console.log("sortByFilters");
+
     const [sortFilterText, setSortFilterText] = useState<string | undefined>("Sort by");
     const [showFilterContainer, setShowFilterContainer] = useState<boolean>(false);
-    const [selectedOption, setSelectedOption] = useState<FilterOption | undefined>(undefined);
-
-    useEffect(() => {
-        setSelectedOption(
-            props.sortFilter?.filterOptions?.find(option => option.selected === true)
-        )
-    }, [props.sortFilter])
+    const [selectedOption, setSelectedOption] = useState<FilterOption | undefined>(props.sortFilter?.filterOptions?.find(option => option.selected === true));
 
     const handleOptionSelection = (selection: FilterOption) => setSelectedOption(selection)
 
     const handleApply = () => {
         selectedOption?.id !== "relevance" ? setSortFilterText(selectedOption?.label) : setSortFilterText("Sort by")
-        props.onApply && props.onApply(selectedOption)
+
+        if (selectedOption?.id) props.onApply && props.onApply(selectedOption)
+
         setShowFilterContainer(false)
     }
 

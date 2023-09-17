@@ -3,23 +3,7 @@ import OpenFiltersButton from "./OpenFilterButton"
 import { IconAdjustmentsHorizontal } from "@tabler/icons-react"
 import MasterFilters from "./MasterFilters"
 import SortByFilter from "./SortByFilter"
-import useDeviceDetect from "../../../hooks/useDeviceDetect"
-import CONSTANTS from "../../../constants"
-
-
-type FilterInfo = {
-    id: "deliveryTime" | "catalog_cuisines" | "explore" | "rating" | "isVeg" | "restaurantOfferMultiTd" | "costForTwo" | "sortAttribute" | undefined,
-    label: string | undefined,
-    subLabel: string | undefined,
-    selection: "SELECT_TYPE_MULTISELECT" | "SELECT_TYPE_SINGLESELECT" | undefined,
-}
-
-export type FilterOption = {
-    id: string | undefined,
-    label: string | undefined,
-    openFilter: boolean | undefined,
-    selected: boolean | undefined,
-}
+import { FilterInfo, FilterOption, FiltersProp } from "../FilterableRestro"
 
 export type FilterType = {
     filterInfo: FilterInfo | undefined,
@@ -37,25 +21,9 @@ export interface FiltersInterface {
     costForTwo: FilterType | undefined
 }
 
-interface RestroFiltersProps {
-    filters: {
-        sortConfigs: { key: string, title: string, selected: boolean }[],
-        facetList: (FilterInfo & {
-            facetInfo: FilterOption[]
-        })[]
-    } | null,
-    setFilters: (filters: {
-        sortConfigs: { key: string, title: string, selected: boolean }[],
-        facetList: (FilterInfo & {
-            facetInfo: FilterOption[]
-        })[]
-    } | null) => void,
-    setRestrosList: [],
-}
+const Filters = (props: { filters: FiltersProp | undefined, fetchFunction: (method: "UPDATE" | "LOAD_MORE") => Promise<void> }) => {
 
-const RestroFIlters = (props: RestroFiltersProps) => {
-
-    const device = useDeviceDetect();
+    console.log("Filters");
 
     // Filters Data
     const [filters, setFilters] = useState<FiltersInterface>({
@@ -67,10 +35,7 @@ const RestroFIlters = (props: RestroFiltersProps) => {
         isVeg: undefined,
         restaurantOfferMultiTd: undefined,
         costForTwo: undefined
-
     })
-
-    // const [filterfetchBody]
 
     const [showMasterFilter, setShowMasterFilter] = useState<boolean>(false);
     const [activeFiltersCount, setActiveFiltersCount] = useState<number>(0);
@@ -84,7 +49,6 @@ const RestroFIlters = (props: RestroFiltersProps) => {
         const vegNonVegFilter = props.filters?.facetList?.find(filter => filter.id === "isVeg");
         const offersFilter = props.filters?.facetList?.find(filter => filter.id === "restaurantOfferMultiTd");
         const costForTwoFilter = props.filters?.facetList?.find(filter => filter.id === "costForTwo");
-
 
         setFilters({
             sortAttribute: {
@@ -239,100 +203,13 @@ const RestroFIlters = (props: RestroFiltersProps) => {
 
     }, [filters])
 
-
-    // Return Filtered Restro List
-    const FilterApplied = async (count: number) => {
-        try {
-
-            const URL = device.isDesk ? CONSTANTS.API_RESTRO_UPDATE.desk : CONSTANTS.API_RESTRO_UPDATE.mob
-
-            const requestBody = {
-                "filters": {
-                    "isFiltered": true,
-                    "facets": {
-                        "deliveryTime": [
-                        ],
-                        "isVeg": [
-                            {
-                                "value": "isVegfacetquery2"
-                            }
-                        ],
-                        "restaurantOfferMultiTd": [
-                            {
-                                "value": "restaurantOfferMultiTdfacetquery3"
-                            }
-                        ],
-                        "costForTwo": [
-                            {
-                                "value": "costForTwofacetquery5"
-                            }
-                        ],
-                        "rating": [
-                            {
-                                "value": "ratingfacetquery4"
-                            }
-                        ],
-                        "catalog_cuisines": [
-                            {
-                                "value": "query_biryani"
-                            },
-                            {
-                                "value": "query_barbecue"
-                            },
-                            {
-                                "value": "query_beverages"
-                            },
-                            {
-                                "value": "query_chinese"
-                            },
-                            {
-                                "value": "query_desserts"
-                            }
-                        ]
-                    },
-                    "sortAttribute": "deliveryTimeAsc"
-                },
-                "lat": 28.410492,
-                "lng": 77.0463719,
-                "widgetOffset": {
-                    "collectionV5RestaurantListWidget_SimRestoRelevance_food_seo": `${count}`,
-                },
-            }
-
-            // Request options
-            const requestOptions = {
-                method: "POST",
-                headers: { "content-type": "application/json" },
-                body: JSON.stringify(requestBody)
-            };
-
-            // Send the request
-            const response = await fetch(URL, requestOptions);
-            const responseData = await response.json();
-
-            props.setFilters(responseData?.data?.cards?.find((value: {card: {card: {facetList: []}}}) => value.card?.card?.facetList)?.card?.card);
-            // console.log(responseData?.data?.cards?.find(d => d.card?.card?.facetList)?.card?.card);
-            // console.log(responseData?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
-
-            // props.setFilters(responseData?.data?.success?.cards[0]?.card?.card)
-
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    };
-
     if ((filters?.sortAttribute?.filterOptions || []).length > 0) {
         return (
-            <div className="filters sticky lg:top-0 top-[64px] z-10 bg-white dark:bg-neutral-950 py-3 lg:py-6">
+            <div className="filters sticky lg:top-0 top-[0] z-10 bg-white dark:bg-neutral-950 py-3 lg:py-6">
                 <div className="flex gap-2 items-center no-scrollbar overflow-scroll">
 
-                    <button onClick={() => FilterApplied(13)}>First: 13</button>
-                    <button onClick={() => FilterApplied(25)}>Next: 25</button>
-
                     {/* Master Filter */}
-                    {showMasterFilter && (
-                        <MasterFilters filters={filters} onClose={() => setShowMasterFilter(false)} />
-                    )}
+                    {showMasterFilter && <MasterFilters filters={filters} onClose={() => setShowMasterFilter(false)} />}
 
                     {/* Master Filter Button */}
                     <OpenFiltersButton
@@ -340,6 +217,7 @@ const RestroFIlters = (props: RestroFiltersProps) => {
                         isPreSelected={false}
                         onClick={() => setShowMasterFilter(true)}
                         className={`${activeFiltersCount > 0 ? "border-zinc-400 bg-zinc-200 dark:bg-zinc-800 dark:border-zinc-600" : "border-zinc-200 bg-transparent dark:border-zinc-800"}`}>
+
                         {activeFiltersCount > 0 && (
                             <div className="active-filters bg-primary rounded-full w-4 h-4 relative">
                                 <span className="text-[10px] absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 leading-none text-white">{activeFiltersCount}</span>
@@ -347,13 +225,11 @@ const RestroFIlters = (props: RestroFiltersProps) => {
                         )}
                         Filters
                         <IconAdjustmentsHorizontal className="text-zinc-700 dark:text-zinc-400" size={15} />
+
                     </OpenFiltersButton>
 
                     {/* Sort by FIlter */}
-                    <SortByFilter
-                        sortFilter={filters?.sortAttribute}
-                        onApply={(data) => console.log(data)}
-                    />
+                    <SortByFilter sortFilter={filters.sortAttribute} onApply={data => console.log(data)} />
 
                     {/* Open Filters */}
                     {Object.keys(filters).map((filterKey) => {
@@ -365,8 +241,8 @@ const RestroFIlters = (props: RestroFiltersProps) => {
                                         isSelectable={true}
                                         isPreSelected={filter.selected ? true : false}
                                         key={filter?.id}
-                                        onSelect={() => FilterApplied(13)}
-                                        onDeSelect={() => FilterApplied(25)}
+                                        onSelect={() => props.fetchFunction("UPDATE")}
+                                        onDeSelect={() => console.log("object")}
                                     >
                                         {filter?.label}
                                     </OpenFiltersButton>
@@ -382,4 +258,4 @@ const RestroFIlters = (props: RestroFiltersProps) => {
     }
 }
 
-export default RestroFIlters
+export default Filters

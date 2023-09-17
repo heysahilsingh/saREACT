@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import useDeviceDetect from "../../../hooks/useDeviceDetect";
 import CONSTANTS from "../../../constants";
 import UserContext from "../../../context/UserContext";
-import FilteredRestro from "../../components/FilteredRestro/FilteredRestro";
+import FilterableRestro from "../../components/FilterableRestro/FilterableRestro"
 
 const Instamart = () => {
 
@@ -25,8 +25,8 @@ const Instamart = () => {
                 if (responseData?.data?.cards) {
                     const data = responseData?.data?.cards?.map((card: { card: { card: [] } }) => card?.card?.card);
 
-                    setRestroFilter(data.find((d: {facetList: object, id: string}) => d.facetList))
-                    setRestrosList(data.find((d: {facetList: object, id: string}) => d.id === "restaurant_grid_listing")?.gridElements?.infoWithStyle?.restaurants)
+                    setRestroFilter(data.find((d: { facetList: object, id: string }) => d.facetList))
+                    setRestrosList(data.find((d: { facetList: object, id: string }) => d.id === "restaurant_grid_listing")?.gridElements?.infoWithStyle?.restaurants)
                     setNextOffset(data.pageOffset?.widgetOffset?.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo)
 
                 } else {
@@ -41,16 +41,17 @@ const Instamart = () => {
     }, [userInfo]);
 
 
-    return (
-        <div>
-            <FilteredRestro
-            filters={restroFilter}
-            restros={restrosList}
-            nextRestrosOffset={nextOffset}
-            restrosLoadType="ON_CLICK"
-            />
-        </div>
-    )
+    if (restroFilter && restrosList) {
+        return (
+            <div>
+                <FilterableRestro
+                    filters={restroFilter}
+                    restros={restrosList}
+                    restrosListLoadType="ON_CLICK"
+                />
+            </div>
+        )
+    }
 }
 
 export default Instamart
