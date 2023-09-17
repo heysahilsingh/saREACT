@@ -9,15 +9,13 @@ import FilterableRestroAPIBodyContext from '../../../context/FilterableRestroAPI
 import useDeviceDetect from '../../../hooks/useDeviceDetect';
 
 const FilterableRestroMain = (props: FilterableRestroProps) => {
-
-    console.log("FilterableRestroMain");
-
+    // console.log("FilterableRestroMain");
 
     const device = useDeviceDetect();
 
-    const { APIBody, updateAPIBody } = useContext(FilterableRestroAPIBodyContext);
+    const { APIBody, updateAPIBody } = useContext(FilterableRestroAPIBodyContext);    
     const [fetchingAPIData, setFetchingAPIData] = useState(false);
-    useEffect(() => console.log(APIBody.filters), [APIBody])
+    // useEffect(() => console.log(APIBody.filters), [APIBody])
 
     const [restros, setRestros] = useState<TypeRestroCard[] | undefined>(props.restros?.map(restro => restro?.info));
     const [filters, setFilters] = useState<FiltersProp | undefined>(props.filters);
@@ -44,21 +42,15 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
                 if (btn) observer.unobserve(btn);
             };
         }
-    }, [props.restrosListLoadType, fetchingAPIData]);
+    }, [props.restrosListLoadType, fetchingAPIData, APIBody]);
 
     // Fetch API Data Function
     const fetchAPIData = async (method: "UPDATE" | "LOAD_MORE") => {
-        console.log("fetchAPIData function called");
+        // console.log("fetchAPIData function called");
+
+        // console.log(APIBody.filters);
 
         if (APIBody.widgetOffset.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo === "") return
-
-        updateAPIBody({
-            ...APIBody,
-            filters: {
-                ...APIBody.filters,
-                sortAttribute: "modelBasedRatingDesc"
-            }
-        })
 
         try {
             const URL = device.isDesk ? CONSTANTS.API_RESTRO_UPDATE.desk : CONSTANTS.API_RESTRO_UPDATE.mob
@@ -133,10 +125,12 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
                 setFilters(newFilters)
 
                 // Update APIBody's nextPageOffset
-                updateAPIBody({
-                    ...APIBody,
-                    widgetOffset: {
-                        collectionV5RestaurantListWidget_SimRestoRelevance_food_seo: nextPageOffset
+                updateAPIBody(prev => {
+                    return {
+                        ...prev,
+                        widgetOffset: {
+                            collectionV5RestaurantListWidget_SimRestoRelevance_food_seo: nextPageOffset
+                        }
                     }
                 })
             }

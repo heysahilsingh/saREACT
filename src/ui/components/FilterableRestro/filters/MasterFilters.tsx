@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react"
+import { useContext, useEffect, useState } from "react"
 import LightBox from "../../LightBox"
 import { FilterType, FiltersInterface } from "./Filters"
+import FilterableRestroAPIBodyContext from "../../../../context/FilterableRestroAPIBodyContext"
 
 interface MasterFiltersProps {
     filters: FiltersInterface,
@@ -9,18 +10,64 @@ interface MasterFiltersProps {
     onClose: () => void
 }
 
-const MasterFilters = (props: MasterFiltersProps) => {
+type sahilArgs = {
+    parentId: string,
+    childId: string,
+    target: "SORT_ATTR" | "FACET"
+}
 
-    useEffect(() => {
-        setDefaultFilter(props.filters.sortAttribute)
-    }, [props.filters]);
+const MasterFilters = (props: MasterFiltersProps) => {
 
     // Default Filter
     const [defaultFilter, setDefaultFilter] = useState(props.filters.sortAttribute);
 
+    const { APIBody } = useContext(FilterableRestroAPIBodyContext);
+
+    const [APIFilters, setAPIFilters] = useState({ ...APIBody.filters });
+
+    useEffect(() => console.log(APIFilters), [APIFilters])
+
+    const sahil = (args: sahilArgs) => {
+        if (args.target === "SORT_ATTR") {
+            setAPIFilters(prev => {
+                return {
+                    ...prev,
+                    sortAttribute: args.childId
+                }
+            })
+        }
+        else if (args.target === "FACET") {
+            setAPIFilters((prev) => {
+                const updatedFacets = { ...prev.facets };
+
+                // Check if the parentId exists as a key in the facets object, create one with an empty array if not.
+                if (!(args.parentId in updatedFacets)) {
+                    updatedFacets[args.parentId] = [];
+                }
+
+                const parentArray = updatedFacets[args.parentId];
+
+                // Check if the args.childId is already present in the parent's array, and remove it if found, or add it if not found.
+                if (parentArray.some(option => option.value === args.childId)) {
+                    updatedFacets[args.parentId] = parentArray.filter(
+                        (option) => option.value !== args.childId
+                    );
+                } else {
+                    updatedFacets[args.parentId].push({ value: args.childId });
+                }
+
+                return {
+                    ...prev,
+                    facets: updatedFacets
+                };
+            });
+        }
+
+    }
+
     // Print Filters Option for Master Filter
     const printFilterOptions = (filter: FilterType | undefined) => {
-        const filterType = filter?.filterInfo?.selection === "SELECT_TYPE_MULTISELECT" ? "checkbox" : "radio";
+        const filterInputType = filter?.filterInfo?.selection === "SELECT_TYPE_MULTISELECT" ? "checkbox" : "radio";
 
         return (
             <div className="content flex flex-col px-[12px] pb-[24px] grow text-[14px] lg:px-[20px]">
@@ -29,7 +76,31 @@ const MasterFilters = (props: MasterFiltersProps) => {
                     <div className="overflow-scroll no-scrollbar flex flex-col gap-[16px] justify-start items-start h-full pl-1">
                         {filter?.filterOptions?.map((option) => (
                             <span className="flex gap-2 items-center" key={option.id}>
-                                <input type={filterType} name="filteroptions" id={option.id} checked={option.selected}/>
+                                <input
+                                    type={filterInputType}
+                                    name="filteroptions"
+                                    id={option.id}
+                                    defaultChecked={(() => {
+                                        if (filter.filterInfo?.id) {
+                                            if (filter.filterInfo?.id === "sortAttribute") {
+                                                if (option.id === APIFilters.sortAttribute) return true
+                                            }
+                                            else {
+                                                if (APIFilters.facets[filter.filterInfo?.id].some(op => op.value === option.id)) return true
+                                            }
+                                        }
+                                    })()}
+
+                                    onChange={() => {
+                                        if (filter.filterInfo?.id && option.id) {
+                                            sahil({
+                                                parentId: filter.filterInfo?.id,
+                                                childId: option.id,
+                                                target: filter.filterInfo.id === "sortAttribute" ? "SORT_ATTR" : "FACET"
+                                            })
+                                        }
+                                    }}
+                                />
                                 <label htmlFor={option.id}>{option.label}</label>
                             </span>
                         ))}

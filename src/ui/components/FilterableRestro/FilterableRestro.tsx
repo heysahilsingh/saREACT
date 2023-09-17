@@ -32,7 +32,7 @@ export interface FilterableRestroProps {
 }
 
 const FilterableRestro = (props: FilterableRestroProps) => {
-    console.log("FilterableRestro");
+    // console.log("FilterableRestro");
 
 
     if (props.filters && props.restros) {

@@ -12,7 +12,7 @@ interface SortByFilterProps {
 
 const SortByFilter = (props: SortByFilterProps) => {
 
-    console.log("sortByFilters");
+    // console.log("sortByFilters");
 
     const [sortFilterText, setSortFilterText] = useState<string | undefined>("Sort by");
     const [showFilterContainer, setShowFilterContainer] = useState<boolean>(false);
@@ -23,7 +23,7 @@ const SortByFilter = (props: SortByFilterProps) => {
     const handleApply = () => {
         selectedOption?.id !== "relevance" ? setSortFilterText(selectedOption?.label) : setSortFilterText("Sort by")
 
-        if (selectedOption?.id) props.onApply && props.onApply(selectedOption)
+        if (selectedOption?.id && props.onApply) props.onApply(selectedOption)
 
         setShowFilterContainer(false)
     }

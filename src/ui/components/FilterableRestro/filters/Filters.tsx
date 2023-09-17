@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import OpenFiltersButton from "./OpenFilterButton"
 import { IconAdjustmentsHorizontal } from "@tabler/icons-react"
 import MasterFilters from "./MasterFilters"
 import SortByFilter from "./SortByFilter"
 import { FilterInfo, FilterOption, FiltersProp } from "../FilterableRestro"
+import FilterableRestroAPIBodyContext from "../../../../context/FilterableRestroAPIBodyContext"
 
 export type FilterType = {
     filterInfo: FilterInfo | undefined,
@@ -21,9 +22,17 @@ export interface FiltersInterface {
     costForTwo: FilterType | undefined
 }
 
+type sahilArgs = {
+    parentId: string,
+    childId: string,
+    target: "SORT_ATTR" | "FACET"
+}
+
 const Filters = (props: { filters: FiltersProp | undefined, fetchFunction: (method: "UPDATE" | "LOAD_MORE") => Promise<void> }) => {
 
-    console.log("Filters");
+    // console.log("Filters");
+
+    const { APIBody, updateAPIBody } = useContext(FilterableRestroAPIBodyContext);
 
     // Filters Data
     const [filters, setFilters] = useState<FiltersInterface>({
@@ -203,13 +212,77 @@ const Filters = (props: { filters: FiltersProp | undefined, fetchFunction: (meth
 
     }, [filters])
 
+
+    // sortBy Filter Handler
+    // const sortByFilterHandler = (selectedSortOption: FilterOption) => {
+    //     if (selectedSortOption.id) {
+    //         updateAPIBody({
+    //             ...APIBody,
+    //             filters: {
+    //                 ...APIBody.filters,
+    //                 sortAttribute: selectedSortOption.id
+    //             }
+    //         })
+
+    //         props.fetchFunction("UPDATE")
+    //     }
+    // }
+
+    // openFilters handler
+    // const openFiltersHandler = (parentId: keyof FiltersInterface | string, selectedFilterOption: FilterOption) => {
+    //     console.log(parentId, selectedFilterOption);
+    // }
+
+    const sahil = (args: sahilArgs) => {
+        if (args.target === "SORT_ATTR") {
+            updateAPIBody({
+                ...APIBody,
+                filters: {
+                    ...APIBody.filters,
+                    sortAttribute: args.childId
+                }
+            })
+        }
+        else if (args.target === "FACET") {
+            updateAPIBody((prev) => {
+                const updatedFacets = { ...prev.filters.facets };
+
+                // Check if the parentId exists as a key in the facets object, create one with an empty array if not.
+                if (!(args.parentId in updatedFacets)) {
+                    updatedFacets[args.parentId] = [];
+                }
+
+                const parentArray = updatedFacets[args.parentId];
+
+                // Check if the args.childId is already present in the parent's array, and remove it if found, or add it if not found.
+                if (parentArray.some(option => option.value === args.childId)) {
+                    updatedFacets[args.parentId] = parentArray.filter(
+                        (option) => option.value !== args.childId
+                    );
+                } else {
+                    updatedFacets[args.parentId].push({ value: args.childId });
+                }
+
+                return {
+                    ...prev,
+                    filters: {
+                        ...prev.filters,
+                        facets: updatedFacets
+                    }
+                };
+            });
+        }
+
+        props.fetchFunction("UPDATE")
+    }
+
     if ((filters?.sortAttribute?.filterOptions || []).length > 0) {
         return (
             <div className="filters sticky lg:top-0 top-[0] z-10 bg-white dark:bg-neutral-950 py-3 lg:py-6">
+                {/* Master Filter */}
+                {showMasterFilter && <MasterFilters filters={filters} onClose={() => setShowMasterFilter(false)} />}
+                
                 <div className="flex gap-2 items-center no-scrollbar overflow-scroll">
-
-                    {/* Master Filter */}
-                    {showMasterFilter && <MasterFilters filters={filters} onClose={() => setShowMasterFilter(false)} />}
 
                     {/* Master Filter Button */}
                     <OpenFiltersButton
@@ -229,7 +302,15 @@ const Filters = (props: { filters: FiltersProp | undefined, fetchFunction: (meth
                     </OpenFiltersButton>
 
                     {/* Sort by FIlter */}
-                    <SortByFilter sortFilter={filters.sortAttribute} onApply={data => console.log(data)} />
+                    <SortByFilter sortFilter={filters.sortAttribute} onApply={selectedSortOption => {
+                        if (selectedSortOption.id) {
+                            sahil({
+                                parentId: selectedSortOption.id,
+                                childId: selectedSortOption.id,
+                                target: "SORT_ATTR"
+                            })
+                        }
+                    }} />
 
                     {/* Open Filters */}
                     {Object.keys(filters).map((filterKey) => {
@@ -241,8 +322,25 @@ const Filters = (props: { filters: FiltersProp | undefined, fetchFunction: (meth
                                         isSelectable={true}
                                         isPreSelected={filter.selected ? true : false}
                                         key={filter?.id}
-                                        onSelect={() => props.fetchFunction("UPDATE")}
-                                        onDeSelect={() => console.log("object")}
+                                        onSelect={() => {
+                                            if (filter.id) {
+                                                sahil({
+                                                    parentId: filterKey,
+                                                    childId: filter.id,
+                                                    target: "FACET"
+                                                })
+                                            }
+                                        }}
+
+                                        onDeSelect={() => {
+                                            if (filter.id) {
+                                                sahil({
+                                                    parentId: filterKey,
+                                                    childId: filter.id,
+                                                    target: "FACET"
+                                                })
+                                            }
+                                        }}
                                     >
                                         {filter?.label}
                                     </OpenFiltersButton>
