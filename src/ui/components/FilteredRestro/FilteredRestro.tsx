@@ -6,6 +6,7 @@ import UserContext from '../../../context/UserContext';
 import FilteredRestroFilters from './FilteredRestroFilters/FilteredRestroFilters';
 import FilteredRestroFiltersShimmer from './FilteredRestroFilters/FilteredRestroFiltersShimmer';
 import useDeviceDetect from '../../../hooks/useDeviceDetect';
+import FilterableRestroAPIBodyContext, { FilterableRestroAPIBodyContextProvider } from '../../../context/FilterableRestroAPIBodyContext';
 
 export type FilterInfo = {
     id: "deliveryTime" | "catalog_cuisines" | "explore" | "rating" | "isVeg" | "restaurantOfferMultiTd" | "costForTwo" | "sortAttribute" | undefined,
@@ -38,6 +39,22 @@ interface FilteredRestroProps {
 }
 
 const FilteredRestro = (props: FilteredRestroProps) => {
+
+    const { APIBody, updateAPIBody } = useContext(FilterableRestroAPIBodyContext);
+
+    useEffect(() => console.log(APIBody), [APIBody])
+
+    useEffect(() => {
+
+        updateAPIBody(
+            {
+                ...APIBody,
+                lat: 1000,
+                lng: 2000,
+            }
+        )
+
+    }, [])
 
     const { userInfo } = useContext(UserContext);
     const device = useDeviceDetect();
@@ -124,19 +141,15 @@ const FilteredRestro = (props: FilteredRestroProps) => {
 
     return (
         <div className="container flex flex-col px-4">
-            {/* 
-            <button onClick={() => updateAPICall("LOAD_MORE", APIRequestBody)}>10</button>
-            <button onClick={() => updateAPICall("LOAD_MORE", APIRequestBody)}>20</button>
+
+            <button onClick={() => updateAPICall("UPDATE",)}>10</button>
+            {/* <button onClick={() => updateAPICall("LOAD_MORE", APIRequestBody)}>20</button>
             <button onClick={() => updateAPICall("LOAD_MORE", APIRequestBody)}>40</button> */}
 
             {/* Filters */}
-            {!filters ? <FilteredRestroFiltersShimmer /> : (
-                <FilteredRestroFilters
-                    filters={filters}
-                // APIRequestBody={APIRequestBody}
-                // setAPIRequestBody={setAPIRequestBody}
-                />
-            )}
+            <FilterableRestroAPIBodyContextProvider>
+                {!filters ? <FilteredRestroFiltersShimmer /> : <FilteredRestroFilters filters={filters} />}
+            </FilterableRestroAPIBodyContextProvider>
 
             {/* Restros */}
             <div className="restros lists grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 lg:gap-8 pt-3 lg:pt-5 no-scrollbar overflow-x-scroll overflow-y-hidden">

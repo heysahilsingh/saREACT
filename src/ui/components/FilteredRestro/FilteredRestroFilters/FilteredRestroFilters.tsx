@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import OpenFiltersButton from "./OpenFilterButton"
 import { IconAdjustmentsHorizontal } from "@tabler/icons-react"
 import MasterFilters from "./MasterFilters"
 import SortByFilter from "./SortByFilter"
-import { APIRequestBodyType, FiltersProp } from "../FilteredRestro"
+import { FiltersProp } from "../FilteredRestro"
+import FilterableRestroAPIBodyContext from "../../../../context/FilterableRestroAPIBodyContext"
 
 
 type FilterInfo = {
@@ -36,13 +37,23 @@ export interface FiltersInterface {
     costForTwo: FilterType | undefined
 }
 
-interface FilteredRestroFiltersProps {
-    filters: FiltersProp | undefined,
-    APIRequestBody: APIRequestBodyType,
-    setAPIRequestBody: (newBody: APIRequestBodyType) => void
-}
+const FilteredRestroFilters = (props: { filters: FiltersProp | undefined }) => {
 
-const FilteredRestroFilters = (props: FilteredRestroFiltersProps) => {
+    const { APIBody, updateAPIBody } = useContext(FilterableRestroAPIBodyContext);
+
+    useEffect(() => console.log(APIBody), [APIBody])
+
+    useEffect(() => {
+
+        updateAPIBody(
+            {
+                ...APIBody,
+                lat: 1000,
+                lng: 2000,
+            }
+        )
+
+    }, [])
 
     // Filters Data
     const [filters, setFilters] = useState<FiltersInterface>({
@@ -260,8 +271,8 @@ const FilteredRestroFilters = (props: FilteredRestroFiltersProps) => {
                                         isSelectable={true}
                                         isPreSelected={filter.selected ? true : false}
                                         key={filter?.id}
-                                        onSelect={() => handleOpenFilterClick(filterKey, filter, "ADD")}
-                                        onDeSelect={() => handleOpenFilterClick(filterKey, filter, "REMOVE")}
+                                        onSelect={() => console.log("object")}
+                                        onDeSelect={() => console.log("object")}
                                     >
                                         {filter?.label}
                                     </OpenFiltersButton>
