@@ -28,20 +28,21 @@ export type RestrosProp = { info: TypeRestroCard }[] | undefined
 export interface FilterableRestroProps {
     filters: FiltersProp,
     restros: RestrosProp,
+    filtersClasses?: string,
+    restrosClasses?: string,
     restrosListLoadType: "INFINITE" | "ON_CLICK"
 }
 
 const FilterableRestro = (props: FilterableRestroProps) => {
-    // console.log("FilterableRestro");
-
-
     if (props.filters && props.restros) {
         return (
             <FilterableRestroAPIBodyContextProvider>
                 <FilterableRestroMain
                     filters={props.filters}
                     restros={props.restros}
-                    restrosListLoadType={"INFINITE"}
+                    filtersClasses={props.filtersClasses && props.filtersClasses} 
+                    restrosClasses={props.restrosClasses && props.restrosClasses}
+                    restrosListLoadType={props.restrosListLoadType}
                 />
             </FilterableRestroAPIBodyContextProvider>
         )

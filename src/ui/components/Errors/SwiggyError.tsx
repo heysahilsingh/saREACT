@@ -1,4 +1,4 @@
-import defaultImg from "../../assets/images/swiggy-not-present.png"
+import defaultImg from "../../../assets/images/swiggy-not-present.png"
 
 interface SwiggyErrorProps {
     image?: string,

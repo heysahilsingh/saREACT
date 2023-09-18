@@ -19,7 +19,7 @@ const CONSTANTS = {
       // location after "&" in "lat=2&lng=2" then "&restaurantId=" add restaurant Id after "="
    },
 
-   API_RESTRO_NEAR: "https://corsproxy.io/?https://www.swiggy.com/api/seo/getListing?", // location after "?" in "lat=2&lng=2"
+   API_PAGE_RESTRO_NEAR: "https://corsproxy.io/?https://www.swiggy.com/api/seo/getListing?", // location after "?" in "lat=2&lng=2"
 
    API_RESTRO_FILTERED: "https://corsproxy.io/?https://www.swiggy.com/api/seo/getListing?", // location after "?" in "lat=2&lng=2"
 

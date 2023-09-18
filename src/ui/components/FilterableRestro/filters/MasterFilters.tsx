@@ -1,19 +1,12 @@
-import { useContext, useEffect, useState } from "react"
+import { useContext, useState } from "react"
 import LightBox from "../../LightBox"
 import { FilterType, FiltersInterface } from "./Filters"
 import FilterableRestroAPIBodyContext from "../../../../context/FilterableRestroAPIBodyContext"
 
 interface MasterFiltersProps {
     filters: FiltersInterface,
-    onFilterApply?: () => void,
-    onFilterClear?: () => void,
+    onApply: (APIFilters: object) => void,
     onClose: () => void
-}
-
-type sahilArgs = {
-    parentId: string,
-    childId: string,
-    target: "SORT_ATTR" | "FACET"
 }
 
 const MasterFilters = (props: MasterFiltersProps) => {
@@ -25,44 +18,48 @@ const MasterFilters = (props: MasterFiltersProps) => {
 
     const [APIFilters, setAPIFilters] = useState({ ...APIBody.filters });
 
-    useEffect(() => console.log(APIFilters), [APIFilters])
 
-    const sahil = (args: sahilArgs) => {
+    const handleFilterSelection = (args: { parentId: string, childId: string, target: "SORT_ATTR" | "FACET" }) => {
+        let updateFilters = {};
+
+        // If arg's target is "SORT_ATTR"
         if (args.target === "SORT_ATTR") {
-            setAPIFilters(prev => {
-                return {
-                    ...prev,
-                    sortAttribute: args.childId
-                }
-            })
+            updateFilters = { sortAttribute: args.childId };
         }
+
+        // If arg's target is "FACET"
         else if (args.target === "FACET") {
-            setAPIFilters((prev) => {
-                const updatedFacets = { ...prev.facets };
+            const updatedFacets: Record<string, Array<{ value: string }>> = { ...APIBody.filters.facets };
 
-                // Check if the parentId exists as a key in the facets object, create one with an empty array if not.
-                if (!(args.parentId in updatedFacets)) {
-                    updatedFacets[args.parentId] = [];
-                }
+            // Add filter if not exists in APIBody's filters
+            if (!(args.parentId in updatedFacets)) {
+                updatedFacets[args.parentId] = [];
+            }
 
-                const parentArray = updatedFacets[args.parentId];
+            // Find filter's array
+            const parentArray = updatedFacets[args.parentId];
+            // find filter option in filter
+            const foundIndex = parentArray.findIndex(option => option.value === args.childId);
 
-                // Check if the args.childId is already present in the parent's array, and remove it if found, or add it if not found.
-                if (parentArray.some(option => option.value === args.childId)) {
-                    updatedFacets[args.parentId] = parentArray.filter(
-                        (option) => option.value !== args.childId
-                    );
-                } else {
-                    updatedFacets[args.parentId].push({ value: args.childId });
-                }
+            // If filter option already in filter's array, remove that option
+            if (foundIndex !== -1) parentArray.splice(foundIndex, 1);
+            // Else add that option
+            else parentArray.push({ value: args.childId });
 
-                return {
-                    ...prev,
-                    facets: updatedFacets
-                };
-            });
+            updateFilters = { facets: updatedFacets };
         }
 
+        // Update API Body
+        setAPIFilters({
+            ...APIFilters,
+            ...updateFilters,
+        });
+    };
+
+    // On Apply
+    const onApplyHandler = () => {
+        props.onClose()
+        props.onApply(APIFilters)
     }
 
     // Print Filters Option for Master Filter
@@ -74,7 +71,7 @@ const MasterFilters = (props: MasterFiltersProps) => {
                 <p className="uppercase mt-[15px] mb-[12px]">{filter?.filterInfo?.subLabel}</p>
                 <div className="options h-[100px] grow">
                     <div className="overflow-scroll no-scrollbar flex flex-col gap-[16px] justify-start items-start h-full pl-1">
-                        {filter?.filterOptions?.map((option) => (
+                        {filter?.filterOptions?.map(option => (
                             <span className="flex gap-2 items-center" key={option.id}>
                                 <input
                                     type={filterInputType}
@@ -82,18 +79,18 @@ const MasterFilters = (props: MasterFiltersProps) => {
                                     id={option.id}
                                     defaultChecked={(() => {
                                         if (filter.filterInfo?.id) {
-                                            if (filter.filterInfo?.id === "sortAttribute") {
+                                            if (filter.filterInfo.id === "sortAttribute") {
                                                 if (option.id === APIFilters.sortAttribute) return true
                                             }
                                             else {
-                                                if (APIFilters.facets[filter.filterInfo?.id].some(op => op.value === option.id)) return true
+                                                if (APIFilters.facets[filter.filterInfo.id].some(optn => optn.value === option.id)) return true
                                             }
                                         }
                                     })()}
 
                                     onChange={() => {
                                         if (filter.filterInfo?.id && option.id) {
-                                            sahil({
+                                            handleFilterSelection({
                                                 parentId: filter.filterInfo?.id,
                                                 childId: option.id,
                                                 target: filter.filterInfo.id === "sortAttribute" ? "SORT_ATTR" : "FACET"
@@ -146,8 +143,8 @@ const MasterFilters = (props: MasterFiltersProps) => {
 
                     {/* Apply Filters Button */}
                     <div className="apply flex gap-6 font-bold bg-white dark:bg-zinc-800 w-full justify-end py-3 px-5 shadow-[0_0px_10px_0px_rgba(40,44,63,0.1)]">
-                        <button onClick={props.onFilterClear} className="text-primary">Clear Filters</button>
-                        <button onClick={props.onFilterApply} className="text-white bg-primary rounded-xl py-2.5 px-6">Apply</button>
+                        <button onClick={onApplyHandler} className="text-primary">Clear Filters</button>
+                        <button onClick={onApplyHandler} className="text-white bg-primary rounded-xl py-2.5 px-6">Apply</button>
                     </div>
                 </div>
             </LightBox>

@@ -1,4 +1,4 @@
-import errorImage from "../../assets/images/error.webp"
+import errorImage from "../../..//assets/images/error.webp"
 
 
 interface ErrorCompProps {

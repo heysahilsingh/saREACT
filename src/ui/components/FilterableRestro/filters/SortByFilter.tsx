@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import OpenFiltersButton from "./OpenFilterButton"
 import { IconChevronDown } from "@tabler/icons-react"
 import LightBox from "../../LightBox"
@@ -12,11 +12,13 @@ interface SortByFilterProps {
 
 const SortByFilter = (props: SortByFilterProps) => {
 
-    // console.log("sortByFilters");
-
     const [sortFilterText, setSortFilterText] = useState<string | undefined>("Sort by");
     const [showFilterContainer, setShowFilterContainer] = useState<boolean>(false);
     const [selectedOption, setSelectedOption] = useState<FilterOption | undefined>(props.sortFilter?.filterOptions?.find(option => option.selected === true));
+
+    useEffect(() => {
+        if(selectedOption?.id !== "relevance") setSortFilterText(selectedOption?.label)
+    }, [selectedOption])
 
     const handleOptionSelection = (selection: FilterOption) => setSelectedOption(selection)
 

@@ -16,8 +16,8 @@ interface RestroCardProps {
 
 const RestroCard = (props: RestroCardProps) => {
     return (
-        <div className="restro-card">
-            <Link to={props.link && props.link} className={props.className && props.className + " restro-card hover:scale-95 flex flex-col items-start justify-start"}>
+        <div className={props.className && props.className + "restro-card"}>
+            <Link to={props.link && props.link} className="restro-card hover:scale-95 flex flex-col items-start justify-start">
                 <div className="col1 w-full relative rounded-2xl overflow-hidden">
                     {props.imageId && (
                         <img className="w-full aspect-[4/5] lg:aspect-[4/3] object-cover bg-zinc-200 dark:bg-zinc-900" src={CONSTANTS.IMG_CDN + props.imageId} alt={props.name && props.name} />

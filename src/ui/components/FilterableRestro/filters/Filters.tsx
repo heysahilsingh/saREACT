@@ -5,6 +5,7 @@ import MasterFilters from "./MasterFilters"
 import SortByFilter from "./SortByFilter"
 import { FilterInfo, FilterOption, FiltersProp } from "../FilterableRestro"
 import FilterableRestroAPIBodyContext from "../../../../context/FilterableRestroAPIBodyContext"
+import { TypeRestroFilterAPIBody } from "../../../../constants"
 
 export type FilterType = {
     filterInfo: FilterInfo | undefined,
@@ -22,19 +23,19 @@ export interface FiltersInterface {
     costForTwo: FilterType | undefined
 }
 
-type sahilArgs = {
-    parentId: string,
-    childId: string,
-    target: "SORT_ATTR" | "FACET"
+interface FiltersProps {
+    filters: FiltersProp | undefined,
+    filtersClasses?: string,
+    fetchAPIData: (method: "UPDATE" | "LOAD_MORE", APIBody: TypeRestroFilterAPIBody) => Promise<void>
 }
 
-const Filters = (props: { filters: FiltersProp | undefined, fetchFunction: (method: "UPDATE" | "LOAD_MORE") => Promise<void> }) => {
-
-    // console.log("Filters");
-
+const Filters = (props: FiltersProps) => {
     const { APIBody, updateAPIBody } = useContext(FilterableRestroAPIBodyContext);
 
-    // Filters Data
+    const [showMasterFilter, setShowMasterFilter] = useState<boolean>(false);
+    const [activeFiltersCount, setActiveFiltersCount] = useState<number>(0);
+
+    // Structure Filters
     const [filters, setFilters] = useState<FiltersInterface>({
         sortAttribute: undefined,
         deliveryTime: undefined,
@@ -46,9 +47,7 @@ const Filters = (props: { filters: FiltersProp | undefined, fetchFunction: (meth
         costForTwo: undefined
     })
 
-    const [showMasterFilter, setShowMasterFilter] = useState<boolean>(false);
-    const [activeFiltersCount, setActiveFiltersCount] = useState<number>(0);
-
+    // Update filters state
     useEffect(() => {
 
         const deliveryFilter = props.filters?.facetList?.find(filter => filter.id === "deliveryTime");
@@ -192,12 +191,10 @@ const Filters = (props: { filters: FiltersProp | undefined, fetchFunction: (meth
 
     }, [props.filters])
 
-    // Handle Active Filter Count
+    // Function to set ActiveFilterCount
     useEffect(() => {
 
-        // Function to set ActiveFilterCount
-        function handleActiveFilterCount(obj: FiltersInterface) {
-
+        const handleActiveFilterCount = (obj: FiltersInterface) => {
             for (const key in obj) {
                 const filterOptions = obj[key as keyof FiltersInterface]?.filterOptions;
                 if (filterOptions) {
@@ -207,83 +204,80 @@ const Filters = (props: { filters: FiltersProp | undefined, fetchFunction: (meth
                 }
             }
         }
-
         handleActiveFilterCount(filters);
 
     }, [filters])
 
 
-    // sortBy Filter Handler
-    // const sortByFilterHandler = (selectedSortOption: FilterOption) => {
-    //     if (selectedSortOption.id) {
-    //         updateAPIBody({
-    //             ...APIBody,
-    //             filters: {
-    //                 ...APIBody.filters,
-    //                 sortAttribute: selectedSortOption.id
-    //             }
-    //         })
+    // Handle Filters Selection function
+    const handleFilterSelection = (args: { parentId: string, childId: string, wholeFilter?: object, target: "SORT_ATTR" | "FACET" | "WHOLE_FILTER" }) => {
+        let updateFilters = {};
 
-    //         props.fetchFunction("UPDATE")
-    //     }
-    // }
+        // If arg's target is "SORT_ATTR"
+        if (args.target === "SORT_ATTR") updateFilters = { sortAttribute: args.childId };
 
-    // openFilters handler
-    // const openFiltersHandler = (parentId: keyof FiltersInterface | string, selectedFilterOption: FilterOption) => {
-    //     console.log(parentId, selectedFilterOption);
-    // }
-
-    const sahil = (args: sahilArgs) => {
-        if (args.target === "SORT_ATTR") {
-            updateAPIBody({
-                ...APIBody,
-                filters: {
-                    ...APIBody.filters,
-                    sortAttribute: args.childId
-                }
-            })
+        // If arg's target is "WHOLE_FILTER"
+        else if (args.target === "WHOLE_FILTER") {
+            if(args.wholeFilter) updateFilters = args.wholeFilter;
         }
+
+        // If arg's target is "FACET"
         else if (args.target === "FACET") {
-            updateAPIBody((prev) => {
-                const updatedFacets = { ...prev.filters.facets };
+            const updatedFacets: Record<string, Array<{ value: string }>> = { ...APIBody.filters.facets };
 
-                // Check if the parentId exists as a key in the facets object, create one with an empty array if not.
-                if (!(args.parentId in updatedFacets)) {
-                    updatedFacets[args.parentId] = [];
-                }
+            // Add filter if not exists in APIBody's filters
+            if (!(args.parentId in updatedFacets)) {
+                updatedFacets[args.parentId] = [];
+            }
 
-                const parentArray = updatedFacets[args.parentId];
+            // Find filter's array
+            const parentArray = updatedFacets[args.parentId];
+            // find filter option in filter
+            const foundIndex = parentArray.findIndex(option => option.value === args.childId);
 
-                // Check if the args.childId is already present in the parent's array, and remove it if found, or add it if not found.
-                if (parentArray.some(option => option.value === args.childId)) {
-                    updatedFacets[args.parentId] = parentArray.filter(
-                        (option) => option.value !== args.childId
-                    );
-                } else {
-                    updatedFacets[args.parentId].push({ value: args.childId });
-                }
+            // If filter option already in filter's array, remove that option
+            if (foundIndex !== -1) parentArray.splice(foundIndex, 1);
+            // Else add that option
+            else parentArray.push({ value: args.childId });
 
-                return {
-                    ...prev,
-                    filters: {
-                        ...prev.filters,
-                        facets: updatedFacets
-                    }
-                };
-            });
+            updateFilters = { facets: updatedFacets };
         }
 
-        props.fetchFunction("UPDATE")
-    }
+        const updatedAPIBody = {
+            ...APIBody,
+            filters: {
+                ...APIBody.filters,
+                ...updateFilters,
+            },
+        };
+
+        // Update API Body
+        updateAPIBody(updatedAPIBody);
+
+        // Run fetchAPIData
+        props.fetchAPIData("UPDATE", updatedAPIBody);
+    };
 
     if ((filters?.sortAttribute?.filterOptions || []).length > 0) {
         return (
-            <div className="filters sticky lg:top-0 top-[0] z-10 bg-white dark:bg-neutral-950 py-3 lg:py-6">
+            <div className={`${props.filtersClasses && props.filtersClasses} filters border-b border-zinc-100 dark:border-zinc-800 z-10 bg-white dark:bg-neutral-950 py-3 lg:py-6`}>
                 {/* Master Filter */}
-                {showMasterFilter && <MasterFilters filters={filters} onClose={() => setShowMasterFilter(false)} />}
-                
-                <div className="flex gap-2 items-center no-scrollbar overflow-scroll">
+                {showMasterFilter && (
+                    <MasterFilters
+                        filters={filters}
+                        onClose={() => setShowMasterFilter(false)}
+                        onApply = {(updatedAPIFilters) => {
+                            handleFilterSelection({
+                                parentId: "",
+                                childId: "",
+                                target: "WHOLE_FILTER",
+                                wholeFilter: updatedAPIFilters
+                            })
+                        }}
+                    />
+                )}
 
+                <div className="flex gap-2 items-center no-scrollbar overflow-scroll">
                     {/* Master Filter Button */}
                     <OpenFiltersButton
                         isSelectable={false}
@@ -296,26 +290,30 @@ const Filters = (props: { filters: FiltersProp | undefined, fetchFunction: (meth
                                 <span className="text-[10px] absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 leading-none text-white">{activeFiltersCount}</span>
                             </div>
                         )}
+
                         Filters
                         <IconAdjustmentsHorizontal className="text-zinc-700 dark:text-zinc-400" size={15} />
-
                     </OpenFiltersButton>
 
                     {/* Sort by FIlter */}
-                    <SortByFilter sortFilter={filters.sortAttribute} onApply={selectedSortOption => {
-                        if (selectedSortOption.id) {
-                            sahil({
-                                parentId: selectedSortOption.id,
-                                childId: selectedSortOption.id,
-                                target: "SORT_ATTR"
-                            })
-                        }
-                    }} />
+                    <SortByFilter
+                        sortFilter={filters.sortAttribute}
+                        onApply={selectedSortOption => {
+                            if (selectedSortOption.id) {
+                                handleFilterSelection({
+                                    parentId: selectedSortOption.id,
+                                    childId: selectedSortOption.id,
+                                    target: "SORT_ATTR"
+                                })
+                            }
+                        }}
+                    />
 
                     {/* Open Filters */}
                     {Object.keys(filters).map((filterKey) => {
                         if (filterKey !== "catalog_cuisines") {
                             const openFilter = filters[filterKey as keyof FiltersInterface]?.filterOptions?.filter(option => option.openFilter === true);
+
                             return openFilter?.map(filter => {
                                 return (
                                     <OpenFiltersButton
@@ -324,7 +322,7 @@ const Filters = (props: { filters: FiltersProp | undefined, fetchFunction: (meth
                                         key={filter?.id}
                                         onSelect={() => {
                                             if (filter.id) {
-                                                sahil({
+                                                handleFilterSelection({
                                                     parentId: filterKey,
                                                     childId: filter.id,
                                                     target: "FACET"
@@ -334,7 +332,7 @@ const Filters = (props: { filters: FiltersProp | undefined, fetchFunction: (meth
 
                                         onDeSelect={() => {
                                             if (filter.id) {
-                                                sahil({
+                                                handleFilterSelection({
                                                     parentId: filterKey,
                                                     childId: filter.id,
                                                     target: "FACET"

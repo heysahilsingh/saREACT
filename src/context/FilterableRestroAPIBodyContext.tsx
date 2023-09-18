@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import UserContext from './UserContext';
 
 // Create the initial context
-const initialAPIBody: TypeRestroFilterAPIBody = {
+export const initialAPIBody: TypeRestroFilterAPIBody = {
     filters: {
         isFiltered: true,
         facets: {

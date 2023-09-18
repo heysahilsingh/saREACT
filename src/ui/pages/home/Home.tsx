@@ -11,8 +11,8 @@ import RestroNearBy from "./RestroNearBy";
 import { routePaths } from "../../Ui";
 import { Link } from "react-router-dom";
 import HomeShimmer from "./HomeShimmer";
-import NetworkError from "../../components/NetworkError";
-import SwiggyError from "../../components/SwiggyError";
+import NetworkError from "../../components/Errors/NetworkError";
+import SwiggyError from "../../components/Errors/SwiggyError";
 import SwiggyNotAvailableImg from "../../../assets/images/swiggy-not-available.jpeg";
 import { useNavigate } from "react-router-dom";
 

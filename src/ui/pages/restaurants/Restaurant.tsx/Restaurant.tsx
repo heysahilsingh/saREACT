@@ -5,7 +5,7 @@ import useDeviceDetect from "../../../../hooks/useDeviceDetect";
 import CONSTANTS from "../../../../constants";
 import Page from "../../Page";
 import RestaurantShimmer from "./RestaurantShimmer";
-import ErrorComp from "../../../components/NetworkError";
+import ErrorComp from "../../../components//Errors/NetworkError";
 
 const Restaurant = () => {
     const { userInfo } = useContext(UserContext);

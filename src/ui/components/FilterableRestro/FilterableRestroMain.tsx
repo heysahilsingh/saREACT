@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState, useRef } from 'react';
-import CONSTANTS, { TypeRestroCard } from '../../../constants';
+import CONSTANTS, { TypeRestroCard, TypeRestroFilterAPIBody } from '../../../constants';
 import { RestroCardShimmer } from '../RestroCard';
 import { FilterableRestroProps, FiltersProp } from './FilterableRestro';
 import Filters from './filters/Filters';
@@ -7,30 +7,30 @@ import FiltersShimmer from './filters/FiltersShimmer';
 import Restros from './restros/Restros';
 import FilterableRestroAPIBodyContext from '../../../context/FilterableRestroAPIBodyContext';
 import useDeviceDetect from '../../../hooks/useDeviceDetect';
+import { IconChevronDown } from '@tabler/icons-react';
 
 const FilterableRestroMain = (props: FilterableRestroProps) => {
-    // console.log("FilterableRestroMain");
-
     const device = useDeviceDetect();
 
-    const { APIBody, updateAPIBody } = useContext(FilterableRestroAPIBodyContext);    
-    const [fetchingAPIData, setFetchingAPIData] = useState(false);
-    // useEffect(() => console.log(APIBody.filters), [APIBody])
+    const { APIBody } = useContext(FilterableRestroAPIBodyContext);
+    const [isFetchingAPIData, setIsFetchingAPIData] = useState(false);
 
     const [restros, setRestros] = useState<TypeRestroCard[] | undefined>(props.restros?.map(restro => restro?.info));
+    const [restroPH, setRestroPH] = useState<TypeRestroCard[] | undefined>(restros);
     const [filters, setFilters] = useState<FiltersProp | undefined>(props.filters);
+    const [nextPageOffset, setNextPageOffset] = useState("10");
 
     const [isMoreRestrosLoading, setIsMoreRestrosLoading] = useState<boolean>(false);
     const moreRestroLoadBtnRef = useRef<HTMLButtonElement | null>(null);
 
-    // Assign Intersection Observer to Load more button
+    // Assign an Intersection Observer to Load more button
     useEffect(() => {
-        if (props.restrosListLoadType === "INFINITE" && !fetchingAPIData) {
+        if (props.restrosListLoadType === "INFINITE" && !isFetchingAPIData) {
             const observer = new IntersectionObserver(entries => {
                 if (entries[0]?.isIntersecting) {
                     if (APIBody.widgetOffset.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo !== "") {
-                        setFetchingAPIData(true);
-                        fetchAPIData("LOAD_MORE").finally(() => setFetchingAPIData(false));
+                        setIsFetchingAPIData(true);
+                        fetchAPIData("LOAD_MORE", APIBody).finally(() => setIsFetchingAPIData(false));
                     }
                 }
             });
@@ -42,14 +42,10 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
                 if (btn) observer.unobserve(btn);
             };
         }
-    }, [props.restrosListLoadType, fetchingAPIData, APIBody]);
+    }, [props.restrosListLoadType, isFetchingAPIData, APIBody]);
 
     // Fetch API Data Function
-    const fetchAPIData = async (method: "UPDATE" | "LOAD_MORE") => {
-        // console.log("fetchAPIData function called");
-
-        // console.log(APIBody.filters);
-
+    const fetchAPIData = async (method: "UPDATE" | "LOAD_MORE", APIBody: TypeRestroFilterAPIBody) => {
         if (APIBody.widgetOffset.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo === "") return
 
         try {
@@ -59,7 +55,12 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
             const requestOptions = {
                 method: "POST",
                 headers: { "content-type": "application/json" },
-                body: JSON.stringify(APIBody)
+                body: JSON.stringify({
+                    ...APIBody,
+                    widgetOffset: {
+                        collectionV5RestaurantListWidget_SimRestoRelevance_food_seo: nextPageOffset,
+                    }
+                })
             };
 
             if (method === "LOAD_MORE") {
@@ -69,29 +70,26 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
                 const response = await fetch(URL, requestOptions);
                 const responseData = await response.json();
 
-                const moreRestros = responseData?.data?.cards?.find((value: { card: { card: { id: string } } }) => value.card?.card?.id === "restaurant_grid_listing")?.card?.card?.gridElements?.infoWithStyle?.restaurants?.map((restro: { info: object }) => restro?.info);
+                const responseMoreRestros = responseData?.data?.cards?.find((value: { card: { card: { id: string } } }) => value.card?.card?.id === "restaurant_grid_listing")?.card?.card?.gridElements?.infoWithStyle?.restaurants?.map((restro: { info: object }) => restro?.info);
 
-                const nextPageOffset = responseData?.data?.pageOffset?.widgetOffset?.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo || "10";
+                const responseNextPageOffset = responseData?.data?.pageOffset?.widgetOffset?.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo || "10";
 
                 // Add more retros to restros state
-                setRestros((prev) => {
-                    if (prev === undefined || moreRestros.length < 1) {
-                        return moreRestros;
-                    } else {
-                        return [
-                            ...prev,
-                            ...moreRestros
-                        ];
-                    }
-                });
+                if (responseMoreRestros) {
+                    setRestros((prev) => {
+                        if (prev === undefined || responseMoreRestros.length < 1) {
+                            return responseMoreRestros;
+                        } else {
+                            return [
+                                ...prev,
+                                ...responseMoreRestros
+                            ];
+                        }
+                    });
+                }
 
-                // Update APIBody's nextPageOffset
-                updateAPIBody({
-                    ...APIBody,
-                    widgetOffset: {
-                        collectionV5RestaurantListWidget_SimRestoRelevance_food_seo: nextPageOffset
-                    }
-                })
+                // Update nextPageOffset
+                setNextPageOffset(responseNextPageOffset)
 
                 setIsMoreRestrosLoading(false)
             }
@@ -103,36 +101,35 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
                 const response = await fetch(URL, requestOptions);
                 const responseData = await response.json();
 
-                const newRestros = responseData?.data?.cards?.find((value: { card: { card: { id: string } } }) => value.card?.card?.id === "restaurant_grid_listing")?.card?.card?.gridElements?.infoWithStyle?.restaurants?.map((restro: { info: object }) => restro?.info);
+                const responseNewRestros = responseData?.data?.cards?.find((value: { card: { card: { id: string } } }) => value.card?.card?.id === "restaurant_grid_listing")?.card?.card?.gridElements?.infoWithStyle?.restaurants?.map((restro: { info: object }) => restro?.info);
 
-                const newFilters = responseData?.data?.cards?.find((value: { card: { card: { facetList: [] } } }) => value.card?.card?.facetList)?.card?.card;
+                const responseNewFilters = responseData?.data?.cards?.find((value: { card: { card: { facetList: [] } } }) => value.card?.card?.facetList)?.card?.card;
 
-                const nextPageOffset = responseData?.data?.pageOffset?.widgetOffset?.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo || "10";
+                const responseNextPageOffset = responseData?.data?.pageOffset?.widgetOffset?.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo || "10";
 
-                // Update restros state
-                setRestros((prev) => {
-                    if (prev === undefined || newRestros.length < 1) {
-                        return newRestros;
-                    } else {
-                        return [
-                            ...prev,
-                            ...newRestros
-                        ];
-                    }
-                });
+                if (responseNewRestros) {
+                    // Update restros state
+                    setRestros((prev) => {
+                        if (prev === undefined || responseNewRestros.length < 1) {
+                            return responseNewRestros;
+                        } else {
+                            return [
+                                ...prev,
+                                ...responseNewRestros
+                            ];
+                        }
+                    });
+
+                    setRestroPH(responseNewRestros)
+                } else {
+                    setRestros(restroPH)
+                }
 
                 // Update filters state
-                setFilters(newFilters)
+                setFilters(responseNewFilters)
 
-                // Update APIBody's nextPageOffset
-                updateAPIBody(prev => {
-                    return {
-                        ...prev,
-                        widgetOffset: {
-                            collectionV5RestaurantListWidget_SimRestoRelevance_food_seo: nextPageOffset
-                        }
-                    }
-                })
+                // Update nextPageOffset
+                setNextPageOffset(responseNextPageOffset)
             }
 
         } catch (error) {
@@ -141,25 +138,24 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
     }
 
     return (
-        <div className="container flex flex-col px-4">
-
-            <button onClick={() => fetchAPIData("UPDATE")} className='fixed bg-primary text-white py-3 px-5 border z-50 bottom-4 right-40'>UPDATE</button>
-            <button onClick={() => fetchAPIData("LOAD_MORE")} className='fixed bg-primary text-white py-3 px-5 border z-50 bottom-4 right-4'>LOAD MORE</button>
-
+        <div className="container flex flex-col">
             {/* Filters */}
-            {!filters ? <FiltersShimmer /> : <Filters filters={filters} fetchFunction={fetchAPIData} />}
+            {!filters ? <FiltersShimmer /> : <Filters filters={filters} fetchAPIData={fetchAPIData} filtersClasses={props.filtersClasses && props.filtersClasses} />}
 
             {/* Restros */}
-            <div className="restros lists grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 lg:gap-8 pt-3 lg:pt-5 no-scrollbar overflow-x-scroll overflow-y-hidden">
+            <div className={`${props.restrosClasses && props.restrosClasses} restros lists grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 lg:gap-8 pt-3 lg:pt-5 no-scrollbar overflow-x-scroll overflow-y-hidden`}>
                 {/* Restros Shimmer */}
                 {!restros && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(() => <RestroCardShimmer key={Math.random()} />)}
 
                 {(restros && restros?.length > 0) && <Restros restros={restros} />}
 
-                {isMoreRestrosLoading && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(() => <RestroCardShimmer key={Math.random()} />)}
+                {isMoreRestrosLoading && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(() => <RestroCardShimmer key={Math.random()} />)}
             </div>
 
-            <button ref={moreRestroLoadBtnRef} onClick={() => fetchAPIData("LOAD_MORE")} className='w-full lg:max-w-[300px] mt-[40px] mx-auto rounded-xl border border-zinc-200 dark:border-zinc-800 p-3'>Show More</button>
+            <button ref={moreRestroLoadBtnRef} onClick={() => fetchAPIData("LOAD_MORE", APIBody)} className='w-full lg:max-w-[300px] mt-[40px] mx-auto rounded-xl border border-zinc-200 dark:border-zinc-800 p-3 flex items-center justify gap-1 font-medium'>
+                Show More
+                <IconChevronDown />
+            </button>
         </div>
     )
 }
