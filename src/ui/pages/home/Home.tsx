@@ -79,61 +79,67 @@ const Home = () => {
 
     // API Call
     useEffect(() => {
-        async function fetchData() {
-            try {
-                setShowShimmer(true)
+        const userLat = userInfo.location.cityInfo.latitude;
+        const userLng = userInfo.location.cityInfo.longitude;
 
-                const url = `${CONSTANTS.API_PAGE_HOME.mob}lat=${userInfo?.location?.cityInfo?.latitude}&lng=${userInfo?.location?.cityInfo?.longitude}`;
+        if (userLat && userLng && !device.isDesk) {
+            const fetchData = async () => {
+                try {
+                    setShowShimmer(true)
 
-                const response = await fetch(url);
+                    const URL = CONSTANTS.API_PAGE_HOME.getUrl(userLat, userLng, device.isDesk ? "desk" : "mob");
 
-                const responseData = await response.json();
+                    const response = await fetch(URL);
 
-                if (responseData?.data?.success?.cards) {
+                    const responseData = await response.json();
 
-                    const data = responseData?.data?.success?.cards.map((card: { gridWidget: object }) => card.gridWidget);
+                    if (responseData?.data?.success?.cards) {
 
-                    const findCard = (cardIds: string[]) => {
-                        for (const cardId of cardIds) {
-                            const card = data.find((card: { id: string }) => card.id === cardId);
-                            if (card) {
-                                return card.gridElements?.infoWithStyle || null;
+                        const data = responseData?.data?.success?.cards.map((card: { gridWidget: object }) => card.gridWidget);
+
+                        const findCard = (cardIds: string[]) => {
+                            for (const cardId of cardIds) {
+                                const card = data.find((card: { id: string }) => card.id === cardId);
+                                if (card) {
+                                    return card.gridElements?.infoWithStyle || null;
+                                }
                             }
-                        }
-                        return null;
-                    };
+                            return null;
+                        };
 
-                    // Set Data
-                    setPageData({
-                        success: responseData?.data?.success ? true : false,
-                        isSwiggyPresent: findCard(["SwiggyNotPresent_Widget"]) ? false : true,
-                        isSwiggyAvailable: findCard(["BlackZone_Widget"]) ? false : true,
-                        banner: findCard(["ScrollNavSplitP2_latebinding", "ScrollNavFullBleedP2_latebinding"])?.info || null,
-                        bigOffer: findCard(["Homepage_Version4_Topical_Fullbleed"])?.info || null,
-                        offer: findCard(["Home_P2_Food_Offerwidget_MainComponent_Scrollcards"])?.info || null,
-                        topPicks: findCard(["Updated_4_favourites_SimRestoRelevance"])?.restaurants?.map((restro: { info: [] }) => restro?.info) || null,
-                        restro: findCard(["restaurantCollectionDeliveringNowTheme"])?.restaurants?.map((restro: { info: [] }) => restro?.info) || null
-                    })
+                        // Set Data
+                        setPageData({
+                            success: responseData?.data?.success ? true : false,
+                            isSwiggyPresent: findCard(["SwiggyNotPresent_Widget"]) ? false : true,
+                            isSwiggyAvailable: findCard(["BlackZone_Widget"]) ? false : true,
+                            banner: findCard(["ScrollNavSplitP2_latebinding", "ScrollNavFullBleedP2_latebinding"])?.info || null,
+                            bigOffer: findCard(["Homepage_Version4_Topical_Fullbleed"])?.info || null,
+                            offer: findCard(["Home_P2_Food_Offerwidget_MainComponent_Scrollcards"])?.info || null,
+                            topPicks: findCard(["Updated_4_favourites_SimRestoRelevance"])?.restaurants?.map((restro: { info: [] }) => restro?.info) || null,
+                            restro: findCard(["restaurantCollectionDeliveringNowTheme"])?.restaurants?.map((restro: { info: [] }) => restro?.info) || null
+                        })
 
-                    // Hide Shimmer
-                    setShowShimmer(false)
+                        // Hide Shimmer
+                        setShowShimmer(false)
 
-                    // Hide Error
-                    setShowError(false)
+                        // Hide Error
+                        setShowError(false)
 
-                } else {
-                    throw new Error(responseData?.data?.statusMessage)
+                    } else {
+                        throw new Error(responseData?.data?.statusMessage)
+                    }
+
+
+                } catch (error) {
+                    setShowError(true);
+                    setShowShimmer(false);
                 }
-
-
-            } catch (error) {
-                setShowError(true);
-                setShowShimmer(false);
             }
+
+            fetchData();
         }
 
-        if (!device.isDesk) fetchData();
-    }, [userInfo]);
+    }, [userInfo, device]);
 
     // if (device.isDesk) navigate(routePaths.restaurants);
 

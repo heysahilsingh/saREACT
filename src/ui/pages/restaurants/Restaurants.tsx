@@ -36,10 +36,7 @@ type PageData = {
 
 const Restaurants = () => {
     const { userInfo } = useContext(UserContext);
-
     const device = useDeviceDetect();
-
-    const API_URL = device.isMob ? CONSTANTS.API_PAGE_RESTAURANTS.mob : CONSTANTS.API_PAGE_RESTAURANTS.desk;
 
     // Shimmer
     const [showShimmer, setShowShimmer] = useState<boolean>(true)
@@ -61,59 +58,64 @@ const Restaurants = () => {
     });
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
+        const userLat = userInfo.location.cityInfo.latitude;
+        const userLng = userInfo.location.cityInfo.longitude;
 
-                setShowShimmer(true)
-                if (showError) setShowError(false)
+        if (userLat && userLng) {
+            const fetchData = async () => {
+                try {
+                    setShowShimmer(true)
+                    if (showError) setShowError(false)
 
-                const url = `${API_URL}lat=${userInfo.location.cityInfo.latitude}&lng=${userInfo.location.cityInfo.longitude}`;
-                const response = await fetch(url);
-                const responseData = await response.json();
+                    const URL = CONSTANTS.API_PAGE_RESTAURANTS.getUrl(userLat, userLng, device.isDesk ? "desk" : "mob");
 
-                if (responseData?.data?.cards) {
-                    const data = responseData?.data?.cards?.map((card: { card: { card: [] } }) => card?.card?.card);
+                    const response = await fetch(URL);
+                    const responseData = await response.json();
 
-                    const findCard = (cardIds: string[]) => {
-                        for (const cardId of cardIds) {
-                            const card = data.find((card: { id: string }) => card.id === cardId);
-                            if (card) {
-                                return card.gridElements?.infoWithStyle || undefined;
+                    if (responseData?.data?.cards) {
+                        const data = responseData?.data?.cards?.map((card: { card: { card: [] } }) => card?.card?.card);
+
+                        const findCard = (cardIds: string[]) => {
+                            for (const cardId of cardIds) {
+                                const card = data.find((card: { id: string }) => card.id === cardId);
+                                if (card) {
+                                    return card.gridElements?.infoWithStyle || undefined;
+                                }
                             }
-                        }
-                        return undefined;
-                    };
+                            return undefined;
+                        };
 
-                    // Populate pageData state
-                    setPageData({
-                        success: true,
-                        isSwiggyPresent: data.find((card: { id: string }) => card.id === "SwiggyNotPresent_Widget") ? false : true,
-                        isSwiggyAvailable: data.find((card: { id: string }) => card.id === "swiggy_not_present") ? false : true,
-                        banner: findCard(["topical_banner"])?.info || undefined,
-                        mind: findCard(["whats_on_your_mind"])?.info || undefined,
-                        topRestro: findCard(["top_brands_for_you"])?.restaurants?.map((restro: { info: [] }) => restro?.info) || undefined,
-                        onlineRestroLists: findCard(["restaurant_grid_listing"])?.restaurants || undefined,
-                        onlineRestroFilters: data.find((card: { facetList: [] }) => card.facetList) || undefined,
-                        onlineRestroTitle: data.find((card: { id: string }) => card.id === "popular_restaurants_title")?.title || undefined,
-                    });
+                        // Populate pageData state
+                        setPageData({
+                            success: true,
+                            isSwiggyPresent: data.find((card: { id: string }) => card.id === "SwiggyNotPresent_Widget") ? false : true,
+                            isSwiggyAvailable: data.find((card: { id: string }) => card.id === "swiggy_not_present") ? false : true,
+                            banner: findCard(["topical_banner"])?.info || undefined,
+                            mind: findCard(["whats_on_your_mind"])?.info || undefined,
+                            topRestro: findCard(["top_brands_for_you"])?.restaurants?.map((restro: { info: [] }) => restro?.info) || undefined,
+                            onlineRestroLists: findCard(["restaurant_grid_listing"])?.restaurants || undefined,
+                            onlineRestroFilters: data.find((card: { facetList: [] }) => card.facetList) || undefined,
+                            onlineRestroTitle: data.find((card: { id: string }) => card.id === "popular_restaurants_title")?.title || undefined,
+                        });
 
-                    // Hide Shimmer
+                        // Hide Shimmer
+                        setShowShimmer(false);
+
+                        // Hide Error
+                        if (showShimmer) setShowError(false);
+
+                    } else {
+                        throw new Error(responseData?.data?.statusMessage);
+                    }
+                } catch (error) {
+                    setShowError(true);
                     setShowShimmer(false);
-
-                    // Hide Error
-                    if (showShimmer) setShowError(false);
-
-                } else {
-                    throw new Error(responseData?.data?.statusMessage);
                 }
-            } catch (error) {
-                setShowError(true);
-                setShowShimmer(false);
             }
-        }
 
-        fetchData();
-    }, [userInfo]);
+            fetchData();
+        }
+    }, [userInfo, device]);
 
     return (
         <Page pageName="restaurants">

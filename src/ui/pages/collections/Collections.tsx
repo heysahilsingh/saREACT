@@ -1,21 +1,21 @@
 import { useContext, useEffect, useState } from "react";
-import CONSTANTS, { TypeRestroCard } from "../../../constants";
+import CONSTANTS from "../../../constants";
 import UserContext from "../../../context/UserContext";
-import { Link, useSearchParams } from "react-router-dom";
+import {useNavigate, useSearchParams } from "react-router-dom";
 import Page from "../Page";
 import NetworkError from "../../components/Errors/NetworkError";
 import CollectionsShimmer from "./CollectionsShimmer";
 import useDeviceDetect from "../../../hooks/useDeviceDetect";
 import { IconArrowNarrowLeft } from '@tabler/icons-react';
-import { routePaths } from "../../Ui";
+import FilterableRestro, { FiltersProp, RestrosProp } from "../../components/FilterableRestro/FilterableRestro";
 
 type pageData = {
     header: {
         imageId: string,
         title: string
     } | undefined,
-    filters: object | undefined,
-    restros: TypeRestroCard[] | undefined
+    restros: RestrosProp,
+    filters: FiltersProp
 }
 
 type ResponseCard = {
@@ -27,6 +27,8 @@ const Collections = () => {
     const { userInfo } = useContext(UserContext);
     const device = useDeviceDetect();
 
+    const navigate = useNavigate();
+
     const [showError, setShowError] = useState<boolean>(false);
     const [showShimmer, setShowShimmer] = useState<boolean>(true);
 
@@ -35,8 +37,6 @@ const Collections = () => {
         filters: undefined,
         restros: undefined
     })
-
-    useEffect(() => console.log(pageData), [pageData])
 
     useEffect(() => {
         const userLat = userInfo.location.cityInfo.latitude;
@@ -61,12 +61,12 @@ const Collections = () => {
 
                         const headerCard = cards.find((card: ResponseCard) => card["@type"] === "type.googleapis.com/swiggy.gandalf.widgets.v2.CollectionMasthead");
 
-                        const filtersCard = cards.find((card: ResponseCard) => card["@type"] === "type.googleapis.com/swiggy.gandalf.widgets.v2.FilterSortWidget" || "type.googleapis.com/swiggy.gandalf.widgets.v2.InlineViewFilterSortWidget"
+                        const filtersCard = cards.find((card: ResponseCard) =>
+                            card["@type"] === "type.googleapis.com/swiggy.gandalf.widgets.v2.FilterSortWidget" ||
+                            card["@type"] === "type.googleapis.com/swiggy.gandalf.widgets.v2.InlineViewFilterSortWidget"
                         );
 
-                        const restrosCard = cards
-                            .filter((card: ResponseCard) => card["@type"] === "type.googleapis.com/swiggy.presentation.food.v2.Restaurant")
-                            .map((card: { info: object }) => card.info);
+                        const restrosCard = cards.filter((card: ResponseCard) => card["@type"] === "type.googleapis.com/swiggy.presentation.food.v2.Restaurant");
 
                         setPageData({
                             header: headerCard,
@@ -88,7 +88,7 @@ const Collections = () => {
 
             fetchData()
         }
-    }, [])
+    }, [userInfo, device])
 
     return (
         <Page pageName="collection">
@@ -105,16 +105,25 @@ const Collections = () => {
                         {!device.isDesk && (
                             <>
                                 <img className="absolute top-0 left-0 object-cover w-full h-[auto]" src={CONSTANTS.IMG_CDN + pageData.header?.imageId} alt="" />
-
-                                <Link to={routePaths.home} className="text-white absolute top-4 left-3 drop-shadow-md">
-                                    <IconArrowNarrowLeft size={40} stroke={1} />
-                                </Link>
+                                <IconArrowNarrowLeft onClick={() =>  navigate(-1)} className="text-white absolute top-4 left-3 drop-shadow-md" size={40} stroke={1} />
                             </>
                         )}
 
-                        {device.isDesk && <h1 className="text-[2.5rem] leading-[120%] font-bold">{pageData.header?.title}</h1>}
+                        {device.isDesk && (
+                            <div className="flex gap-3 items-center">
+                                <IconArrowNarrowLeft onClick={() =>  navigate(-1)} size={60} stroke={1} />
+                                <h1 className="text-[2.5rem] leading-[120%] font-bold">{pageData.header?.title}</h1>
+                            </div>
+                        )}
                     </div>
-                    <div className="restros bg-slate-200 px-4">Noo</div>
+                    <div className="restros px-4">
+                        <FilterableRestro
+                            restros={pageData.restros}
+                            filters={pageData.filters}
+                            restrosListLoadType="INFINITE"
+                            filtersClasses="sticky top-0"
+                        />
+                    </div>
                 </div>
             )}
         </Page>

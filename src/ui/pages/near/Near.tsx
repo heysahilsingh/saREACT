@@ -21,35 +21,41 @@ const Near = () => {
     const [showShimmer, setShowShimmer] = useState<boolean>(true);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                if (showError) setShowError(false)
+        const userLat = userInfo.location.cityInfo.latitude;
+        const userLng = userInfo.location.cityInfo.longitude;
 
-                const URL = `${CONSTANTS.API_PAGE_RESTRO_NEAR}lat=${userInfo.location.cityInfo.latitude}&lng=${userInfo.location.cityInfo.longitude}`
-                const response = await fetch(URL);
-                const responseData = await response.json();
+        if (userLat && userLng) {
+            const fetchData = async () => {
+                try {
+                    if (showError) setShowError(false)
+                    if(!showShimmer) setShowShimmer(true)
 
-                if (responseData?.data?.success?.cards) {
-                    const data = responseData?.data?.success?.cards?.map((card: { card: { card: [] } }) => card?.card?.card);
+                    const URL = CONSTANTS.API_PAGE_RESTRO_NEAR.getUrl(userLat, userLng);
+                    const response = await fetch(URL);
+                    const responseData = await response.json();
 
-                    const responseRestros = data.find((d: { id: string }) => d.id === "restaurant_grid_listing")?.gridElements?.infoWithStyle?.restaurants;
-                    const responseFilters = data.find((d: { facetList: object, id: string }) => d.facetList);
+                    if (responseData?.data?.success?.cards) {
+                        const data = responseData?.data?.success?.cards?.map((card: { card: { card: [] } }) => card?.card?.card);
 
-                    if (responseFilters) setFilters(responseFilters)
-                    if (responseRestros) setRestros(responseRestros)
+                        const responseRestros = data.find((d: { id: string }) => d.id === "restaurant_grid_listing")?.gridElements?.infoWithStyle?.restaurants;
+                        const responseFilters = data.find((d: { facetList: object, id: string }) => d.facetList);
 
-                    if (showShimmer) setShowShimmer(false)
+                        if (responseFilters) setFilters(responseFilters)
+                        if (responseRestros) setRestros(responseRestros)
+
+                        if (showShimmer) setShowShimmer(false)
+                    }
+                    else {
+                        throw new Error(responseData?.data?.statusMessage);
+                    }
+                } catch (error) {
+                    setShowError(true);
                 }
-                else {
-                    throw new Error(responseData?.data?.statusMessage);
-                }
-            } catch (error) {
-                setShowError(true);
             }
-        }
 
-        fetchData();
-    }, [])
+            fetchData();
+        }
+    }, [userInfo, device])
 
     return (
         <Page pageName='near-me'>

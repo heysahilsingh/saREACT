@@ -89,8 +89,8 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
                         }
                     });
 
-                    if(!canFetchRestros) setCanFetchRestros(true)
-                } else{
+                    if (!canFetchRestros) setCanFetchRestros(true)
+                } else {
                     setCanFetchRestros(false)
                 }
 
@@ -101,7 +101,7 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
             }
             else {
                 // Scroll to parent Div
-                if(parentDivRef.current) parentDivRef.current.scrollIntoView();
+                if (parentDivRef.current) parentDivRef.current.scrollIntoView();
 
                 setFilters(undefined)
                 setRestros(undefined)
@@ -161,10 +161,12 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
                 {isMoreRestrosLoading && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(() => <RestroCardShimmer key={Math.random()} />)}
             </div>
 
-            <button ref={moreRestroLoadBtnRef} onClick={() => fetchAPIData("LOAD_MORE", APIBody)} className='w-full lg:max-w-[300px] mt-[40px] mx-auto rounded-xl border border-zinc-200 dark:border-zinc-800 p-3 flex items-center justify-center gap-1 font-medium'>
-                Show More
-                <IconChevronDown />
-            </button>
+            {canFetchRestros && (
+                <button ref={moreRestroLoadBtnRef} onClick={() => fetchAPIData("LOAD_MORE", APIBody)} className='w-full lg:max-w-[300px] mt-[40px] mx-auto rounded-xl border border-zinc-200 dark:border-zinc-800 p-3 flex items-center justify-center gap-1 font-medium'>
+                    Show More
+                    <IconChevronDown />
+                </button>
+            )}
         </div>
     )
 }

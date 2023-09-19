@@ -3,20 +3,33 @@ const CONSTANTS = {
 
    // APIs URL
    API_PAGE_HOME: {
-      mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/homepage/getCards?",
-      desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/homepage/getCards?"
-      // location after "?" in "lat=2&lng=2"
+      url: {
+         mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/homepage/getCards?",
+         desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/homepage/getCards?",
+      },
+      getUrl: function (userLat: number, userLng: number, device: "desk" | "mob") {
+         return `https://corsproxy.io/?https://www.swiggy.com/${device === "desk" ? "d" : "m"}api/homepage/getCards?lat=${userLat}&lng=${userLng}`;
+      },
    },
+
    API_PAGE_RESTAURANTS: {
-      mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&",
-      desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&"
-      // location after "&" in "lat=2&lng=2"
+      url: {
+         mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&",
+         desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&"
+      },
+      getUrl: function (userLat: number, userLng: number, device: "desk" | "mob") {
+         return `https://corsproxy.io/?https://www.swiggy.com/${device === "desk" ? "d" : "m"}api/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&lat=${userLat}&lng=${userLng}`;
+      },
    },
 
    API_PAGE_RESTAURANT: {
-      mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&",
-      desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&"
-      // location after "&" in "lat=2&lng=2" then "&restaurantId=" add restaurant Id after "="
+      url: {
+         mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&",
+         desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&"
+      },
+      getUrl: function (userLat: number, userLng: number, restaurantId: string, device: "desk" | "mob") {
+         return `https://corsproxy.io/?https://www.swiggy.com/${device === "desk" ? "d" : "m"}api/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=${userLat}&lng=${userLng}&restaurantId=${restaurantId}`;
+      },
    },
 
    API_PAGE_COLLECTIONS: {
@@ -27,10 +40,21 @@ const CONSTANTS = {
             `https://corsproxy.io/?https://www.swiggy.com/${device === "desk" ? "dapi" : "mapi"}/restaurants/list/v5?lat=${lat}&lng=${lng}&collection=${collectionId}&type=rcv2`
          )
       }
-      // location after "&" in "lat=2&lng=2" then "&restaurantId=" add restaurant Id after "="
    },
 
-   API_PAGE_RESTRO_NEAR: "https://corsproxy.io/?https://www.swiggy.com/api/seo/getListing?", // location after "?" in "lat=2&lng=2"
+   API_GET_RESTROS: {
+      url: "https://corsproxy.io/?https://www.swiggy.com/api/seo/getListing?",
+      getUrl: function (userLat: number, userLng: number) {
+         return `${this.url}lat=${userLat}&lng=${userLng}`;
+      },
+   },
+
+   API_PAGE_RESTRO_NEAR: {
+      url: "https://corsproxy.io/?https://www.swiggy.com/api/seo/getListing?",
+      getUrl: function (userLat: number, userLng: number) {
+         return `${this.url}lat=${userLat}&lng=${userLng}`;
+      },
+   },
 
    API_RESTRO_FILTERED: "https://corsproxy.io/?https://www.swiggy.com/api/seo/getListing?", // location after "?" in "lat=2&lng=2"
 
@@ -61,13 +85,13 @@ const CONSTANTS = {
 export type TypeRestroCard = {
    aggregatedDiscountInfoV2: {
       header: string,
-      descriptionList: {discountType: string, meta: string, operationType: string}[],
-      shortDescriptionList: {discountType: string, meta: string, operationType: string}[],
+      descriptionList: { discountType: string, meta: string, operationType: string }[],
+      shortDescriptionList: { discountType: string, meta: string, operationType: string }[],
    },
    aggregatedDiscountInfoV3: {
       header: string,
       subHeader: string
-  }
+   }
    areaName: string,
    availability: {
       nextCloseTime: string,
@@ -98,7 +122,7 @@ export type TypeRestroCard = {
    },
    displayType: string,
    feeDetails: {
-      fees: {name: string, fee: number}[],
+      fees: { name: string, fee: number }[],
       restaurantId: string,
       totalFee: number
    },
@@ -124,17 +148,17 @@ export type TypeRestroCard = {
 
 export type TypeRestroFilterAPIBody = {
    filters: {
-       isFiltered: true,
-       facets: {
-           deliveryTime: { value: string }[] | [],
-           isVeg: { value: string }[] | [],
-           restaurantOfferMultiTd: { value: string }[] | [],
-           explore: { value: string }[] | [],
-           costForTwo: { value: string }[] | [],
-           rating: { value: string }[] | [],
-           catalog_cuisines: { value: string }[] | []
-       },
-       sortAttribute: string
+      isFiltered: true,
+      facets: {
+         deliveryTime: { value: string }[] | [],
+         isVeg: { value: string }[] | [],
+         restaurantOfferMultiTd: { value: string }[] | [],
+         explore: { value: string }[] | [],
+         costForTwo: { value: string }[] | [],
+         rating: { value: string }[] | [],
+         catalog_cuisines: { value: string }[] | []
+      },
+      sortAttribute: string
    },
    lat: number | null,
    lng: number | null,
