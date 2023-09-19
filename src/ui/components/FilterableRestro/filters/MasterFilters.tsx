@@ -62,6 +62,23 @@ const MasterFilters = (props: MasterFiltersProps) => {
         props.onApply(APIFilters)
     }
 
+    const onClearHandler = () => {
+        props.onClose()
+        props.onApply({
+            isFiltered: true,
+            sortAttribute: "relevance",
+            facets: {
+                explore: [],
+                deliveryTime: [],
+                isVeg: [],
+                restaurantOfferMultiTd: [],
+                costForTwo: [],
+                rating: [],
+                catalog_cuisines: []
+            }
+        })
+    }
+
     // Print Filters Option for Master Filter
     const printFilterOptions = (filter: FilterType | undefined) => {
         const filterInputType = filter?.filterInfo?.selection === "SELECT_TYPE_MULTISELECT" ? "checkbox" : "radio";
@@ -143,7 +160,7 @@ const MasterFilters = (props: MasterFiltersProps) => {
 
                     {/* Apply Filters Button */}
                     <div className="apply flex gap-6 font-bold bg-white dark:bg-zinc-800 w-full justify-end py-3 px-5 shadow-[0_0px_10px_0px_rgba(40,44,63,0.1)]">
-                        <button onClick={onApplyHandler} className="text-primary">Clear Filters</button>
+                        <button onClick={onClearHandler} className="text-primary">Clear Filters</button>
                         <button onClick={onApplyHandler} className="text-white bg-primary rounded-xl py-2.5 px-6">Apply</button>
                     </div>
                 </div>

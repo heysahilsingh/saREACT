@@ -19,6 +19,17 @@ const CONSTANTS = {
       // location after "&" in "lat=2&lng=2" then "&restaurantId=" add restaurant Id after "="
    },
 
+   API_PAGE_COLLECTIONS: {
+      mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/list/v5?lat=28.6497478&lng=77.137371&collection=54802&type=rcv2",
+      desk: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/list/v5?lat=28.6497478&lng=77.137371&collection=54802&type=rcv2",
+      getURL: (lat: number, lng: number, collectionId: string, device: "desk" | "mob") => {
+         return (
+            `https://corsproxy.io/?https://www.swiggy.com/${device === "desk" ? "dapi" : "mapi"}/restaurants/list/v5?lat=${lat}&lng=${lng}&collection=${collectionId}&type=rcv2`
+         )
+      }
+      // location after "&" in "lat=2&lng=2" then "&restaurantId=" add restaurant Id after "="
+   },
+
    API_PAGE_RESTRO_NEAR: "https://corsproxy.io/?https://www.swiggy.com/api/seo/getListing?", // location after "?" in "lat=2&lng=2"
 
    API_RESTRO_FILTERED: "https://corsproxy.io/?https://www.swiggy.com/api/seo/getListing?", // location after "?" in "lat=2&lng=2"

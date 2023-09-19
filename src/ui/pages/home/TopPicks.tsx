@@ -16,7 +16,7 @@ const TopPicks = (props: TopPicksProps) => {
     return (
         <Link to={props.link} className={props?.className + " flex flex-col gap-2 items-start justify-center"}>
             <div className="col1 relative">
-                <img className="rounded-[8px] aspect-square" src={CONSTANTS.IMG_CDN + props.imgSrc} alt={props.restroName} />
+                <img className="bg-zinc-200 dark:bg-zinc-900 rounded-[8px] aspect-square" src={CONSTANTS.IMG_CDN + props.imgSrc} alt={props.restroName} />
                 {props.offerHeading && props.offerSubHeading && (
                     <div className="absolute w-[90%] -bottom-[5px] left-2/4 -translate-x-2/4 rounded-[4px] shadow-lg bg-white flex flex-col gap-0 leading-[1.2] font-black text-center text-primary leading offer p-1">
                         <span className="text-[13px]">{props.offerHeading}</span>

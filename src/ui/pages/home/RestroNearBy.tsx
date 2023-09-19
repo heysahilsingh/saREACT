@@ -20,7 +20,7 @@ const RestroNearBy = (props: RestroNearByProps) => {
     return (
         <Link to={props.link} className={props?.className + " w-full flex gap-4 items-center justify-start"}>
             <div className="col1 relative min-w-[22%] max-w-[22%] w-[22%]">
-                <img className="rounded-[8px] aspect-[4/4.5] object-cover" src={CONSTANTS.IMG_CDN + props.imgSrc} alt={props.restroName} />
+                <img className="bg-zinc-200 dark:bg-zinc-900 rounded-[8px] aspect-[4/4.5] object-cover" src={CONSTANTS.IMG_CDN + props.imgSrc} alt={props.restroName} />
                 {props.offerHeading && props.offerSubHeading && (
                     <div className="absolute w-[90%] -bottom-[5px] left-2/4 -translate-x-2/4 rounded-[4px] shadow-lg bg-white flex flex-col gap-0 leading-[1.2] font-black text-center text-primary leading offer p-1">
                         <span className="text-[13px]">{props.offerHeading}</span>

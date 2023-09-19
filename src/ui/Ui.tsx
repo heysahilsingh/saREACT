@@ -38,7 +38,7 @@ export const routePaths = {
   search: "/search",
   restaurants: "/restaurants",
   restaurant: "/restaurants/:restaurantSlug",
-  collections: "/collections/:collectionId"
+  collections: "/collections"
 }
 
 export const routes = createBrowserRouter([

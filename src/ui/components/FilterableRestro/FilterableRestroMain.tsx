@@ -21,11 +21,13 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
     const [nextPageOffset, setNextPageOffset] = useState("10");
 
     const [isMoreRestrosLoading, setIsMoreRestrosLoading] = useState<boolean>(false);
+    const [canFetchRestros, setCanFetchRestros] = useState<boolean>(true);
     const moreRestroLoadBtnRef = useRef<HTMLButtonElement | null>(null);
+    const parentDivRef = useRef<HTMLDivElement | null>(null);
 
     // Assign an Intersection Observer to Load more button
     useEffect(() => {
-        if (props.restrosListLoadType === "INFINITE" && !isFetchingAPIData) {
+        if (props.restrosListLoadType === "INFINITE" && !isFetchingAPIData && canFetchRestros) {
             const observer = new IntersectionObserver(entries => {
                 if (entries[0]?.isIntersecting) {
                     if (APIBody.widgetOffset.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo !== "") {
@@ -63,7 +65,7 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
                 })
             };
 
-            if (method === "LOAD_MORE") {
+            if (method === "LOAD_MORE" && canFetchRestros) {
                 setIsMoreRestrosLoading(true)
 
                 // Send the request
@@ -86,6 +88,10 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
                             ];
                         }
                     });
+
+                    if(!canFetchRestros) setCanFetchRestros(true)
+                } else{
+                    setCanFetchRestros(false)
                 }
 
                 // Update nextPageOffset
@@ -94,6 +100,9 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
                 setIsMoreRestrosLoading(false)
             }
             else {
+                // Scroll to parent Div
+                if(parentDivRef.current) parentDivRef.current.scrollIntoView();
+
                 setFilters(undefined)
                 setRestros(undefined)
 
@@ -138,7 +147,7 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
     }
 
     return (
-        <div className="container flex flex-col">
+        <div ref={parentDivRef} className="container flex flex-col">
             {/* Filters */}
             {!filters ? <FiltersShimmer /> : <Filters filters={filters} fetchAPIData={fetchAPIData} filtersClasses={props.filtersClasses && props.filtersClasses} />}
 
@@ -152,7 +161,7 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
                 {isMoreRestrosLoading && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(() => <RestroCardShimmer key={Math.random()} />)}
             </div>
 
-            <button ref={moreRestroLoadBtnRef} onClick={() => fetchAPIData("LOAD_MORE", APIBody)} className='w-full lg:max-w-[300px] mt-[40px] mx-auto rounded-xl border border-zinc-200 dark:border-zinc-800 p-3 flex items-center justify gap-1 font-medium'>
+            <button ref={moreRestroLoadBtnRef} onClick={() => fetchAPIData("LOAD_MORE", APIBody)} className='w-full lg:max-w-[300px] mt-[40px] mx-auto rounded-xl border border-zinc-200 dark:border-zinc-800 p-3 flex items-center justify-center gap-1 font-medium'>
                 Show More
                 <IconChevronDown />
             </button>

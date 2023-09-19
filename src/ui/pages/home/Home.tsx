@@ -14,10 +14,11 @@ import HomeShimmer from "./HomeShimmer";
 import NetworkError from "../../components/Errors/NetworkError";
 import SwiggyError from "../../components/Errors/SwiggyError";
 import SwiggyNotAvailableImg from "../../../assets/images/swiggy-not-available.jpeg";
-import { useNavigate } from "react-router-dom";
+import Restaurants from "../restaurants/Restaurants";
 
 type Api_Card = {
     id: string,
+    entityId: string,
     name: string,
     cloudinaryImageId: string,
     aggregatedDiscountInfoV3: {
@@ -55,8 +56,6 @@ type PageData = {
 
 const Home = () => {
     const device = useDeviceDetect();
-
-    const navigate = useNavigate();
 
     const { userInfo } = useContext(UserContext);
 
@@ -136,7 +135,10 @@ const Home = () => {
         if (!device.isDesk) fetchData();
     }, [userInfo]);
 
-    if (device.isDesk) navigate(routePaths.restaurants);
+    // if (device.isDesk) navigate(routePaths.restaurants);
+
+    if (device.isDesk) return <Restaurants />;
+
     else {
         return (
             <Page pageName="home">
@@ -154,23 +156,23 @@ const Home = () => {
                     {/* If Swiggy Not Present */}
                     {!pageData.isSwiggyPresent && (
                         <SwiggyError
-                        heading={"Swiggy not present in " + (userInfo.location.cityInfo.cityName || userInfo.location.cityInfo.stateName)}
-                        caption="We don't have any services here till now. Try changing the location."
-                        showButton= {true}
-                        buttonText="Change Location"
-                        buttonOnClick={() => console.log("object")}
+                            heading={"Swiggy not present in " + (userInfo.location.cityInfo.cityName || userInfo.location.cityInfo.stateName)}
+                            caption="We don't have any services here till now. Try changing the location."
+                            showButton={true}
+                            buttonText="Change Location"
+                            buttonOnClick={() => console.log("object")}
                         />
                     )}
 
                     {/* If Swiggy Not Available */}
                     {!pageData.isSwiggyAvailable && (
                         <SwiggyError
-                        image={SwiggyNotAvailableImg}
-                        heading={"Due to operational exigencies, we are temporarily unserviceable"}
-                        caption="Some restaurants around you are not serviceable due to operational exigencies. Please bear with us."
-                        showButton= {true}
-                        buttonText="Change Location"
-                        buttonOnClick={() => console.log("object")}
+                            image={SwiggyNotAvailableImg}
+                            heading={"Due to operational exigencies, we are temporarily unserviceable"}
+                            caption="Some restaurants around you are not serviceable due to operational exigencies. Please bear with us."
+                            showButton={true}
+                            buttonText="Change Location"
+                            buttonOnClick={() => console.log("object")}
                         />
                     )}
 
@@ -224,9 +226,17 @@ const Home = () => {
                             {/* Big Offers Slider */}
                             {pageData.bigOffer && (
                                 <div className="flex gap-4 items-center no-scrollbar overflow-x-scroll overflow-y-hidden">
-                                    {pageData.bigOffer?.map(slide => (
-                                        <img key={slide.id} className="w-[80%] rounded-xl" src={CONSTANTS.IMG_CDN + slide.imageId} alt={slide.accessibility?.altText} />
-                                    ))}
+                                    {pageData.bigOffer?.map(slide => {
+                                        const link = `${routePaths.collections}?collection_id=${slide.entityId}`;
+
+                                        return (
+                                            <div key={slide.id} className="min-w-[80%] rounded-xl">
+                                                <Link to={link}>
+                                                    <img className="bg-zinc-200 dark:bg-zinc-900" src={CONSTANTS.IMG_CDN + slide.imageId} alt={slide.accessibility?.altText} />
+                                                </Link>
+                                            </div>
+                                        )
+                                    })}
                                 </div>
                             )}
 
@@ -235,9 +245,17 @@ const Home = () => {
                                 <div className="">
                                     <p className="font-bold text-lg pb-4">Offers For You</p>
                                     <div className="flex gap-2 items-center no-scrollbar overflow-x-scroll overflow-y-hidden">
-                                        {pageData.offer?.map(slide => (
-                                            <img key={slide.id} className="w-[35%] rounded-xl" src={CONSTANTS.IMG_CDN + slide.imageId} alt={slide.accessibility?.altText} />
-                                        ))}
+                                        {pageData.offer?.map(slide => {
+                                            const link = `${routePaths.collections}?collection_id=${slide.entityId}`;
+
+                                            return (
+                                                <div key={slide.id} className="min-w-[35%] rounded-xl">
+                                                    <Link to={link}>
+                                                        <img className="bg-zinc-200 dark:bg-zinc-900" src={CONSTANTS.IMG_CDN + slide.imageId} alt={slide.accessibility?.altText} />
+                                                    </Link>
+                                                </div>
+                                            )
+                                        })}
                                     </div>
                                 </div>
                             )}

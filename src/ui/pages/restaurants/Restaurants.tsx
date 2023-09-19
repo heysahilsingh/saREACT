@@ -10,9 +10,11 @@ import SwiggyError from "../../components/Errors/SwiggyError";
 import { routePaths } from "../../Ui";
 import FilterableRestro from "../../components/FilterableRestro/FilterableRestro";
 import RestroCard from "../../components/RestroCard";
+import { Link } from "react-router-dom";
 
 type PageBanner = {
     id: string,
+    entityId: string,
     accessibility: {
         altText: "RESTAURANT" | "INSTAMART",
         altTextCta: string
@@ -143,9 +145,17 @@ const Restaurants = () => {
                         {/* Banner */}
                         {pageData.banner && (
                             <div className="flex gap-4 items-center no-scrollbar overflow-x-scroll overflow-y-hidden">
-                                {pageData.banner?.map(slide => (
-                                    <img key={slide?.id} className="w-[80%] lg:w-[40%] rounded-[25px]" src={CONSTANTS.IMG_CDN + slide?.imageId} alt={slide?.accessibility?.altText} />
-                                ))}
+                                {pageData.banner?.map(slide => {
+                                    const link = `${routePaths.collections}?collection_id=${slide.entityId}`;
+
+                                    return (
+                                        <div key={slide?.id} className="min-w-[80%] lg:min-w-[40%] rounded-[25px]">
+                                            <Link to={link}>
+                                                <img className="bg-zinc-200 dark:bg-zinc-900" src={CONSTANTS.IMG_CDN + slide?.imageId} alt={slide?.accessibility?.altText} />
+                                            </Link>
+                                        </div>
+                                    )
+                                })}
                             </div>
                         )}
 
@@ -153,10 +163,18 @@ const Restaurants = () => {
                         {pageData.mind && (
                             <div>
                                 <p className="font-bold text-lg pb-4 lg:pb-8 lg:text-2xl">What's on your mind?</p>
-                                <div className="grid grid-cols-[repeat(10,80px)] gap-2 items-center lg:flex no-scrollbar overflow-x-scroll overflow-y-hidden">
-                                    {pageData.mind?.map(option => (
-                                        <img key={option?.id} className="min-w-[80px] w-[22%] lg:w-[14.5%] lg:min-w-[14.5%] rounded-xl" src={CONSTANTS.IMG_CDN + option?.imageId} alt={option?.accessibility?.altText} />
-                                    ))}
+                                <div className={`grid grid-cols-[repeat(${pageData.mind.length / 2 < 5 ? "5" : pageData.mind.length / 2},80px)] gap-2 items-center lg:flex no-scrollbar overflow-x-scroll overflow-y-hidden`}>
+                                    {pageData.mind?.map(option => {
+                                        const link = `${routePaths.collections}?collection_id=${option.id}`;
+
+                                        return (
+                                            <div key={option?.id} className="min-w-[80px] w-[22%] lg:w-[14.5%] lg:min-w-[14.5%] rounded-xl">
+                                                <Link to={link}>
+                                                    <img className="bg-zinc-200 dark:bg-zinc-900" src={CONSTANTS.IMG_CDN + option?.imageId} alt={option?.accessibility?.altText} />
+                                                </Link>
+                                            </div>
+                                        )
+                                    })}
                                 </div>
                             </div>
                         )}

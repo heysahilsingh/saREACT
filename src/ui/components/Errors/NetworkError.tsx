@@ -1,13 +1,13 @@
 import errorImage from "../../..//assets/images/error.webp"
 
 
-interface ErrorCompProps {
+interface NetworkErrorProps {
     message?: string,
     buttonText?: string,
     onClick?: () => void
 }
 
-const ErrorComp = (props: ErrorCompProps) => {
+const NetworkError = (props: NetworkErrorProps) => {
     return (
         <div className="error text-center max-w-[300px] mx-auto">
             <img src={errorImage} alt={props?.message || "Error"} />
@@ -20,4 +20,4 @@ const ErrorComp = (props: ErrorCompProps) => {
     )
 }
 
-export default ErrorComp
+export default NetworkError
