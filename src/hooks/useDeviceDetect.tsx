@@ -33,28 +33,28 @@ const useDeviceDetect = () => {
 
   const [device, setDevice] = useState<DeviceInterface>(getDeviceState);
 
-  // useEffect(() => setDevice(getDeviceState), [])
+  useEffect(() => setDevice(getDeviceState), [])
 
-  useEffect(() => {
-    const handleResize = () => {
-      const newDeviceState = getDeviceState();
-      if (
-        newDeviceState.isDesk !== device.isDesk ||
-        newDeviceState.isTab !== device.isTab ||
-        newDeviceState.isMob !== device.isMob
-      ) {
-        setDevice(newDeviceState);
-      }
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     const newDeviceState = getDeviceState();
+  //     if (
+  //       newDeviceState.isDesk !== device.isDesk ||
+  //       newDeviceState.isTab !== device.isTab ||
+  //       newDeviceState.isMob !== device.isMob
+  //     ) {
+  //       setDevice(newDeviceState);
+  //     }
+  //   };
 
-    // Add event listener for window resize
-    window.addEventListener('resize', handleResize);
+  //   // Add event listener for window resize
+  //   window.addEventListener('resize', handleResize);
 
-    // Clean up the event listener when the component unmounts
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [device]);
+  //   // Clean up the event listener when the component unmounts
+  //   return () => {
+  //     window.removeEventListener('resize', handleResize);
+  //   };
+  // }, [device]);
 
   return device;
 };
