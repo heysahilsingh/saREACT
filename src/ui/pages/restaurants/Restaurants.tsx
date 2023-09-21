@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from "react";
 import UserContext from "../../../context/UserContext";
 import useDeviceDetect from "../../../hooks/useDeviceDetect";
-import CONSTANTS, { TypeRestroCard } from "../../../constants";
+import CONSTANTS, { TypeRestaurantInformation } from "../../../constants";
 import RestaurantsShimmer from "./RestaurantsShimmer";
 import NetworkError from "../../components/Errors/NetworkError";
 import Page from "../Page";
@@ -28,10 +28,10 @@ type PageData = {
     isSwiggyAvailable: boolean,
     banner: PageBanner[] | undefined,
     mind: PageBanner[] | undefined,
-    topRestro: TypeRestroCard[] | undefined,
+    topRestro: TypeRestaurantInformation[] | undefined,
     onlineRestroTitle: string | undefined,
     onlineRestroFilters: { sortConfigs: [], facetList: [] } | undefined,
-    onlineRestroLists: { info: TypeRestroCard }[] | undefined,
+    onlineRestroLists: { info: TypeRestaurantInformation }[] | undefined,
 }
 
 const Restaurants = () => {

@@ -31,9 +31,9 @@ const LocationSearch = (props: LocationSearchProps) => {
 
     const device = useDeviceDetect();
 
-    const API_LOCATION_SUGGESTION = device?.isDesk ? CONSTANTS.API_LOCATION_SUGGESTION.desk : CONSTANTS.API_LOCATION_SUGGESTION.mob;
-    const API_USER_LOCATION_BY_PLACE_ID = device?.isDesk ? CONSTANTS.API_USER_LOCATION.by_place_id.desk : CONSTANTS.API_USER_LOCATION.by_place_id.mob;
-    const API_USER_LOCATION_BY_GEO_ID = device?.isDesk ? CONSTANTS.API_USER_LOCATION.by_geo_id.desk : CONSTANTS.API_USER_LOCATION.by_geo_id.mob;
+    const API_LOCATION_SUGGESTION = device?.isDesk ? CONSTANTS.API_LOCATION_SUGGESTION.url.desk : CONSTANTS.API_LOCATION_SUGGESTION.url.mob;
+    const API_USER_LOCATION_BY_PLACE_ID = device?.isDesk ? CONSTANTS.API_USER_LOCATION.url.by_place_id.desk : CONSTANTS.API_USER_LOCATION.url.by_place_id.mob;
+    const API_USER_LOCATION_BY_GEO_ID = device?.isDesk ? CONSTANTS.API_USER_LOCATION.url.by_geo_id.desk : CONSTANTS.API_USER_LOCATION.url.by_geo_id.mob;
 
     // Error Message
     const [showError, setShowError] = useState<boolean>(false)

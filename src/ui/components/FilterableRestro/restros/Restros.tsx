@@ -1,11 +1,11 @@
-import { TypeRestroCard } from "../../../../constants"
+import { TypeRestaurantInformation } from "../../../../constants"
 import UserContext from "../../../../context/UserContext";
 import { routePaths } from "../../../Ui";
 import RestroCard from "../../RestroCard";
 import { useContext } from 'react';
 
 
-const Restros = (props: { restros: TypeRestroCard[] }) => {
+const Restros = (props: { restros: TypeRestaurantInformation[] }) => {
 
   const { userInfo } = useContext(UserContext);
 

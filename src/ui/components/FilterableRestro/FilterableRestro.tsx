@@ -1,4 +1,4 @@
-import { TypeRestroCard } from "../../../constants"
+import { TypeRestaurantInformation } from "../../../constants"
 import { FilterableRestroAPIBodyContextProvider } from "../../../context/FilterableRestroAPIBodyContext"
 import FilterableRestroMain from "./FilterableRestroMain"
 
@@ -23,7 +23,7 @@ export type FiltersProp = {
     })[]
 } | undefined
 
-export type RestrosProp = { info: TypeRestroCard }[] | undefined
+export type RestrosProp = { info: TypeRestaurantInformation }[] | undefined
 
 export interface FilterableRestroProps {
     filters: FiltersProp,

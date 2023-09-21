@@ -56,94 +56,187 @@ const CONSTANTS = {
       },
    },
 
-   API_RESTRO_FILTERED: "https://corsproxy.io/?https://www.swiggy.com/api/seo/getListing?", // location after "?" in "lat=2&lng=2"
-
    API_RESTRO_UPDATE: {
-      mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/list/update",
-      desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/restaurants/list/update"
+      url: {
+         mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/list/update",
+         desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/restaurants/list/update"
+      }
    },
 
    API_LOCATION_SUGGESTION: {
-      mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc/place-autocomplete?input=",
-      desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/misc/place-autocomplete?input="
-      // keyword after "="
+      url: {
+         mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc/place-autocomplete?input=",
+         desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/misc/place-autocomplete?input="
+      }
    },
+
    API_USER_LOCATION: {
-      by_place_id: {
-         mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc/address-recommend?place_id=",
-         desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/misc/address-recommend?place_id="
-         // place_id after "?"
-      },
-      by_geo_id: {
-         mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc/address-recommend?",
-         desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/misc/address-recommend?"
-         // after ? "latlng=28.721152%2C77.0605056"
+      url: {
+         by_place_id: {
+            mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc/address-recommend?place_id=",
+            desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/misc/address-recommend?place_id="
+            // place_id after "?"
+         },
+         by_geo_id: {
+            mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc/address-recommend?",
+            desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/misc/address-recommend?"
+            // after ? "latlng=28.721152%2C77.0605056"
+         }
       }
    },
 }
 
-export type TypeRestroCard = {
+export type TypeRestaurantInformation = {
+   type: string,
+   name: string,
+   id: string,
+   uniqueId: string,
+   parentId: string,
+   logo: string,
+   cloudinaryImageId: string,
+   isOpen: boolean,
+   latLong: string
+   areaName: string,
+   locality: string,
+   city: string,
+   totalRatings: number,
+   totalRatingsString: string,
+   avgRating: number,
+   avgRatingString: string,
+   ratingSlab: string,
+   hasBestsellerItems: boolean,
+   costForTwo: string,
+   costForTwoMessage: string,
+   veg: boolean,
+   cuisines: string[],
+
+   displayType: string,
+   differentiatedUi: {
+      displayType: string,
+      differentiatedUiMediaDetails: {
+         mediaType: string,
+      }
+   },
+   badges: object,
+   badgesV2: {
+      cloudinaryImageId: string,
+      costForTwo: string,
+   },
+
+   slugs: {
+      restaurant: string,
+      city: string
+   },
+   slugString: string,
+   feeDetails: {
+      restaurantId: string,
+      fees: { name: string, fee: number }[],
+      totalFee: number,
+      icon: string,
+      message: string
+   },
+   sla: {
+      restaurantId: string,
+      deliveryTime: number,
+      minDeliveryTime: number,
+      maxDeliveryTime: number,
+      lastMileTravel: number,
+      serviceability: string,
+      stressFactor: number,
+      rainMode: string,
+      longDistance: string,
+      zoneId: number,
+      slaString: string,
+      lastMileTravelString: string,
+      iconType: string
+   },
+   availability: {
+      nextCloseTime: string,
+      visibility: boolean,
+      opened: boolean,
+      restaurantClosedMeta: object
+   },
+   multiOutlet: boolean,
+   labels: {
+      title: string,
+      message: string
+   }[],
+   nudgeBanners: [
+      {
+         minValue: number,
+         maxValue: number,
+         priority: number,
+         couponCode: string,
+         discountInfo: {
+            discountType: string,
+            value: number
+         },
+         lockedMessage: string,
+         unlockedMessage: string,
+         logoCtx: object
+      }
+   ],
+   headerBanner: {
+      url: string
+   },
+   aggregatedDiscountInfo: {
+      header: string,
+      shortDescriptionList: {
+         meta: string,
+         discountType: string,
+         operationType: string
+      }[],
+      descriptionList: {
+         meta: string,
+         discountType: string,
+         operationType: string
+      }[],
+      visible: boolean
+   },
    aggregatedDiscountInfoV2: {
       header: string,
-      descriptionList: { discountType: string, meta: string, operationType: string }[],
-      shortDescriptionList: { discountType: string, meta: string, operationType: string }[],
+      shortDescriptionList: {
+         meta: string,
+         discountType: string,
+         operationType: string
+      }[],
+      descriptionList: {
+         meta: string,
+         discountType: string,
+         operationType: string
+      }[],
+      couponDetailsCta: string
    },
    aggregatedDiscountInfoV3: {
       header: string,
       subHeader: string
    }
-   areaName: string,
-   availability: {
-      nextCloseTime: string,
-      opened: boolean
-   },
-   avgRating: number,
-   avgRatingString: string,
-   badges: object,
-   badgesV2: {
-      cloudinaryImageId: string,
-      costForTwo: string,
-      entityBadges: {
-         imageBased: object,
-         textBased: object,
-         textExtendedBadges: object
+   expectationNotifiers: [
+      {
+         text: string,
+         icon: {
+            imageId: string
+         },
+         popup: {
+            cta: object
+         },
+         type: string,
+         enrichedText: string,
+         halfCardPopup: {
+            halfCardPopupHeader: object
+         }
       }
+   ],
+   orderabilityCommunication: {
+      title: object,
+      subTitle: object,
+      message: object,
+      customIcon: object
    },
-   cloudinaryImageId: string,
-   costForTwo: string,
-   cuisines: string[],
-   differentiatedUi: {
-      displayType: string,
-      differentiatedUiMediaDetails: {
-         lottie: object,
-         mediaType: string,
-         video: object
-      }
+   cartOrderabilityNudgeBanner: {
+      parameters: object,
+      presentation: object
    },
-   displayType: string,
-   feeDetails: {
-      fees: { name: string, fee: number }[],
-      restaurantId: string,
-      totalFee: number
-   },
-   id: string,
-   isOpen: boolean,
-   locality: string,
-   name: string,
-   parentId: string,
-   restaurantOfferPresentationInfo: object,
-   reviewsSummary: object,
-   sla: {
-      deliveryTime: number,
-      iconType: string,
-      lastMileTravel: number,
-      lastMileTravelString: string,
-      serviceability: string,
-      slaString: string
-   },
-   totalRatingsString: string,
-   type: string,
-   veg: boolean
 }
 
 export type TypeRestroFilterAPIBody = {
@@ -163,6 +256,42 @@ export type TypeRestroFilterAPIBody = {
    lat: number | null,
    lng: number | null,
    widgetOffset: { collectionV5RestaurantListWidget_SimRestoRelevance_food_seo: string },
+}
+
+export type TypeMenuItem = {
+   id: string,
+   name: string,
+   category: string,
+   description: string,
+   imageId: string,
+   inStock: number,
+   price: number,
+   addons: {
+      groupId: string,
+      groupName: string,
+      choices: {
+         id: string,
+         name: string,
+         price: number,
+         inStock: number,
+         isVeg: number,
+         isEnabled: number
+      }[],
+      maxAddons: number,
+      maxFreeAddons: number,
+      minAddons: number
+   }[],
+   itemAttribute: {
+      vegClassifier: string,
+      portionSize: string
+   },
+   ratings: {
+      aggregatedRating: {
+         rating: string,
+         ratingCount: string,
+         ratingCountV2: string
+      }
+   }
 }
 
 export default CONSTANTS

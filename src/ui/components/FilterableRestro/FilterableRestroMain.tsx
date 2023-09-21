@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState, useRef } from 'react';
-import CONSTANTS, { TypeRestroCard, TypeRestroFilterAPIBody } from '../../../constants';
+import CONSTANTS, { TypeRestaurantInformation, TypeRestroFilterAPIBody } from '../../../constants';
 import { RestroCardShimmer } from '../RestroCard';
 import { FilterableRestroProps, FiltersProp } from './FilterableRestro';
 import Filters from './filters/Filters';
@@ -15,8 +15,8 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
     const { APIBody } = useContext(FilterableRestroAPIBodyContext);
     const [isFetchingAPIData, setIsFetchingAPIData] = useState(false);
 
-    const [restros, setRestros] = useState<TypeRestroCard[] | undefined>(props.restros?.map(restro => restro?.info));
-    const [restroPH, setRestroPH] = useState<TypeRestroCard[] | undefined>(restros);
+    const [restros, setRestros] = useState<TypeRestaurantInformation[] | undefined>(props.restros?.map(restro => restro?.info));
+    const [restroPH, setRestroPH] = useState<TypeRestaurantInformation[] | undefined>(restros);
     const [filters, setFilters] = useState<FiltersProp | undefined>(props.filters);
     const [nextPageOffset, setNextPageOffset] = useState("10");
 
@@ -51,7 +51,7 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
         if (APIBody.widgetOffset.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo === "") return
 
         try {
-            const URL = device.isDesk ? CONSTANTS.API_RESTRO_UPDATE.desk : CONSTANTS.API_RESTRO_UPDATE.mob
+            const URL = device.isDesk ? CONSTANTS.API_RESTRO_UPDATE.url.desk : CONSTANTS.API_RESTRO_UPDATE.url.mob
 
             // Request options
             const requestOptions = {
