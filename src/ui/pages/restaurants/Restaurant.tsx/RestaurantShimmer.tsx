@@ -1,7 +1,9 @@
 
 const RestaurantShimmer = () => {
     return (
-        <div>Shimmer loading</div>
+        <div className="rounded-2xl overflow-hidden h-[50vh] w-full">
+            <div className="shimmer-bg h-full w-full"></div>
+        </div>
     )
 };
 

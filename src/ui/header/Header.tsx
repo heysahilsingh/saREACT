@@ -6,7 +6,7 @@ const Header = () => {
     const device = useDeviceDetect();
 
     return (
-        <header className="header">
+        <header className="header z-50 relative">
             {device?.isDesk ? <DeskHeader /> : <MobHeader />}
         </header>
     )

@@ -144,7 +144,7 @@ export type TypeRestaurantInformation = {
       serviceability: string,
       stressFactor: number,
       rainMode: string,
-      longDistance: string,
+      longDistance: "LONG_DISTANCE_NOT_LONG_DISTANCE" | "LONG_DISTANCE_IT_IS_LONG_DISTANCE",
       zoneId: number,
       slaString: string,
       lastMileTravelString: string,
