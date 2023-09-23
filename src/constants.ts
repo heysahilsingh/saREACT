@@ -32,6 +32,16 @@ const CONSTANTS = {
       },
    },
 
+   API_GET_RESTRO_OUTLET: {
+      url: {
+         mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/menu/api/v1/json/layout-section/MENU_MULTI_OUTLET",
+         desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/menu/api/v1/json/layout-section/MENU_MULTI_OUTLET"
+      },
+      getUrl: function (device: "desk" | "mob") {
+         return device === "desk" ? this.url.desk : this.url.mob
+      },
+   },
+
    API_PAGE_COLLECTIONS: {
       mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/list/v5?lat=28.6497478&lng=77.137371&collection=54802&type=rcv2",
       desk: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/list/v5?lat=28.6497478&lng=77.137371&collection=54802&type=rcv2",
@@ -265,6 +275,7 @@ export type TypeMenuItem = {
    description: string,
    imageId: string,
    inStock: number,
+   isBestseller: number,
    price: number,
    addons: {
       groupId: string,
@@ -282,7 +293,7 @@ export type TypeMenuItem = {
       minAddons: number
    }[],
    itemAttribute: {
-      vegClassifier: string,
+      vegClassifier: "VEG" | "NONVEG",
       portionSize: string
    },
    ratings: {
@@ -291,7 +302,16 @@ export type TypeMenuItem = {
          ratingCount: string,
          ratingCountV2: string
       }
-   }
+   },
+   offerTags: {
+      title: string,
+      subTitle: string
+   }[],
+   ribbon: {
+      text: string,
+
+   },
+   showImage: boolean
 }
 
 export default CONSTANTS
