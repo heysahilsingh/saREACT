@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import CONSTANTS, { TypeMenuItem } from "../../constants"
 import { IconStarFilled } from "@tabler/icons-react";
 
-interface MenuCardProps {
+interface MenuItemCardProps {
     menu: TypeMenuItem
 }
 
-const MenuCard = (props: MenuCardProps) => {
+const MenuItemCard = (props: MenuItemCardProps) => {
     const [showFullDesc, setShowFullDesc] = useState(false);
     const [isOverflowing, setIsOverflowing] = useState(false);
     const descriptionRef = useRef<HTMLDivElement | null>(null);
@@ -47,7 +47,7 @@ const MenuCard = (props: MenuCardProps) => {
                     </div>
                     <div className="item-pricing">
                         <div className="flex items-center gap-2 mt-1.5 mb-3">
-                            <p className="price text-[15px] h-fit min-w-fit">₹ {props.menu.price / 100}</p>
+                            <p className="price text-[15px] h-fit min-w-fit">₹ {(props.menu.price || props.menu.defaultPrice) / 100}</p>
                             {(props.menu.offerTags || []).length > 0 && (
                                 <div className="flex items-center gap-2 text-[10px] uppercase no-scrollbar overflow-scroll grow">
                                     {props.menu.offerTags.map((offerTag, index) => (
@@ -102,4 +102,4 @@ const MenuCard = (props: MenuCardProps) => {
     );
 };
 
-export default MenuCard;
+export default MenuItemCard;

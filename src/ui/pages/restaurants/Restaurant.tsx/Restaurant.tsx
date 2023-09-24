@@ -6,10 +6,11 @@ import CONSTANTS, { TypeMenuItem, TypeRestaurantInformation } from "../../../../
 import Page from "../../Page";
 import RestaurantShimmer from "./RestaurantShimmer";
 import ErrorComp from "../../../components//Errors/NetworkError";
-import { IconArrowNarrowLeft, IconBike, IconCaretDownFilled, IconCoinRupee, IconDiscount2, IconInfoCircleFilled, IconMapPinFilled, IconSearch, IconStarFilled } from "@tabler/icons-react";
+import { IconArrowNarrowLeft, IconBike, IconCaretDownFilled, IconInfoCircleFilled, IconMapPinFilled, IconSearch, IconStarFilled } from "@tabler/icons-react";
 import TopPicks from "./TopPicks";
 import MenuCategory from "./MenuCategory";
 import MultiOutlet from "./MultiOutlet";
+import Offers from "./Offers";
 
 type PageData = {
     restroInfo: {
@@ -74,6 +75,8 @@ const Restaurant = () => {
         menuCategories: undefined,
         topPicks: undefined
     });
+
+    const [showOnlyVegItems, setShowOnlyVegItems] = useState(false);
 
     const [showMultiOutlets, setShowMultiOutlets] = useState(false);
 
@@ -181,10 +184,7 @@ const Restaurant = () => {
 
     }, [userInfo]);
 
-    useEffect(() => {
-        if (pageData?.restroInfo?.info?.id) console.log(pageData);
-    }, [pageData])
-
+    useEffect(() => console.log(pageData && pageData), [pageData])
 
     return (
         <Page pageName="restaurant">
@@ -253,45 +253,22 @@ const Restaurant = () => {
                             <hr className="w-full bg-zinc-300 dark:bg-zinc-700 h-[1px] border-0" />
 
                             {/* Offers */}
-                            <div className="r-offers flex flex-col">
-                                <div className="r-d-time-c-t">
-                                    <ul className="flex items-center gap-6">
-                                        <li className="flex items-center gap-2 text-zinc-700 dark:text-zinc-400">
-                                            <svg className="RestaurantTimeCost_icon__8UdT4" width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" fill="none">
-                                                <circle r="8.35" transform="matrix(-1 0 0 1 9 9)" stroke="currentColor" strokeWidth="1.3"></circle>
-                                                <path d="M3 15.2569C4.58666 16.9484 6.81075 18 9.273 18C14.0928 18 18 13.9706 18 9C18 4.02944 14.0928 0 9.273 0C9.273 2.25 9.273 9 9.273 9C6.36399 12 5.63674 12.75 3 15.2569Z" fill="currentColor"></path>
-                                            </svg>
-                                            <p className="font-bold">{pageData.restroInfo.info.sla.deliveryTime} MIN</p>
-                                        </li>
-                                        <li className="flex items-center gap-2 text-zinc-700 dark:text-zinc-400">
-                                            <IconCoinRupee />
-                                            <p className="font-bold">{pageData.restroInfo.info.costForTwoMessage}</p>
-                                        </li>
-                                    </ul>
+                            {pageData.offers && (
+                                <div className="r-offers flex flex-col">
+                                    <Offers offers={pageData.offers} restroInfo={pageData.restroInfo} />
                                 </div>
-                                {(pageData.offers || []).length > 0 && (pageData.offers?.some(offer => offer.couponCode)) && (
-                                    <ul className="flex gap-3 mt-4 no-scrollbar overflow-x-scroll overflow-y-hidden text-[14px]">
-                                        {pageData.offers?.map(offer => {
-                                            return (
-                                                <li key={offer.restId + offer.header + offer.description} className="relative min-w-fit flex items-center py-2.5 px-3.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 uppercase">
-                                                    {offer.offerTag && (
-                                                        <div className="flex flex-col gap-1 items-center justify-center h-fit -rotate-90 -ml-[16px]">
-                                                            <span className="font-bold text-[10px] text-primary">{offer.offerTag}</span>
-                                                            <hr className="w-full bg-zinc-200 dark:bg-zinc-800 h-[1px] border-0" />
-                                                        </div>
-                                                    )}
-                                                    <div className="grow flex flex-col">
-                                                        <div className="head flex items-center gap-1.5">
-                                                            <IconDiscount2 size={20} stroke={3} className="text-[#8B554E]" />
-                                                            <p className="font-bold">{offer.header}</p>
-                                                        </div>
-                                                        <p className="text-zinc-900 dark:text-zinc-400">{offer.couponCode} | {offer.description}</p>
-                                                    </div>
-                                                </li>
-                                            )
-                                        })}
-                                    </ul>
-                                )}
+                            )}
+
+                            {/* Veg Only FIlter */}
+                            <div className="r-veg-filter">
+                                <div className="flex gap-2 items-center pt-4">
+                                    <p className="font-semibold">Veg Only</p>
+                                    <label className="relative inline-flex items-center cursor-pointer">
+                                        <input onChange={() => setShowOnlyVegItems(prev => !prev)} type="checkbox" value="" className="sr-only peer" />
+                                        <div className="w-[40px] h-[20px] rounded bg-gray-200 peer dark:bg-gray-700 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:rounded after:left-[2px] after:bg-white dark:after:bg-gray-500 after:h-[16px] after:w-[18px] after:transition-all peer-checked:bg-[#008000] peer-checked:after:bg-white peer-checked:before:translate-x-[18px] peer-checked:before:opacity-100 before:opacity-0 before:content-[''] before:absolute before:top-[2px] before:rounded-full before:left-[2px] before:bg-[#008000] before:h-[8px] before:w-[8px] before:my-[4px] before:mx-[5px] before:transition-all before:z-10"></div>
+                                    </label>
+
+                                </div>
                             </div>
 
                             {/* Top Picks */}
@@ -309,9 +286,19 @@ const Restaurant = () => {
                             )}
 
                             {/* Menu Categories */}
-                            <div className="r-menu-categories -mx-4 flex flex-col">
-                                {pageData.menuCategories?.map(category => <MenuCategory key={category.title} title={category.title} itemCards={category.itemCards} />)}
-                            </div>
+                            {pageData.menuCategories && (pageData.menuCategories || []).length > 0 && (
+                                <div className="r-menu-categories -mx-4 flex flex-col">
+                                    {pageData.menuCategories.map(category =>
+                                        <MenuCategory
+                                            key={category.title}
+                                            title={category.title}
+                                            itemCards={
+                                                showOnlyVegItems ? category.itemCards.filter(card => card.card.info.itemAttribute.vegClassifier === "NONVEG") : category.itemCards
+                                            }
+                                        />
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         {/* Restro Legal Info */}
@@ -333,7 +320,7 @@ const Restaurant = () => {
 
                         {/* Multi Outlets */}
                         {(showMultiOutlets && pageData.restroInfo.info) && (
-                            <MultiOutlet restroInfo={pageData.restroInfo.info} onClose={() => setShowMultiOutlets(false)}/>
+                            <MultiOutlet restroInfo={pageData.restroInfo.info} onClose={() => setShowMultiOutlets(false)} />
                         )}
                     </>
                 )}

@@ -1,6 +1,6 @@
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react"
 import { TypeMenuItem } from "../../../../constants"
-import MenuCard from "../../../components/MenuCard"
+import MenuItemCard from "../../../components/MenuItemCard"
 import { useState } from "react"
 
 interface MenuCategoryProps {
@@ -32,7 +32,7 @@ const MenuCategory = (props: MenuCategoryProps) => {
                     {props.itemCards.slice(0, visibleItems).map(item => (
                         <div key={item.card.info.id} className="menu">
                             <hr className="border-zinc-200 dark:border-zinc-800 mb-6" />
-                            <MenuCard menu={item.card.info} />
+                            <MenuItemCard menu={item.card.info} />
                         </div>
                     ))}
                     {(props.itemCards.length > 10 && visibleItems < props.itemCards.length) && (

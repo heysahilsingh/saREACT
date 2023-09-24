@@ -30,7 +30,7 @@ const RestroCard = (props: RestroCardProps) => {
                     )}
                 </div>
                 <div className="col2 pt-[10px] leading-[120%] lg:leading">
-                    <p className="line-clamp-2 font-bold lg:text-lg" style={{ display: "-webkit-box" }}>{props.name}</p>
+                    <p className="line-clamp-2 font-bold lg:text-lg" style={{ wordBreak: "break-word" }}>{props.name}</p>
                     {props.avgRating && (
                         <div className="rating flex gap-2 pt-1.5 pb-0.5 lg:pb-1 items-center">
                             <div className="relative bg-green-600 rounded-full aspect-square overflow-hidden w-[15px] lg:w-[20px]">

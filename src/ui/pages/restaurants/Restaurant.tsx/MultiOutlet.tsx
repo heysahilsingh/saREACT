@@ -45,7 +45,9 @@ const MultiOutlet = (props: MultiOutletProps) => {
                     // "Sec-Fetch-Mode": "cors",
                     // "Sec-Fetch-Site": "same-origin",
 
-                    "Cookie": "_device_id=1f498a0c-aa32-410a-eac2-1e05a66ceef8; _swuid=1f498a0c-aa32-410a-eac2-1e05a66ceef8; __SW=fIgXnKNRNsofEBjdni_XJj-S3Cwg-C8D; _guest_tid=7618ba58-5af3-4277-8e98-fd6c1b051d4b; _sid=9hufbe4a-6be8-478e-8717-d029b7b597d3; WZRK_G=5cea0e716ab3483b95226258681f7d3c; WZRK_S_W86-ZZK-zR6Z=%7B%22p%22%3A1%7D; userLocation={%22lat%22:28.6480384%2C%22lng%22:77.1344946%2C%22address%22:%22Block%20G%2C%20Ramesh%20Nagar%2C%20Delhi%2C%20110015%2C%20India%22%2C%22area%22:%22%22%2C%22id%22:%22%22}; dadl=true; deliveryAddressId=",
+                    // "Cookie": "_device_id=1f498a0c-aa32-410a-eac2-1e05a66ceef8; _swuid=1f498a0c-aa32-410a-eac2-1e05a66ceef8; __SW=fIgXnKNRNsofEBjdni_XJj-S3Cwg-C8D; _guest_tid=7618ba58-5af3-4277-8e98-fd6c1b051d4b; _sid=9hufbe4a-6be8-478e-8717-d029b7b597d3; WZRK_G=5cea0e716ab3483b95226258681f7d3c; WZRK_S_W86-ZZK-zR6Z=%7B%22p%22%3A1%7D; userLocation={%22lat%22:28.6480384%2C%22lng%22:77.1344946%2C%22address%22:%22Block%20G%2C%20Ramesh%20Nagar%2C%20Delhi%2C%20110015%2C%20India%22%2C%22area%22:%22%22%2C%22id%22:%22%22}; dadl=true; deliveryAddressId=",
+
+                    "Cookie": "_device_id=47489116-2393-3a5d-2894-8d2a2352cd96; Max-Age=31536000; Domain=www.swiggy.com; Path=/; Expires=Mon, 23 Sep 2024 02:57:11 GMT; HttpOnly; Secure; _guest_tid=6c4227f8-286a-48d8-8b39-b461425449de; Max-Age=86400; Domain=www.swiggy.com; Path=/; Expires=Mon, 25 Sep 2023 02:57:11 GMT; HttpOnly; Secure; _sid=9i8eb10d-d3e0-4480-b0be-6e19c0bf1c91; Max-Age=10800; Domain=www.swiggy.com; Path=/; Expires=Sun, 24 Sep 2023 05:57:11 GMT; HttpOnly; Secure; _swuid=47489116-2393-3a5d-2894-8d2a2352cd96; Max-Age=31536000; Domain=www.swiggy.com; Path=/; Expires=Mon, 23 Sep 2024 02:57:11 GMT; HttpOnly; Secure"
                     
                     // "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1",
                 });

@@ -277,6 +277,7 @@ export type TypeMenuItem = {
    inStock: number,
    isBestseller: number,
    price: number,
+   defaultPrice: number,
    addons: {
       groupId: string,
       groupName: string,

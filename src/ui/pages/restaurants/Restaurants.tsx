@@ -186,7 +186,7 @@ const Restaurants = () => {
                             <>
                                 <div className="divider -mt-[10px] border-b border-zinc-300 dark:border-zinc-800"></div>
                                 <div>
-                                    <p className="font-bold text-lg pb-4 lg:pb-8 lg:text-2xl">Top restaurant chains in {userInfo.location.cityInfo.cityName}</p>
+                                    <p className="font-bold text-lg pb-4 lg:pb-8 lg:text-2xl">Top restaurant chains in {userInfo.location.cityInfo.cityName || userInfo.location.cityInfo.stateName}</p>
                                     <div className="flex gap-[16px] items-start no-scrollbar overflow-x-scroll overflow-y-hidden">
                                         {pageData.topRestro?.map(restro => {
 
