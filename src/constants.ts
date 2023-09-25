@@ -77,17 +77,20 @@ const CONSTANTS = {
       },
    },
 
+   API_PAGE_SEARCH: {
+      url: {
+         mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/landing/PRE_SEARCH?lat=28.6497478&lng=77.137371",
+         desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/landing/PRE_SEARCH?lat=28.6497478&lng=77.137371"
+      },
+      getUrl: function (userLat: number, userLng: number, device: "desk" | "mob") {
+         return `https://corsproxy.io/?https://www.swiggy.com/${device === "desk" ? "d" : "m"}api/landing/PRE_SEARCH?lat=${userLat}&lng=${userLng}`;
+      },
+   },
+
    API_RESTRO_UPDATE: {
       url: {
          mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/list/update",
          desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/restaurants/list/update"
-      }
-   },
-
-   API_LOCATION_SUGGESTION: {
-      url: {
-         mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc/place-autocomplete?input=",
-         desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/misc/place-autocomplete?input="
       }
    },
 
@@ -104,6 +107,24 @@ const CONSTANTS = {
             // after ? "latlng=28.721152%2C77.0605056"
          }
       }
+   },
+
+   API_LOCATION_SUGGESTION: {
+      url: {
+         mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc/place-autocomplete?input=",
+         desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/misc/place-autocomplete?input="
+      }
+   },
+
+   API_USER_LOCATION_INSTAMART: {
+      url: {
+         mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc_new/location-features?lat=28.6347642&lng=77.2162998&features=CITY_INFO%2CINSTAMART",
+         desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/misc_new/location-features?lat=28.6347642&lng=77.2162998&features=CITY_INFO%2CINSTAMART"
+      },
+      // lng=77.137371&restaurantId=53774&query=piz
+      getUrl: function (userLat: number, userLng: number,  device: "desk" | "mob") {
+         return `https://corsproxy.io/?https://www.swiggy.com/${device === "desk" ? "d" : "m"}api/misc_new/location-features?lat=${userLat}&lng=${userLng}&features=CITY_INFO%2CINSTAMART`;
+      },
    },
 }
 
