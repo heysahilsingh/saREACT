@@ -11,6 +11,7 @@ import TopPicks from "./TopPicks";
 import MenuCategory from "./MenuCategory";
 import MultiOutlet from "./MultiOutlet";
 import Offers from "./Offers";
+import SearchItem from "./SearchItem";
 
 type PageData = {
     restroInfo: {
@@ -79,6 +80,8 @@ const Restaurant = () => {
     const [showOnlyVegItems, setShowOnlyVegItems] = useState(false);
 
     const [showMultiOutlets, setShowMultiOutlets] = useState(false);
+
+    const [searchItem, setSearchItem] = useState(false);
 
     // Get MultiOutlets
     const getMultiOutlets = () => {
@@ -184,8 +187,6 @@ const Restaurant = () => {
 
     }, [userInfo]);
 
-    useEffect(() => console.log(pageData && pageData), [pageData])
-
     return (
         <Page pageName="restaurant">
             <div className="flex flex-col max-w-[800px] mx-auto">
@@ -208,9 +209,13 @@ const Restaurant = () => {
                                 </div>
                             )}
                             <div className="grow flex items-center justify-end">
-                                <IconSearch size={22} stroke={1} />
+                                <IconSearch onClick={() => setSearchItem(true)} size={22} stroke={1} />
                             </div>
                         </div>
+
+                        {/* Search Item */}
+                        {searchItem && <SearchItem restaurantInfo={pageData.restroInfo.info} onClose={() => setSearchItem(false)}/>}
+
 
                         {/* Content */}
                         <div className="r-content flex gap-6 flex-col px-4 pt-4">

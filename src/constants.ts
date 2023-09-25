@@ -42,6 +42,17 @@ const CONSTANTS = {
       },
    },
 
+   API_SEARCH_IN_RESTRO_ITEMS: {
+      url: {
+         mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/menu/pl/search?lat=28.6497478&",
+         desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/menu/pl/search?lat=28.6497478&"
+      },
+      // lng=77.137371&restaurantId=53774&query=piz
+      getUrl: function (userLat: number, userLng: number, restaurantId: string, device: "desk" | "mob", query: string) {
+         return `https://corsproxy.io/?https://www.swiggy.com/${device === "desk" ? "d" : "m"}api/menu/pl/search?lat=${userLat}&lng=${userLng}&restaurantId=${restaurantId}&query=${query}&submitAction=ENTER`;
+      },
+   },
+
    API_PAGE_COLLECTIONS: {
       mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/list/v5?lat=28.6497478&lng=77.137371&collection=54802&type=rcv2",
       desk: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/list/v5?lat=28.6497478&lng=77.137371&collection=54802&type=rcv2",
@@ -278,6 +289,7 @@ export type TypeMenuItem = {
    isBestseller: number,
    price: number,
    defaultPrice: number,
+   nextAvailableAtMessage: string,
    addons: {
       groupId: string,
       groupName: string,

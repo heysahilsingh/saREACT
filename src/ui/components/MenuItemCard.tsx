@@ -36,7 +36,7 @@ const MenuItemCard = (props: MenuItemCardProps) => {
                             </div>
                             {props.menu.ribbon.text && (
                                 <div className="flex items-center gap-1 leading-none text-[12px] font-bold text-[#ee9c00]">
-                                    <IconStarFilled size={12}/>
+                                    <IconStarFilled size={12} />
                                     <span>{props.menu.ribbon.text}</span>
                                 </div>
                             )}
@@ -81,17 +81,25 @@ const MenuItemCard = (props: MenuItemCardProps) => {
                         <div className="item-img min-w-full rounded-[8px] overflow-hidden aspect-[1.25/1] bg-zinc-200 dark:bg-zinc-800">
                             {props.menu.imageId && (
                                 <img
-                                    className="object-cover object-center h-full w-full"
+                                    className={`object-cover object-center h-full w-full ${props.menu?.nextAvailableAtMessage ? "saturate-0" : ""}`}
                                     src={CONSTANTS.IMG_CDN + props.menu.imageId}
                                     alt={props.menu.name}
                                 />
                             )}
                         </div>
                         <div className="item-action">
-                            <button className="-mt-[23px] text-green-700 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-green-700 leading-none py-2.5 px-8 uppercase rounded-md font-bold text-[15px] shadow-xl">
-                                Add
+                            <button className="-mt-[23px] w-[99px] h-[37px] text-green-700 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-green-700 leading-none p-2.5 uppercase rounded-md font-bold text-[15px] shadow-xl relative">
+                                {!props.menu?.nextAvailableAtMessage && (
+                                    <>
+                                        <span>Add</span>
+                                        {props.menu.addons && <span className="absolute top-0.5 right-1">+</span>}
+                                    </>
+                                )}
+
+                                {props.menu?.nextAvailableAtMessage && <span className="block text-[8px] leading-[120%] capitalize font-normal text-gray-800">{props.menu.nextAvailableAtMessage}</span>}
                             </button>
-                            {props.menu.addons && (
+
+                            {props.menu.addons && !props.menu?.nextAvailableAtMessage && (
                                 <p className="text-xs text-center opacity-90 mt-1">Customizable</p>
                             )}
                         </div>

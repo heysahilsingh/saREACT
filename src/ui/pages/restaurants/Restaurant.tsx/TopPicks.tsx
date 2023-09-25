@@ -19,9 +19,9 @@ const TopPicks = (props: TopPicksInterface) => {
             <div className="absolute bottom-0 left-0 w-full px-4 pb-4 flex justify-between">
                 <span className="text-white grow">₹ {(props.topPick.dish.info.price / 100)}</span>
                 <div className="w-fit">
-                    <button className="text-green-700 bg-white leading-none py-2.5 px-8 relative uppercase rounded font-bold text-[15px]">
+                    <button className="text-green-700 bg-white leading-none py-2.5 px-8 relative uppercase rounded-md font-bold text-[15px]">
                         Add
-                        <span className="absolute top-1 right-1.5">+</span>
+                        <span className="absolute top-0.5 right-1">+</span>
                     </button>
                     {props.topPick.dish.info.addons && <p className="text-white text-xs text-right mt-2">Customisable</p>}
                 </div>
