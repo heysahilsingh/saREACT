@@ -2,8 +2,12 @@ import { NavLink } from "react-router-dom";
 import Logo from "../../theme/Logo";
 import { IconSoup, IconBasket, IconSearch, IconUserHeart } from '@tabler/icons-react';
 import { routePaths } from "../Ui";
+import { useContext } from "react";
+import UserContext from "../../context/UserContext";
 
 const MobHeader = () => {
+
+    const { userInfo } = useContext(UserContext);
 
     return (
         <div className="mob fixed bottom-0 left-0 z-50 px-5 pt-3 pb-2 w-full max-w-full bg-white text-zinc-500 border-t dark:bg-neutral-950 dark:border-neutral-800">
@@ -21,12 +25,14 @@ const MobHeader = () => {
                             <span>Food</span>
                         </NavLink>
                     </li>
-                    <li>
-                        <NavLink to={routePaths.Instamart} className="group hover:text-primary flex flex-col items-center justify-center gap-[2px]">
-                            <IconBasket size={24} className="stroke-[1.5px] group-hover:stroke-[2.5px]" />
-                            <span>Instamart</span>
-                        </NavLink>
-                    </li>
+                    {userInfo.location.isInstamartEnabled && (
+                        <li>
+                            <NavLink to={routePaths.Instamart} className="group hover:text-primary flex flex-col items-center justify-center gap-[2px]">
+                                <IconBasket size={24} className="stroke-[1.5px] group-hover:stroke-[2.5px]" />
+                                <span>Instamart</span>
+                            </NavLink>
+                        </li>
+                    )}
                     <li>
                         <NavLink to={routePaths.search} className="group hover:text-primary flex flex-col items-center justify-center gap-[2px]">
                             <IconSearch size={24} className="stroke-[1.5px] group-hover:stroke-[2.5px]" />

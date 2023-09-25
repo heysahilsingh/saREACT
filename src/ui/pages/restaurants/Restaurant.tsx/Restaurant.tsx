@@ -298,7 +298,7 @@ const Restaurant = () => {
                                             key={category.title}
                                             title={category.title}
                                             itemCards={
-                                                showOnlyVegItems ? category.itemCards.filter(card => card.card.info.itemAttribute.vegClassifier === "NONVEG") : category.itemCards
+                                                showOnlyVegItems ? category.itemCards.filter(card => card.card.info.itemAttribute.vegClassifier === "VEG") : category.itemCards
                                             }
                                         />
                                     )}

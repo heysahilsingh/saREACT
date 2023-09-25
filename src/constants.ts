@@ -87,6 +87,16 @@ const CONSTANTS = {
       },
    },
 
+   API_PAGE_SEARCH_QUERY: {
+      url: {
+         mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/search/suggest?lat=28.649972&lng=77.143636&str=burger&includeIMItem=true",
+         desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/restaurants/search/suggest?lat=28.649972&lng=77.143636&str=burger&includeIMItem=true"
+      },
+      getUrl: function (userLat: number, userLng: number, device: "desk" | "mob", query: string) {
+         return `https://corsproxy.io/?https://www.swiggy.com/${device === "desk" ? "d" : "m"}api/restaurants/search/suggest?lat=${userLat}&lng=${userLng}&str=${query}&includeIMItem=true`;
+      },
+   },
+
    API_RESTRO_UPDATE: {
       url: {
          mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/list/update",
