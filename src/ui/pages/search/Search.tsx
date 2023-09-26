@@ -9,6 +9,7 @@ import useDeviceDetect from '../../../hooks/useDeviceDetect';
 import { useEffect } from 'react';
 import CONSTANTS from '../../../constants';
 import Page from '../Page';
+import { Link } from 'react-router-dom';
 
 type PageData = {
     popularCuisines: {
@@ -29,7 +30,7 @@ type searchResults = {
     highlightedText: string,
     metadata: string,
     subCategory: string,
-    tagToDisplay: string,
+    tagToDisplay: "Instamart" | "DIsh" | "Restaurant",
     text: string,
     type: string
 }[] | undefined
@@ -55,14 +56,12 @@ const Search = () => {
 
                     const response = await fetch(URL);
                     const responseData = await response.json();
-                    const responseCards = responseData?.data?.cards?.map(card => card.card.card);
+                    const responseCards = responseData?.data?.cards?.map((card: { card: { card: object } }) => card.card.card);
 
                     if (responseCards) {
-                        console.log(responseCards);
-
                         setPageData({
-                            popularCuisines: responseCards.find(card => card.id === "PopularCuisinessearchpage")?.gridElements?.infoWithStyle?.info,
-                            popularInstamart: responseCards.find(card => card.id === "PopularCategoriessearchpage")?.gridElements?.infoWithStyle?.info
+                            popularCuisines: responseCards.find((card: { id: string }) => card.id === "PopularCuisinessearchpage")?.gridElements?.infoWithStyle?.info,
+                            popularInstamart: responseCards.find((card: { id: string }) => card.id === "PopularCategoriessearchpage")?.gridElements?.infoWithStyle?.info
                         })
                     }
 
@@ -102,7 +101,9 @@ const Search = () => {
                     const responseData = await response.json();
                     const results = responseData?.data?.suggestions;
 
-                    if(results) setSearchResults(results)
+                    if (results) setSearchResults(results)
+
+                    console.log(results);
 
                 } catch (error) {
                     console.log(error);
@@ -110,6 +111,23 @@ const Search = () => {
             }
         }
 
+    }
+
+    // Bold HighlightedText
+    const boldHighlightedText = (text: string) => {
+        const parts = text.split(/\{\{(.*?)\}\}/);
+
+        return (
+            <p>
+                {parts.map((part, index) =>
+                    index % 2 === 1 ? (
+                        <span key={index} className='font-bold'>{part}</span>
+                    ) : (
+                        <span key={index}>{part}</span>
+                    )
+                )}
+            </p>
+        );
     }
 
     return (
@@ -171,7 +189,25 @@ const Search = () => {
 
                 {/* Search Results */}
                 {searchResults && (
-                    <div className="d">Search found</div>
+                    <div className="flex flex-col gap-6 px-4 py-6">
+                        {searchResults.map(result => {
+                            const link = "";
+
+                            return (
+                                <div className="w-fit" key={result.metadata + result.text}>
+                                    <Link to={link} className='flex gap-4 items-center'>
+                                        <div className="border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden w-[64px] h-[64px]">
+                                            <img className='object-cover w-full h-full bg-zinc-100 dark:bg-zinc-900' src={CONSTANTS.IMG_CDN + result.cloudinaryId} alt={result.category} />
+                                        </div>
+                                        <div className="flex flex-col gap-1 leading-none">
+                                            <div className='text-[15px]'>{boldHighlightedText(result.highlightedText)}</div>
+                                            <p className={`text-[14px] ${result.tagToDisplay === "Instamart" ? "text-[#982160]" : ""}`}>{result.tagToDisplay}</p>
+                                        </div>
+                                    </Link>
+                                </div>
+                            )
+                        })}
+                    </div>
                 )}
             </div>
         </Page>
