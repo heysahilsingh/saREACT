@@ -8,7 +8,8 @@ import Page from '../Page';
 import { useSearchParams } from 'react-router-dom';
 import SearchQuery from './SearchQuery';
 import SearchInput from './SearchInput';
-import SearchResults, { SearchResultsType } from './SearchResults';
+import DefaultSearchResult, { DefaultSearchResultType } from './searchResult/DefaultSearchResult';
+import SearchResultShimmer from './searchResult/SearchResultShimmer';
 
 type InitialPageData = {
     popularCuisines: {
@@ -34,7 +35,6 @@ const Search = () => {
         popularCuisines: undefined,
         popularInstamart: undefined
     });
-
     // Load InitialpageData at first
     useEffect(() => {
         const userLat = userInfo.location.cityInfo.latitude;
@@ -67,8 +67,8 @@ const Search = () => {
     }, [])
 
     const [clearSearch, setClearSearch] = useState(false);
-    const [searchedQuery, setSearchedQuery] = useState("");
-    const [searchResults, setSearchResults] = useState<SearchResultsType[] | undefined>(undefined);
+    const [fetchingSearchResults, setFetchingSearchResults] = useState(false);
+    const [searchResults, setSearchResults] = useState<DefaultSearchResultType[] | undefined>(undefined);
 
     // Handle searching
     const handleSearch = async (keyword: string) => {
@@ -79,6 +79,7 @@ const Search = () => {
             setSearchResults(undefined);
             setClearSearch(false)
         } else {
+            setFetchingSearchResults(true)
             const userLat = userInfo.location.cityInfo.latitude;
             const userLng = userInfo.location.cityInfo.longitude;
 
@@ -92,6 +93,8 @@ const Search = () => {
 
                     if (results) setSearchResults(results)
 
+                    setFetchingSearchResults(false)
+
                 } catch (error) {
                     console.log(error);
                 }
@@ -100,50 +103,57 @@ const Search = () => {
 
     }
 
+    // Render popular searches
+    const popularSearches = (heading: "Instamart" | "Cuisines", popularSearches: { id: string, imageId: string }[]) => {
+        return (
+            <div className="cuisines bg-white dark:bg-neutral-950">
+                <h2 className="font-bold text-xl mb-4 lg:mb-3 lg:mt-6">Popular {
+                    heading === "Cuisines" ? "Cuisines" : <span>on <span className='text-[#982160] font-black'>Instamart</span></span>
+                }</h2>
+                <div className="items flex no-scrollbar overflow-y-scroll">
+                    {popularSearches.map(cuisine => {
+                        return (
+                            <div className="min-w-[25%] lg:min-w-[15%]" key={cuisine.id}>
+                                <img className='rounded-md overflow-hidden aspect-[1/1.4] bg-zinc-200 dark:bg-zinc-900' src={CONSTANTS.IMG_CDN + cuisine.imageId} alt="" />
+                            </div>
+                        )
+                    })}
+                </div>
+            </div>
+        )
+    }
+
     if (searchParams.get("query")) return <SearchQuery />
     else {
         return (
             <Page pageName='search'>
                 <div className="flex flex-col lg:max-w-[800px] lg:mx-auto">
                     <div className="search-input sticky top-0 p-4 pb-6 lg:py-8 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-neutral-950">
-                        <SearchInput searchFunction={(e) => handleSearch(e)}/>
+                        <SearchInput showBackButton={false} inputValue={""} searchFunction={inputValue => handleSearch(inputValue)} />
                     </div>
-                    {/* Pre Search */}
-                    {!searchResults && (
-                        <div className="pre-search flex gap-3 lg:gap-5 flex-col bg-[#f5f6f8] dark:bg-zinc-900">
-                            {InitialpageData.popularInstamart && (
-                                <div className="cuisines py-5 px-4 bg-white dark:bg-neutral-950">
-                                    <h2 className="font-bold text-xl mb-4 lg:mb-3 lg:mt-6">Popular on <span className='text-[#982160] font-black'>Instamart</span></h2>
-                                    <div className="items flex no-scrollbar overflow-y-scroll">
-                                        {InitialpageData.popularInstamart.map(cuisine => {
-                                            return (
-                                                <div className="min-w-[25%] lg:min-w-[15%]" key={cuisine.id}>
-                                                    <img src={CONSTANTS.IMG_CDN + cuisine.imageId} alt="" />
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
-                                </div>
-                            )}
-                            {InitialpageData.popularCuisines && (
-                                <div className="cuisines py-5 px-4 bg-white dark:bg-neutral-950">
-                                    <h2 className="font-bold text-xl mb-4 lg:mb-3 lg:mt-6">Popular Cuisines</h2>
-                                    <div className="items flex no-scrollbar overflow-y-scroll">
-                                        {InitialpageData.popularCuisines.map(cuisine => {
-                                            return (
-                                                <div className="min-w-[25%] lg:min-w-[15%]" key={cuisine.id}>
-                                                    <img src={CONSTANTS.IMG_CDN + cuisine.imageId} alt="" />
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
+                    <div className="search-results flex flex-col gap-6 px-4 py-6">
+                        {/* Pre Search */}
+                        {(!searchResults && !fetchingSearchResults) && (
+                            <>
+                                {/* Pre Search Shimmer */}
+                                {(!InitialpageData.popularCuisines && !InitialpageData.popularInstamart) && <SearchResultShimmer />}
 
-                    {/* Search Results */}
-                    {searchResults && <SearchResults results={searchResults}/>}
+                                {/* Pre Search */}
+                                {(InitialpageData.popularCuisines || InitialpageData.popularInstamart) && (
+                                    <div className="pre-search flex gap-3 lg:gap-5 flex-col bg-[#f5f6f8] dark:bg-zinc-900">
+                                        {InitialpageData.popularInstamart && popularSearches("Instamart", InitialpageData.popularInstamart)}
+                                        {InitialpageData.popularCuisines && popularSearches("Cuisines", InitialpageData.popularCuisines)}
+                                    </div>
+                                )}
+                            </>
+                        )}
+
+                        {/* Search Results Shimmer */}
+                        {fetchingSearchResults && <SearchResultShimmer />}
+
+                        {/* Search Results */}
+                        {searchResults && !fetchingSearchResults && <DefaultSearchResult results={searchResults} />}
+                    </div>
                 </div>
             </Page>
         )

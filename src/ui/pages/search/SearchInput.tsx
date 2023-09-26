@@ -1,15 +1,19 @@
 import React, { useRef, useState, ChangeEvent, useCallback } from "react";
-import { IconSearch, IconX } from "@tabler/icons-react";
+import { IconChevronLeft, IconSearch, IconX } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 
 interface SearchInputProps {
     searchFunction: (inputValue: string) => void;
-    value?: string;
+    inputValue: string;
+    showBackButton: boolean
 }
 
 const SearchInput: React.FC<SearchInputProps> = (props) => {
     const refSearchInput = useRef<HTMLInputElement | null>(null);
-    const [inputValue, setInputValue] = useState(props.value || "");
+    const [inputValue, setInputValue] = useState(props.inputValue);
     const [clearSearch, setClearSearch] = useState(false);
+
+    const navigate = useNavigate();
 
     // Define a debounce function outside the component
     const debounce = (func: (inputValue: string) => void, delay: number) => {
@@ -20,7 +24,6 @@ const SearchInput: React.FC<SearchInputProps> = (props) => {
         };
     };
 
-    // Create a debounced search function using useCallback
     const debouncedSearch = useCallback(
         debounce((inputValue: string) => {
             if (props.searchFunction) {
@@ -41,6 +44,7 @@ const SearchInput: React.FC<SearchInputProps> = (props) => {
 
     return (
         <div className="flex items-center gap-2 py-3 px-4 border border-zinc-300 dark:border-zinc-700 rounded-xl w-full">
+            {props.showBackButton && <IconChevronLeft onClick={() => navigate(-1)} className="-ml-[5px] dark:text-zinc-300" />}
             <input
                 ref={refSearchInput}
                 value={inputValue}
@@ -57,7 +61,7 @@ const SearchInput: React.FC<SearchInputProps> = (props) => {
                     stroke={1.5}
                     onClick={() => {
                         if (refSearchInput.current) {
-                            refSearchInput.current.value = "";
+                            setInputValue("")
                             refSearchInput.current.focus();
                             setClearSearch(false);
                             debouncedSearch("");
