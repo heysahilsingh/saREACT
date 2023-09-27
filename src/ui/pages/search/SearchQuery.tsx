@@ -1,20 +1,30 @@
 import { useContext, useEffect, useState } from "react"
 import SearchInput from "./SearchInput"
-import CONSTANTS from "../../../constants"
+import CONSTANTS, { TypeMenuItem, TypeRestaurantInformation } from "../../../constants"
 import UserContext from "../../../context/UserContext"
 import useDeviceDetect from "../../../hooks/useDeviceDetect"
 import { useSearchParams } from "react-router-dom"
 import SearchResultShimmer from "./searchResult/SearchResultShimmer"
 import DefaultSearchResult, { DefaultSearchResultType } from "./searchResult/DefaultSearchResult"
+import capitalizeWord from "../../../utility/capitalizeWord"
 
 type SearchNavType = {
     id: string,
     title: string,
-    selected: boolean
+    selected?: boolean
+}
+
+type SearchResultLists = {
+    "@type": string,
+    info: TypeMenuItem | TypeRestaurantInformation,
+    restaurant: { info: TypeRestaurantInformation }
 }
 
 type PageDataType = {
-    initial: { id: string }[] | undefined,
+    initial: {
+        selectedNav: SearchNavType,
+        lists: SearchResultLists
+    } | undefined,
     searched: DefaultSearchResultType[] | undefined
 }
 
@@ -25,7 +35,8 @@ const SearchQuery = () => {
     const [searchParams] = useSearchParams();
 
     const [searchQuery, setSearchQuery] = useState<string>(searchParams.get("query") || "");
-    const [selectedNavTab, setSelectedNavTab] = useState<string | undefined>(undefined);
+    const [isFetchingPageData, setIsFetchingPageData] = useState(false);
+    // const [selectedNavTab, setSelectedNavTab] = useState<string | undefined>(undefined);
 
     // Page Data
     const [pageData, setPageData] = useState<PageDataType | undefined>({
@@ -36,64 +47,80 @@ const SearchQuery = () => {
     // Load Initial Page Data
     useEffect(() => {
         fetchPageData("INITIAL", searchQuery)
-    }, [])
+    }, [searchParams])
 
     useEffect(() => {
-        console.log(pageData);
-        console.log(selectedNavTab);
-    }, [selectedNavTab, pageData])
+        if (pageData?.initial) console.log(pageData.initial.lists);
+    }, [pageData])
 
     // fetchData function
-    const fetchPageData = async (dataType: "INITIAL" | "SEARCHED", query: string, navTabId?: string) => {
-        setPageData(undefined)
+    const fetchPageData = async (dataType: "INITIAL" | "SEARCHED", query: string, navTab?: SearchNavType) => {
+        setIsFetchingPageData(true);
 
         const userLat = userInfo.location.cityInfo.latitude;
         const userLng = userInfo.location.cityInfo.longitude;
 
-        if (userLat && userLng && query && query.trim() !== '') {
-            try {
-                if (dataType === "INITIAL") {
-                    const URL = CONSTANTS.API_PAGE_SEARCH_SPECIFIC_RESULT.getUrl(userLat, userLng, device.isDesk ? "desk" : "mob", query, (navTabId ? navTabId : undefined));
+        if (!(userLat && userLng && query && query.trim() !== '')) {
+            setIsFetchingPageData(false);
+            return;
+        }
 
-                    const response = await fetch(URL);
-                    const responseData = await response.json();
-                    const responseCards = responseData?.data?.cards;
+        try {
+            let URL: string;
 
-                    if (responseCards) {
-                        const navData = responseCards.find((card: { card: { card: { "@type": string } } }) => card?.card?.card["@type"] === "type.googleapis.com/swiggy.gandalf.widgets.v2.Navigation")?.card?.card?.tab;
-                        const selectedNavData = navData?.find((nav: SearchNavType) => nav?.selected)?.id;
-                        // const queryResultData = responseCards.find(card => card?.groupedCard?.cardGroupMap)?.groupedCard?.cardGroupMap;
+            if (dataType === "INITIAL") {
+                URL = CONSTANTS.API_PAGE_SEARCH_SPECIFIC_RESULT.getUrl(userLat, userLng, device.isDesk ? "desk" : "mob", query, (navTab?.id ? navTab?.id : undefined));
+            } else if (dataType === "SEARCHED") {
+                URL = CONSTANTS.API_PAGE_SEARCH_DEFAULT_RESULT.getUrl(userLat, userLng, device.isDesk ? "desk" : "mob", query);
+            } else {
+                setIsFetchingPageData(false);
+                return;
+            }
 
-                        setPageData(prev => ({
-                            initial: selectedNavData ? selectedNavData : prev?.initial,
-                            searched: undefined
-                        }))
+            const response = await fetch(URL);
+            const responseData = await response.json();
 
-                        setSelectedNavTab(prev => (
-                            selectedNavData ? selectedNavData : prev
-                        ))
-                    }
-                }
-                else if (dataType === "SEARCHED") {
-                    const URL = CONSTANTS.API_PAGE_SEARCH_DEFAULT_RESULT.getUrl(userLat, userLng, device.isDesk ? "desk" : "mob", query);
+            if (dataType === "INITIAL") {
+                const responseCards = responseData?.data?.cards;
 
-                    const response = await fetch(URL);
-                    const responseData = await response.json();
-                    const results = responseData?.data?.suggestions;
+                if (responseCards) {
+                    const navData = responseCards.find((card: { card: { card: { "@type": string } } }) => card?.card?.card["@type"] === "type.googleapis.com/swiggy.gandalf.widgets.v2.Navigation")?.card?.card?.tab;
+                    const selectedNavData: SearchNavType = navData?.find((nav: SearchNavType) => nav?.selected);
 
-                    if (results) {
+                    if (selectedNavData || navTab) {
+                        const navToUse = selectedNavData || navTab;
+                        const listsData = responseCards.find((card: { groupedCard: { cardGroupMap: object } }) => card?.groupedCard?.cardGroupMap)?.groupedCard?.cardGroupMap;
+                        const extractedListCards = listsData[navToUse.id]?.cards?.map((card: { card: object }) => card?.card)?.map((card: { card: object }) => card?.card)?.filter((card: { "@type": string }) => card["@type"] === `type.googleapis.com/swiggy.presentation.food.v2.${capitalizeWord(navToUse.id)}`);
+
+                        // Set pageData
                         setPageData({
-                            initial: undefined,
-                            searched: results
+                            initial: {
+                                selectedNav: navToUse,
+                                lists: extractedListCards,
+                            },
+                            searched: undefined,
                         });
                     }
                 }
+            } else if (dataType === "SEARCHED") {
+                const results = responseData?.data?.suggestions;
 
-            } catch (error) {
-                console.log(error)
+                if (results) {
+                    
+                    // Set pageData
+                    setPageData({
+                        initial: undefined,
+                        searched: results,
+                    });
+                }
             }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsFetchingPageData(false);
         }
     };
+
 
     return (
         <div className="flex flex-col lg:max-w-[800px] lg:mx-auto">
@@ -106,10 +133,9 @@ const SearchQuery = () => {
                     <div className="flex gap-2">
                         {[{ id: "RESTAURANT", title: "Restaurants" }, { id: "DISH", title: "Dishes" }].map(nav => (
                             <div
-                                className={`${selectedNavTab === nav.id && "text-white bg-[#3e4152] dark:bg-primary"} font-semibold border border-zinc-200 dark:border-zinc-800 rounded-full leading-none py-2.5 px-4`}
+                                className={`${pageData.initial?.selectedNav?.id === nav.id && "text-white bg-[#3e4152] dark:bg-primary"} font-semibold border border-zinc-200 dark:border-zinc-800 rounded-full leading-none py-2.5 px-4`}
                                 onClick={() => {
-                                    setSelectedNavTab(nav.id)
-                                    fetchPageData("INITIAL", searchQuery, nav.id)
+                                    fetchPageData("INITIAL", searchQuery, nav)
                                 }}
                                 key={nav.id}>
                                 {nav.title}
@@ -120,12 +146,13 @@ const SearchQuery = () => {
             </div>
             <div className="results flex flex-col gap-6 px-4 py-6 border-t-8 border-zinc-200 dark:border-zinc-800">
                 {/* Shimmer */}
-                {!pageData && <SearchResultShimmer />}
+                {isFetchingPageData && <SearchResultShimmer />}
 
                 {/* Page Data */}
-                {pageData && (
+                {!isFetchingPageData && (
                     <>
-                        {pageData.searched && <DefaultSearchResult results={pageData.searched} />}
+                        {/* Show Default Search Results */}
+                        {pageData?.searched && <DefaultSearchResult results={pageData?.searched} />}
                     </>
                 )}
             </div>

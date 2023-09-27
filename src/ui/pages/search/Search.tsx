@@ -40,7 +40,7 @@ const Search = () => {
         const userLat = userInfo.location.cityInfo.latitude;
         const userLng = userInfo.location.cityInfo.longitude;
 
-        if (userLat && userLng) {
+        if (userLat && userLng && !searchParams.get("query")) {
             const fetchData = async () => {
                 try {
                     const URL = CONSTANTS.API_PAGE_SEARCH.getUrl(userLat, userLng, device.isDesk ? "desk" : "mob");
