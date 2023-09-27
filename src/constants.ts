@@ -1,3 +1,5 @@
+import encodeStringToUrl from "./utility/encodeStringToUrl";
+
 const CONSTANTS = {
    IMG_CDN: "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/",
 
@@ -87,13 +89,23 @@ const CONSTANTS = {
       },
    },
 
-   API_PAGE_SEARCH_QUERY: {
+   API_PAGE_SEARCH_DEFAULT_RESULT: {
       url: {
          mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/search/suggest?lat=28.649972&lng=77.143636&str=burger&includeIMItem=true",
          desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/restaurants/search/suggest?lat=28.649972&lng=77.143636&str=burger&includeIMItem=true"
       },
       getUrl: function (userLat: number, userLng: number, device: "desk" | "mob", query: string) {
          return `https://corsproxy.io/?https://www.swiggy.com/${device === "desk" ? "d" : "m"}api/restaurants/search/suggest?lat=${userLat}&lng=${userLng}&str=${query}&includeIMItem=true`;
+      },
+   },
+
+   API_PAGE_SEARCH_SPECIFIC_RESULT: {
+      url: {
+         mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/search/v3?lat=28.6497478&lng=77.137371&str=Masala%20Dosa&submitAction=ENTER",
+         desk: "https://corsproxy.io/?https://www.swiggy.com/mapi/restaurants/search/v3?lat=28.6497478&lng=77.137371&str=Masala%20Dosa&submitAction=ENTER"
+      },
+      getUrl: function (userLat: number, userLng: number, device: "desk" | "mob", query: string, selectedNavTab?: string) {
+         return `https://corsproxy.io/?https://www.swiggy.com/${device === "desk" ? "d" : "m"}api/restaurants/search/v3?lat=${userLat}&lng=${userLng}&str=${encodeStringToUrl(query)}&submitAction=SUGGESTION${selectedNavTab ? "&selectedPLTab=" + selectedNavTab : ""}`;
       },
    },
 

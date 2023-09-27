@@ -11,7 +11,7 @@ interface SearchInputProps {
 const SearchInput: React.FC<SearchInputProps> = (props) => {
     const refSearchInput = useRef<HTMLInputElement | null>(null);
     const [inputValue, setInputValue] = useState(props.inputValue);
-    const [clearSearch, setClearSearch] = useState(false);
+    const [clearSearch, setClearSearch] = useState(!!inputValue);
 
     const navigate = useNavigate();
 

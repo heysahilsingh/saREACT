@@ -85,7 +85,7 @@ const Search = () => {
 
             if (userLat && userLng) {
                 try {
-                    const URL = CONSTANTS.API_PAGE_SEARCH_QUERY.getUrl(userLat, userLng, device.isDesk ? "desk" : "mob", keyword);
+                    const URL = CONSTANTS.API_PAGE_SEARCH_DEFAULT_RESULT.getUrl(userLat, userLng, device.isDesk ? "desk" : "mob", keyword);
 
                     const response = await fetch(URL);
                     const responseData = await response.json();
