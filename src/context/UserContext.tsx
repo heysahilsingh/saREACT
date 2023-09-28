@@ -86,7 +86,7 @@ export const UserContextProvider = (props: React.PropsWithChildren<object>) => {
         const userLng = newInfo.location.cityInfo.longitude;
 
         if (userLat && userLng) {
-            const doesInstaMartEnabled = await knowInstaEnable(userLat, userLng);
+            const doesInstaMartEnabled = device.isDesk ? false : await knowInstaEnable(userLat, userLng);
 
             const newUserInfo: UserInfo = {
                 ...newInfo,

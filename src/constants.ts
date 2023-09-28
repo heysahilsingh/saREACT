@@ -141,7 +141,7 @@ const CONSTANTS = {
    API_USER_LOCATION_INSTAMART: {
       url: {
          mob: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc_new/location-features?lat=28.6347642&lng=77.2162998&features=CITY_INFO%2CINSTAMART",
-         desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/misc_new/location-features?lat=28.6347642&lng=77.2162998&features=CITY_INFO%2CINSTAMART"
+         desk: "https://corsproxy.io/?https://www.swiggy.com/mapi/misc_new/location-features?lat=28.6347642&lng=77.2162998&features=CITY_INFO%2CINSTAMART"
       },
       // lng=77.137371&restaurantId=53774&query=piz
       getUrl: function (userLat: number, userLng: number, device: "desk" | "mob") {

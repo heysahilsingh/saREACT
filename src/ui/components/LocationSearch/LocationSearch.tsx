@@ -131,7 +131,7 @@ const LocationSearch = (props: LocationSearchProps) => {
             );
 
             // Update UserInfo Context
-            updateUserInfo({
+            await updateUserInfo({
                 ...userInfo,
                 location: {
                     cityInfo: {

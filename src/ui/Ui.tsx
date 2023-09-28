@@ -14,13 +14,17 @@ import { UserContextProvider } from "../context/UserContext";
 import Restaurants from "./pages/restaurants/Restaurants";
 import Restaurant from "./pages/restaurants/Restaurant.tsx/Restaurant";
 import Collections from "./pages/collections/Collections";
+import SetLocation from "./components/SetLocation";
 
 const UI = () => {
+
+  const userInfo = localStorage.getItem("userInfo");
+
   return (
     <UserContextProvider>
       <Header />
       <div className="page-content sa-container mx-auto">
-        <Outlet />
+        {userInfo ? <Outlet /> : <SetLocation />}
       </div>
       <Footer />
     </UserContextProvider>

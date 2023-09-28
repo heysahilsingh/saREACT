@@ -58,6 +58,8 @@ const Home = () => {
     const device = useDeviceDetect();
 
     const { userInfo } = useContext(UserContext);
+    
+    useEffect(() => console.log("sasasasasobject"), [])
 
     // Shimmer
     const [showShimmer, setShowShimmer] = useState<boolean>(true)
