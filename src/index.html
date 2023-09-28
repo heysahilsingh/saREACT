@@ -10,20 +10,9 @@
 </head>
 
 <body>
-  <input class="sa-dark-toggle" type="checkbox" name="" id="">
   <main class="main min-h-screen dark:bg-neutral-950" id="main"></main>
   <div class="lightbox-container" id="lb"></div>
   <script type="module" src="./index.tsx"></script>
-  <script>
-    document.querySelector(".sa-dark-toggle").addEventListener("change", () => {
-      if(document.documentElement.classList.contains('dark')){
-        document.documentElement.classList.remove('dark')
-      }else{
-        document.documentElement.classList.add('dark')
-      }
-    })
-    
-  </script>
 </body>
 
 </html>

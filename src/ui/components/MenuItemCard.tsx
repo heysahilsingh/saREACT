@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import CONSTANTS, { TypeMenuItem } from "../../constants"
-import { IconStarFilled } from "@tabler/icons-react";
+import { IconArrowUpRight, IconStarFilled } from "@tabler/icons-react";
 
 interface MenuItemCardProps {
-    menu: TypeMenuItem
+    menu: TypeMenuItem,
+    promoted?: boolean,
 }
 
 const MenuItemCard = (props: MenuItemCardProps) => {
@@ -27,17 +28,25 @@ const MenuItemCard = (props: MenuItemCardProps) => {
             <div className="flex gap-6">
                 <div className="col1 w-2/4 grow">
                     <div className="item-ribbons">
-                        <div className="flex items-center gap-2 mb-2">
-                            <div className={`veg-classifier border ${props.menu.itemAttribute.vegClassifier === "VEG" ? "text-[#0f8a65] border-[#0f8a65]" : "text-[#e43b4f] border-[#e43b4f]"}`}>
+                        <div className="flex items-center gap-2 mb-2 no-scrollbar overflow-scroll grow">
+                            <div className={`veg-classifier border ${(props.menu.itemAttribute?.vegClassifier === "VEG" || props.menu.isVeg) ? "text-[#0f8a65] border-[#0f8a65]" : "text-[#e43b4f] border-[#e43b4f]"}`}>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 518.16 518.16" fill="currentColor" width="10" height="10">
                                     <path d="M498.16 0H20A20 20 0 0 0 0 20v478.16a20 20 0 0 0 20 20h478.16a20 20 0 0 0 20-20V20a20 20 0 0 0-20-20zm-4 484.16a10 10 0 0 1-10 10H34a10 10 0 0 1-10-10V34a10 10 0 0 1 10-10h450.16a10 10 0 0 1 10 10z" fill="currentColor" />
                                     <circle cx="258.39" cy="258.29" r="180.79" fill="currentColor" />
                                 </svg>
                             </div>
-                            {props.menu.ribbon.text && (
-                                <div className="flex items-center gap-1 leading-none text-[12px] font-bold text-[#ee9c00]">
+                            {props.menu.ribbon?.text && (
+                                <div className="min-w-fit flex items-center gap-1 leading-none text-[12px] font-bold text-[#ee9c00]">
                                     <IconStarFilled size={12} />
                                     <span>{props.menu.ribbon.text}</span>
+                                </div>
+                            )}
+                            {props.promoted && (
+                                <div className="flex items-center gap-1 leading-none text-[12px] min-w-fit">
+                                    <div className="relative w-[13px] h-[13px] rounded-full bg-[#686b78] text-white">
+                                        <IconArrowUpRight className="absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 w-[90%] h-[90%]" stroke={2} />
+                                    </div>
+                                    <p>Promoted DIsh</p>
                                 </div>
                             )}
                         </div>
@@ -50,7 +59,7 @@ const MenuItemCard = (props: MenuItemCardProps) => {
                             <p className="price text-[15px] h-fit min-w-fit">₹ {(props.menu.price || props.menu.defaultPrice) / 100}</p>
                             {(props.menu.offerTags || []).length > 0 && (
                                 <div className="flex items-center gap-2 text-[10px] uppercase no-scrollbar overflow-scroll grow">
-                                    {props.menu.offerTags.map((offerTag, index) => (
+                                    {props.menu.offerTags?.map((offerTag, index) => (
                                         <div key={offerTag.title + index} className="offer min-w-fit bg-[#fae8e3] dark:bg-zinc-800 border-l-2 border-[#db6742] text-[#db6742] py-1 px-1.5 leading-none">
                                             <span className="font-bold">{offerTag.title}</span> | {offerTag.subTitle}
                                         </div>
@@ -78,10 +87,10 @@ const MenuItemCard = (props: MenuItemCardProps) => {
                 </div>
                 <div className="col2 max-w-[120px] min-w-[120px]">
                     <div className="relative w-full flex flex-col items-center justify-center">
-                        <div className="item-img min-w-full rounded-[8px] overflow-hidden aspect-[1.25/1] bg-zinc-200 dark:bg-zinc-800">
+                        <div className="item-img min-w-full rounded-[8px] overflow-hidden min-h-[30px]">
                             {props.menu.imageId && (
                                 <img
-                                    className={`object-cover object-center h-full w-full ${props.menu?.nextAvailableAtMessage ? "saturate-0" : ""}`}
+                                    className={`aspect-[1.25/1] object-cover object-center h-full w-full bg-zinc-200 dark:bg-zinc-800 ${props.menu.nextAvailableAtMessage ? "saturate-0" : ""}`}
                                     src={CONSTANTS.IMG_CDN + props.menu.imageId}
                                     alt={props.menu.name}
                                 />
@@ -96,10 +105,10 @@ const MenuItemCard = (props: MenuItemCardProps) => {
                                     </>
                                 )}
 
-                                {props.menu?.nextAvailableAtMessage && <span className="block text-[8px] leading-[120%] capitalize font-normal text-gray-800">{props.menu.nextAvailableAtMessage}</span>}
+                                {props.menu.nextAvailableAtMessage && <span className="block text-[8px] leading-[120%] capitalize font-normal text-gray-800">{props.menu.nextAvailableAtMessage}</span>}
                             </button>
 
-                            {props.menu.addons && !props.menu?.nextAvailableAtMessage && (
+                            {props.menu.addons && !props.menu.nextAvailableAtMessage && (
                                 <p className="text-xs text-center opacity-90 mt-1">Customizable</p>
                             )}
                         </div>

@@ -5,6 +5,7 @@ import Logo from "../../theme/Logo"
 import InfoCardSection from "./InfoCardSection";
 import { routePaths } from "../Ui";
 import useDeviceDetect from "../../hooks/useDeviceDetect";
+import ThemeAppearanceBtn from "../../theme/ThemeAppearanceBtn";
 
 const Footer = () => {
 
@@ -46,6 +47,7 @@ const Footer = () => {
                             <span className="font-bold leading-none text-xl">Swiggy</span>
                         </div>
                         <p className="w-full my-2 lg:mb-0 lg:mt-3">© 2023 Bundl Technologies Pvt. Ltd</p>
+                        <ThemeAppearanceBtn className={"pt-4"}/>
                     </div>
                     <div className="">
                         <p className="text-white mb-4 font-medium text-[17px]">Company</p>

@@ -9,8 +9,8 @@ import TopHeader from "../../components/TopHeader";
 import SwiggyError from "../../components/Errors/SwiggyError";
 import { routePaths } from "../../Ui";
 import FilterableRestro from "../../components/FilterableRestro/FilterableRestro";
-import RestroCard from "../../components/RestroCard";
 import { Link } from "react-router-dom";
+import RestroCardVerticle from "../../components/RestroCardVertical";
 
 type PageBanner = {
     id: string,
@@ -188,25 +188,7 @@ const Restaurants = () => {
                                 <div>
                                     <p className="font-bold text-lg pb-4 lg:pb-8 lg:text-2xl">Top restaurant chains in {userInfo.location.cityInfo.cityName || userInfo.location.cityInfo.stateName}</p>
                                     <div className="flex gap-[16px] items-start no-scrollbar overflow-x-scroll overflow-y-hidden">
-                                        {pageData.topRestro?.map(restro => {
-
-                                            const link = routePaths.restaurants + "/" + [restro.name, restro.locality, restro.areaName, userInfo.location.cityInfo.cityName, restro.id].map(value => value ? value.replace(/[^a-zA-Z0-9]/g, '-') : "").join("-").toLowerCase();
-
-                                            return (
-                                                <RestroCard
-                                                    key={restro.id}
-                                                    name={restro?.name}
-                                                    link={link}
-                                                    avgRating={restro?.avgRating}
-                                                    cuisines={restro?.cuisines}
-                                                    areaName={restro?.areaName}
-                                                    imageId={restro?.cloudinaryImageId}
-                                                    offerHeader={restro?.aggregatedDiscountInfoV3?.header}
-                                                    offerSubHeader={restro?.aggregatedDiscountInfoV3?.subHeader}
-                                                    className="min-w-[35%] lg:min-w-[27%] "
-                                                />
-                                            )
-                                        })}
+                                        {pageData.topRestro?.map(restro => <RestroCardVerticle key={restro.id} className="min-w-[35%] lg:min-w-[27%]" restro={restro}/>)}
                                     </div>
                                 </div>
                             </>

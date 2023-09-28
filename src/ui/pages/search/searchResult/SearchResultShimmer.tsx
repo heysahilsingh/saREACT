@@ -1,7 +1,7 @@
 const SearchResultShimmer = () => {
     return (
-        <div className="flex flex-col gap-6">
-            {[1, 2, 3, 4, 5].map(number => (
+        <div className="flex flex-col gap-6 lg:grid lg:grid-cols-2 lg:gap-4">
+            {[1, 2, 3, 4, 5, 6].map(number => (
                 <div className="w-fit flex gap-4 items-center" key={number}>
                     <div className="shimmer-bg border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden min-w-[64px] aspect-square"></div>
                     <div className="flex flex-col gap-2 min-w-[50%] grow">

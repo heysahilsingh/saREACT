@@ -221,7 +221,7 @@ const Restaurant = () => {
                         <div className="r-content flex gap-6 flex-col px-4 pt-4">
                             {/* Restro Information */}
                             <div ref={refRestroInfo} className="r-info flex flex-col gap-5 text-zinc-500 dark:text-slate-400">
-                                <div className="flex">
+                                <div className="flex gap-2">
                                     <div className="col1 grow flex flex-col items-start text-xs ">
                                         <p className="font-bold text-xl text-zinc-950 dark:text-zinc-100">{pageData.restroInfo.info.name}</p>
                                         <p className=" mt-2 mb-1">{pageData.restroInfo.info.cuisines.join(", ")}</p>

@@ -26,7 +26,7 @@ const TopPicks = (props: TopPicksInterface) => {
                     {props.topPick.dish.info.addons && <p className="text-white text-xs text-right mt-2">Customisable</p>}
                 </div>
             </div>
-            <img src={CONSTANTS.IMG_CDN + props.topPick.creativeId} alt="" className="w-full h-full"/>
+            <img src={CONSTANTS.IMG_CDN + props.topPick.creativeId} alt="" className="w-full h-auto aspect-[0.9/1] rounded-[6%] overflow-hidden bg-zinc-200 dark:bg-zinc-800"/>
         </div>
     )
 }

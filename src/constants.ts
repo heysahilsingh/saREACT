@@ -144,7 +144,7 @@ const CONSTANTS = {
          desk: "https://corsproxy.io/?https://www.swiggy.com/dapi/misc_new/location-features?lat=28.6347642&lng=77.2162998&features=CITY_INFO%2CINSTAMART"
       },
       // lng=77.137371&restaurantId=53774&query=piz
-      getUrl: function (userLat: number, userLng: number,  device: "desk" | "mob") {
+      getUrl: function (userLat: number, userLng: number, device: "desk" | "mob") {
          return `https://corsproxy.io/?https://www.swiggy.com/${device === "desk" ? "d" : "m"}api/misc_new/location-features?lat=${userLat}&lng=${userLng}&features=CITY_INFO%2CINSTAMART`;
       },
    },
@@ -152,6 +152,7 @@ const CONSTANTS = {
 
 export type TypeRestaurantInformation = {
    type: string,
+   promoted: boolean,
    name: string,
    id: string,
    uniqueId: string,
@@ -259,6 +260,8 @@ export type TypeRestaurantInformation = {
    },
    aggregatedDiscountInfoV2: {
       header: string,
+      subHeader: string,
+      headerType: "HEADER_TYPE_1" | "HEADER_TYPE_2",
       shortDescriptionList: {
          meta: string,
          discountType: string,
@@ -273,8 +276,9 @@ export type TypeRestaurantInformation = {
    },
    aggregatedDiscountInfoV3: {
       header: string,
-      subHeader: string
-   }
+      subHeader: string,
+      headerType: "HEADER_TYPE_1" | "HEADER_TYPE_2",
+   },
    expectationNotifiers: [
       {
          text: string,
@@ -329,6 +333,7 @@ export type TypeMenuItem = {
    description: string,
    imageId: string,
    inStock: number,
+   isVeg: boolean,
    isBestseller: number,
    price: number,
    defaultPrice: number,

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import CONSTANTS from "../../../constants";
+import CONSTANTS, { TypeRestaurantInformation } from "../../../constants";
 import useDeviceDetect from "../../../hooks/useDeviceDetect";
 import TopHeader from "../../components/TopHeader"
 import Page from "../Page";
@@ -7,7 +7,6 @@ import UserContext from "../../../context/UserContext";
 import RestroInstaWidget from "./RestroInstaWidget";
 import TopPicks from "./TopPicks";
 import { IconThumbUp, IconToolsKitchen } from '@tabler/icons-react';
-import RestroNearBy from "./RestroNearBy";
 import { routePaths } from "../../Ui";
 import { Link } from "react-router-dom";
 import HomeShimmer from "./HomeShimmer";
@@ -15,6 +14,7 @@ import NetworkError from "../../components/Errors/NetworkError";
 import SwiggyError from "../../components/Errors/SwiggyError";
 import SwiggyNotAvailableImg from "../../../assets/images/swiggy-not-available.jpeg";
 import Restaurants from "../restaurants/Restaurants";
+import RestroCardHorizontal from "../../components/RestroCardHorizontal";
 
 type Api_Card = {
     id: string,
@@ -50,7 +50,7 @@ type PageData = {
     banner: Api_Card[] | null,
     bigOffer: Api_Card[] | null,
     offer: Api_Card[] | null,
-    restro: Api_Card[] | null,
+    restro: TypeRestaurantInformation[] | null,
     topPicks: Api_Card[] | null,
 }
 
@@ -278,27 +278,7 @@ const Home = () => {
                                     </div>
 
                                     <div className="restro no-scrollbar flex flex-col items-start justify-start gap-8 overflow-x-scroll overflow-y-hidden">
-                                        {pageData.restro?.map((restro: Api_Card) => {
-
-                                            const link = routePaths.restaurants + "/" + [restro.name, restro.locality, restro.areaName, userInfo.location.cityInfo.cityName, restro.id].map(value => value ? value.replace(/[^a-zA-Z0-9]/g, '-') : "").join("-").toLowerCase();
-
-                                            return (
-                                                <RestroNearBy
-                                                    key={restro.id}
-                                                    imgSrc={restro.cloudinaryImageId}
-                                                    offerHeading={restro.aggregatedDiscountInfoV3?.header}
-                                                    offerSubHeading={restro.aggregatedDiscountInfoV3?.subHeader}
-                                                    restroName={restro.name}
-                                                    deliveryTime={restro.sla?.deliveryTime}
-                                                    link={link}
-                                                    isPromoted={restro.promoted}
-                                                    cuisines={restro.cuisines}
-                                                    averageRating={restro.avgRating}
-                                                    costForTwo={restro.costForTwo}
-                                                    className="min-w-[80px]"
-                                                />
-                                            )
-                                        })}
+                                        {pageData.restro?.map((restro: TypeRestaurantInformation) => <RestroCardHorizontal restro={restro} key={restro.id} className="min-w-[80px]"/>)}
                                     </div>
                                 </div>
                             )}

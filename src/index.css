@@ -109,56 +109,31 @@ input[type="radio"]:checked{
   box-shadow:0 0 0 1px #fc8019;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .sa-container{
   max-width: 1400px;
   margin: auto;
 }
 
 .sa-dark-toggle:checked {
-  background-color: green !important;
+  background-color: #fc8019 !important;
 }
 
 .sa-dark-toggle:checked:after {
-  transform: translate(23px, -50%) !important;
+  transform: translate(27px, -50%) !important;
+  background-color: white !important;
 }
 
 .sa-dark-toggle {
-  height: 28px !important;
+  height: 24px !important;
   width: 52px !important;
   border-radius: 15px !important;
   display: inline-block !important;
   position: relative !important;
   margin: 0 !important;
-  background: grey !important;
+  background: rgb(61, 61, 61) !important;
   transition: all 0.2s !important;
   appearance: none !important;
   outline: none !important;
-  position: fixed !important;
-  z-index: 999999 !important;
-  bottom: 50px !important;
-  left: 50px !important;
 }
 
 .sa-dark-toggle:after {
@@ -167,10 +142,10 @@ input[type="radio"]:checked{
   top: 50% !important;
   transform: translateY(-50%) !important;
   left: 3px !important;
-  width: 23px !important;
-  height: 23px !important;
+  width: 19px !important;
+  height: 19px !important;
   border-radius: 50% !important;
-  background: white !important;
+  background: rgb(197, 197, 197) !important;
   box-shadow: var(--box-shadow) !important;
   transition: all 0.2s cubic-bezier(0.5, 0.1, 0.75, 1.35) !important;
 }

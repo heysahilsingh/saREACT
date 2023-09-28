@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, useRef } from 'react';
 import CONSTANTS, { TypeRestaurantInformation, TypeRestroFilterAPIBody } from '../../../constants';
-import { RestroCardShimmer } from '../RestroCard';
+import { RestroCardVerticleShimmer } from '../RestroCardVertical';
 import { FilterableRestroProps, FiltersProp } from './FilterableRestro';
 import Filters from './filters/Filters';
 import FiltersShimmer from './filters/FiltersShimmer';
@@ -154,11 +154,11 @@ const FilterableRestroMain = (props: FilterableRestroProps) => {
             {/* Restros */}
             <div className={`${props.restrosClasses && props.restrosClasses} restros lists grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 lg:gap-8 pt-3 lg:pt-5 no-scrollbar overflow-x-scroll overflow-y-hidden`}>
                 {/* Restros Shimmer */}
-                {!restros && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(() => <RestroCardShimmer key={Math.random()} />)}
+                {!restros && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(() => <RestroCardVerticleShimmer key={Math.random()} />)}
 
                 {(restros && restros?.length > 0) && <Restros restros={restros} />}
 
-                {isMoreRestrosLoading && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(() => <RestroCardShimmer key={Math.random()} />)}
+                {isMoreRestrosLoading && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(() => <RestroCardVerticleShimmer key={Math.random()} />)}
             </div>
 
             {canFetchRestros && (

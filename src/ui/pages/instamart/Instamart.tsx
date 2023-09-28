@@ -1,57 +1,20 @@
-import { useContext, useEffect, useState } from "react";
-import useDeviceDetect from "../../../hooks/useDeviceDetect";
-import CONSTANTS from "../../../constants";
-import UserContext from "../../../context/UserContext";
-import FilterableRestro from "../../components/FilterableRestro/FilterableRestro"
+import LightBox from "../../components/LightBox"
+import img from "../../../assets/images/no_instamart.png"
+import { useNavigate } from "react-router-dom";
+import { routePaths } from "../../Ui";
 
 const Instamart = () => {
 
-    const [restroFilter, setRestroFilter] = useState(null);
-    const [restrosList, setRestrosList] = useState(null);
-    const [nextOffset, setNextOffset] = useState("10");
+    const navigate = useNavigate();
 
-    const { userInfo } = useContext(UserContext);
-    const device = useDeviceDetect();
-    const API_URL = device.isMob ? CONSTANTS.API_PAGE_RESTAURANTS.mob : CONSTANTS.API_PAGE_RESTAURANTS.desk;
-
-    useEffect(() => {
-        async function fetchData() {
-            try {
-
-                const url = `${API_URL}lat=${userInfo.location.cityInfo.latitude}&lng=${userInfo.location.cityInfo.longitude}`;
-                const response = await fetch(url);
-                const responseData = await response.json();
-
-                if (responseData?.data?.cards) {
-                    const data = responseData?.data?.cards?.map((card: { card: { card: [] } }) => card?.card?.card);
-
-                    setRestroFilter(data.find((d: { facetList: object, id: string }) => d.facetList))
-                    setRestrosList(data.find((d: { facetList: object, id: string }) => d.id === "restaurant_grid_listing")?.gridElements?.infoWithStyle?.restaurants)
-                    setNextOffset(data.pageOffset?.widgetOffset?.collectionV5RestaurantListWidget_SimRestoRelevance_food_seo)
-
-                } else {
-                    throw new Error(responseData?.data?.statusMessage);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        }
-
-        fetchData();
-    }, [userInfo]);
-
-
-    if (restroFilter && restrosList) {
-        return (
-            <div>
-                <FilterableRestro
-                    filters={restroFilter}
-                    restros={restrosList}
-                    restrosListLoadType="ON_CLICK"
-                />
+    return (
+        <LightBox wrapperClasses="w-full h-full" closeBtnClasses="hidden">
+            <div className="flex bg-white h-[100vh] w-full relative">
+                <img className="w-full h-full lg:object-contain" src={img} alt="Instamart not available" />
+                <button onClick={() => navigate(routePaths.home)} className="absolute bottom-[40px] left-2/4 -translate-x-2/4 rounded-xl py-2 px-5 bg-[#9e1e62] text-white">Go To Home</button>
             </div>
-        )
-    }
+        </LightBox>
+    )
 }
 
 export default Instamart
